@@ -2,7 +2,10 @@ package edu.gatech.icompiler;
 
 import java.io.*;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
 import edu.gatech.facade.IScanner;
 /**
  * Created by Alex on 1/30/14.
@@ -12,6 +15,7 @@ public class Scanner implements Iterator<String>, Closeable, AutoCloseable, ISca
 
     private CharBuffer tokenBuffer;
     private Reader charStream;
+    private List<List<Integer>> selectionTable;
 
     private final int INITIAL_BUFFER_SIZE = 11; //primes are good, right?
 
@@ -27,6 +31,8 @@ public class Scanner implements Iterator<String>, Closeable, AutoCloseable, ISca
 
         this.charStream = charStream;
         this.tokenBuffer = CharBuffer.allocate(INITIAL_BUFFER_SIZE);
+        this.selectionTable = new ArrayList<List<Integer>>();
+        selectionTable.add(new ArrayList<Integer>());
 
     }
 
