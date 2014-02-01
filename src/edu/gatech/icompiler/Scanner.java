@@ -32,10 +32,42 @@ public class Scanner implements Iterator<String>, Closeable, AutoCloseable, ISca
         this.charStream = charStream;
         this.tokenBuffer = CharBuffer.allocate(INITIAL_BUFFER_SIZE);
         this.selectionTable = new ArrayList<List<Integer>>();
-        selectionTable.add(new ArrayList<Integer>());
+
 
     }
 
+    public void initializeTable()
+    {
+        try
+        {
+            File csv = new File("ScannerTable.csv");
+            BufferedReader reader = new BufferedReader(new FileReader(csv));
+            String line="";
+            int row = -1;
+            while((line=reader.readLine())!=null)
+            {
+                if(row==-1)
+                {
+                    row++;
+                    continue;
+                }
+                selectionTable.add(new ArrayList<Integer>());
+                String[] items = line.split(",");
+                for(int i=1; i<items.length; i++)
+                {
+                    //add items
+                    selectionTable.get(row).add(Integer.parseInt(items[i]));
+                }
+                row++;
+            }
+        }
+        catch(FileNotFoundException fex)
+        {}
+        catch(IOException ioex)
+        {
+
+        }
+    }
 
     public boolean hasNext(){
         //TODO: implement
