@@ -19,6 +19,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     private List<List<Integer>> selectionTable;
     private HashMap<Integer, TokenType> stateNames;
     private HashMap<String, Integer> symbolColumns;
+    private Character lastCharacter = null;
 
     private final int INITIAL_BUFFER_SIZE = 11; //primes are good, right?
 
@@ -60,8 +61,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 String[] items = line.split(",");
 
                 //index state names by row
-                if(TokenType.getFromString(items[0]) != null)
-                    stateNames.put(row, TokenType.getFromString(items[0]));
+                stateNames.put(row, TokenType.getFromString(items[0]));
 
                 //add items
                 for(int i=1; i<items.length; i++)
@@ -94,20 +94,61 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         return out;
     }
 
+    //TODO: implement && test
     public Token next(){
 
-        boolean found = false;
+        tokenBuffer.clear();
+
+        if(null!= lastCharacter)
+            tokenBuffer.put(lastCharacter);
+
+
+        int currentColumn =-1;
+        int currentRow = 0;
+
+        TokenType currentState = null;
+
+        if(tokenBuffer.hasRemaining()){
+
+            String foo = ""+ tokenBuffer.get();
+
+            tokenBuffer.clear();
+            lastCharacter = null;
+
+            currentColumn = symbolColumns.get(foo);
+            currentRow = selectionTable.get(currentRow).get(currentColumn);
+
+            currentState = stateNames.get(currentRow);
+
+        }
 
         try{
 
-            while(!found && charStream.ready()){
+            while(charStream.ready()){
 
+                lastCharacter = (char)charStream.read();
+
+                currentColumn = symbolColumns.get( "" + lastCharacter );
+
+                currentRow = selectionTable.get(currentRow).get(currentColumn);
+
+                if(currentRow < 0) {
+
+                    if(null != currentState)
+                        return new Token(currentState, tokenBuffer.toString());
+                    else
+                        throw new Error("Lexical Error?");
+
+                }
+
+                currentState = stateNames.get(currentRow);
+                tokenBuffer.put(lastCharacter);
             }
 
         }catch(IOException e){
             e.printStackTrace();
         }
-        //TODO: implement
+
         return null;
     }
 
