@@ -20,9 +20,7 @@ public class ScannerTest {
     public void testNext() throws Exception {
         IScanner scanner = new Scanner("var N := 8");
 
-        Token correct = new Token(TokenType.VAR, "var");
-
-        assert(correct.equals(scanner.next()));
+        assert(scanner.next().equals(new Token(TokenType.VAR, "var")));
 
         assert(scanner.next().equals( new Token(TokenType.ID, "N" )));
 
@@ -30,13 +28,32 @@ public class ScannerTest {
 
         assert(scanner.next().equals(new Token(TokenType.INTLIT, "8")));
 
-        //TODO: figure out failure conditions
+        scanner = new Scanner ("type intArray := array of int\n");
 
-        scanner = new Scanner ("type intArray = array of int\n");
+        assert(scanner.next().equals(new Token(TokenType.TYPE, "type")));
 
+        assert(scanner.next().equals(new Token(TokenType.ID, "intArray")));
 
+        assert(scanner.next().equals(new Token(TokenType.ASSIGN, ":=")));
+
+        assert(scanner.next().equals(new Token(TokenType.ARRAY, "array")));
+
+        assert(scanner.next().equals(new Token(TokenType.OF, "of")));
+
+        assert(scanner.next().equals(new Token(TokenType.TYPE, "int")));
 
         scanner = new Scanner("var row := intArray [ N ] of 0");
+
+        assert(scanner.next().equals(new Token(TokenType.VAR, "var")));
+
+        assert(scanner.next().equals(new Token(TokenType.ID, "row")));
+        assert(scanner.next().equals(new Token(TokenType.ASSIGN, ":=")));
+        assert(scanner.next().equals(new Token(TokenType.ID, "intArray")));
+        assert(scanner.next().equals(new Token(TokenType.LBRACK, "[")));
+        assert(scanner.next().equals(new Token(TokenType.ID, "N")));
+        assert(scanner.next().equals(new Token(TokenType.RBRACK, "]")));
+        assert(scanner.next().equals(new Token(TokenType.OF, "of")));
+        assert(scanner.next().equals(new Token(TokenType.INTLIT, "0")));
 
 
     }
