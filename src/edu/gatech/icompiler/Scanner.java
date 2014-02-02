@@ -100,8 +100,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
         tokenBuffer.clear();
 
-        if(null!= lastCharacter)
-            tokenBuffer.put(lastCharacter);
+
 
 
         int currentColumn =-1;
@@ -109,19 +108,6 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
         TokenType currentState = null;
 
-        if(tokenBuffer.hasRemaining()){
-
-            String foo = ""+ tokenBuffer.get();
-
-            tokenBuffer.clear();
-            lastCharacter = null;
-
-            currentColumn = symbolColumns.get(foo);
-            currentRow = selectionTable.get(currentRow).get(currentColumn);
-
-            currentState = stateNames.get(currentRow);
-
-        }
 
         try{
 
@@ -136,7 +122,11 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 if(currentRow < 0) {
 
                     if(null != currentState)
+                    {
+                        charStream.unread((char)lastCharacter);
                         return new Token(currentState, tokenBuffer.toString());
+                    }
+
                     else
                         throw new Error("Lexical Error?");
 
