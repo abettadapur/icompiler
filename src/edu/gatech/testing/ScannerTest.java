@@ -13,11 +13,6 @@ public class ScannerTest {
     //TODO: implement testing battery
 
     @Test
-    public void testHasNext() throws Exception {
-
-    }
-
-    @Test
     public void testNext() throws Exception {
 
         IScanner scanner = new Scanner("var N := 8");
@@ -67,13 +62,4 @@ public class ScannerTest {
 
     }
 
-    @Test
-    public void testRemove() throws Exception {
-
-    }
-
-    @Test
-    public void testClose() throws Exception {
-
-    }
 }

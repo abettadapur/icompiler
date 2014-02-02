@@ -30,4 +30,8 @@ public class Token {
 
     }
 
+    public String toString(){
+        return "[" + TOKEN_TYPE.name() + ", " + TOKEN_CONTENT + "]";
+    }
+
 }
