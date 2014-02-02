@@ -3,6 +3,7 @@ package edu.gatech.testing;
 import edu.gatech.facade.IScanner;
 import edu.gatech.icompiler.*;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Created by Stefano on 1/31/14.
@@ -18,42 +19,50 @@ public class ScannerTest {
 
     @Test
     public void testNext() throws Exception {
+
         IScanner scanner = new Scanner("var N := 8");
 
-        assert(scanner.next().equals(new Token(TokenType.VAR, "var")));
+        assertEquals(scanner.next(), new Token(TokenType.VAR, "var"));
 
-        assert(scanner.next().equals( new Token(TokenType.ID, "N" )));
+        assertEquals(scanner.next(), new Token(TokenType.ID, "N" ));
 
-        assert(scanner.next().equals( new Token(TokenType.ASSIGN, ":=" )));
+        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":=" ));
 
-        assert(scanner.next().equals(new Token(TokenType.INTLIT, "8")));
+        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "8"));
 
         scanner = new Scanner ("type intArray := array of int\n");
 
-        assert(scanner.next().equals(new Token(TokenType.TYPE, "type")));
+        assertEquals(scanner.next(), new Token(TokenType.TYPE, "type"));
 
-        assert(scanner.next().equals(new Token(TokenType.ID, "intArray")));
+        assertEquals(scanner.next(), new Token(TokenType.ID, "intArray"));
 
-        assert(scanner.next().equals(new Token(TokenType.ASSIGN, ":=")));
+        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
 
-        assert(scanner.next().equals(new Token(TokenType.ARRAY, "array")));
+        assertEquals(scanner.next(), new Token(TokenType.ARRAY, "array"));
 
-        assert(scanner.next().equals(new Token(TokenType.OF, "of")));
+        assertEquals(scanner.next(), new Token(TokenType.OF, "of"));
 
-        assert(scanner.next().equals(new Token(TokenType.TYPE, "int")));
+        assertEquals(scanner.next(), new Token(TokenType.TYPE, "int"));
 
         scanner = new Scanner("var row := intArray [ N ] of 0");
 
-        assert(scanner.next().equals(new Token(TokenType.VAR, "var")));
+        assertEquals(scanner.next(), new Token(TokenType.VAR, "var"));
 
-        assert(scanner.next().equals(new Token(TokenType.ID, "row")));
-        assert(scanner.next().equals(new Token(TokenType.ASSIGN, ":=")));
-        assert(scanner.next().equals(new Token(TokenType.ID, "intArray")));
-        assert(scanner.next().equals(new Token(TokenType.LBRACK, "[")));
-        assert(scanner.next().equals(new Token(TokenType.ID, "N")));
-        assert(scanner.next().equals(new Token(TokenType.RBRACK, "]")));
-        assert(scanner.next().equals(new Token(TokenType.OF, "of")));
-        assert(scanner.next().equals(new Token(TokenType.INTLIT, "0")));
+        assertEquals(scanner.next(), new Token(TokenType.ID, "row"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "intArray"));
+
+        assertEquals(scanner.next(), new Token(TokenType.LBRACK, "["));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "N"));
+
+        assertEquals(scanner.next(), new Token(TokenType.RBRACK, "]"));
+
+        assertEquals(scanner.next(), new Token(TokenType.OF, "of"));
+
+        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "0"));
 
 
     }
