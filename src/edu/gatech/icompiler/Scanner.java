@@ -44,6 +44,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
     }
 
+    //Takes the CSV table, makes a transition table and creates a symbol lookup table and state name lookup table
     public void initializeTable()
     {
         try
@@ -53,8 +54,11 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
             String line="";
             int row = 0;
 
+
+
             String[] symbols = reader.readLine().split(",");
 
+            //first line is the symbol lookup table
             for(int i=1; i < symbols.length; i++)
             {
                 if(symbols[i].equals("~"))
@@ -64,15 +68,16 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 symbolColumns.put(symbols[i], i-1 );
             }
 
+            //other lines are the transitions
             while((line=reader.readLine())!=null)
             {
                 selectionTable.add(new ArrayList<Integer>());
                 String[] items = line.split(",");
 
-                //index state names by row
+                //first item is the state name. store that information
                 stateNames.put(row, TokenType.getFromString(items[0]));
 
-                //add items
+                //other items are transitions. Populate table
                 for(int i=1; i<items.length; i++)
                     selectionTable.get(row).add(Integer.parseInt(items[i]));
 
@@ -91,6 +96,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
     }
 
+    //are there more tokens?
     public boolean hasNext(){
 
         boolean out = false;
@@ -104,32 +110,35 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         return out;
     }
 
-    //TODO: implement && test
+    //get the next token
     public Token next(){
 
         tokenBuffer.clear();
 
 
 
-
+        //currentCol is the current input char, currentRow is the current state
         int currentColumn =-1;
         int currentRow = 0;
 
+        //null unless we have an end state
         TokenType currentState = null;
 
 
         try{
+            //eliminate whitespace tokens
             while(charStream.peek()==' '||charStream.peek()=='\r'||charStream.peek()=='\n'||charStream.peek()=='\t')
             {
                 charStream.read();
             }
 
 
+            //while there are things in the stream, loop
             while(charStream.hasNext()){
 
                 lastCharacter = (char)charStream.read();
-                System.out.println(lastCharacter);
-                System.out.println(symbolColumns.get("" + lastCharacter));
+
+                //if input is not in our language, default to something
                 if(!symbolColumns.containsKey(""+lastCharacter))
                 {
                     currentColumn = symbolColumns.get("OTHERS");
@@ -137,10 +146,12 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 else
                     currentColumn = symbolColumns.get( "" + lastCharacter );
 
+                //get next state
                 currentRow = selectionTable.get(currentRow).get(currentColumn);
 
+                //if there is no next state (i.e state==-1)
                 if(currentRow < 0) {
-
+                    //remember, currentState is not null only if there is an end state
                     if(null != currentState)
                     {
                         charStream.unread((char)lastCharacter);
@@ -151,10 +162,12 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                         throw new Error("Lexical Error?");
 
                 }
-
+                //update current state using state names (non accepting states are null in the map)
                 currentState = stateNames.get(currentRow);
+                //add to the running token buffer
                 tokenBuffer.add(lastCharacter);
             }
+            //we've run out of characters, need to see if we can accept
             if(null!=currentState)
             {
                 return new Token(currentState, Util.stringFromList(tokenBuffer));
