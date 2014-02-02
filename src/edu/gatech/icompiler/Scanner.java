@@ -55,7 +55,13 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
             String[] symbols = reader.readLine().split(",");
 
             for(int i=1; i < symbols.length; i++)
+            {
+                if(symbols[i].equals("~"))
+                {
+                    symbols[i]=",";
+                }
                 symbolColumns.put(symbols[i], i-1 );
+            }
 
             while((line=reader.readLine())!=null)
             {
@@ -127,7 +133,12 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 lastCharacter = (char)charStream.read();
                 System.out.println(lastCharacter);
                 System.out.println(symbolColumns.get("" + lastCharacter));
-                currentColumn = symbolColumns.get( "" + lastCharacter );
+                if(!symbolColumns.containsKey(lastCharacter))
+                {
+                    //
+                }
+                else
+                    currentColumn = symbolColumns.get( "" + lastCharacter );
 
                 currentRow = selectionTable.get(currentRow).get(currentColumn);
 
