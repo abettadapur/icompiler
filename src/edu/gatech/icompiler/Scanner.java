@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.gatech.facade.IScanner;
+import edu.gatech.util.PeekBackReader;
 import edu.gatech.util.Util;
 
 /**
@@ -16,7 +17,7 @@ import edu.gatech.util.Util;
 public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScanner {
 
     private List<Character> tokenBuffer;
-    private PushbackReader charStream;
+    private PeekBackReader charStream;
     private List<List<Integer>> selectionTable;
     private HashMap<Integer, TokenType> stateNames;
     private HashMap<String, Integer> symbolColumns;
@@ -34,7 +35,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
     public Scanner(Reader charStream){
 
-        this.charStream = new PushbackReader(charStream);
+        this.charStream = new PeekBackReader(charStream);
         this.tokenBuffer = new ArrayList<>();
         this.selectionTable = new ArrayList<List<Integer>>();
         this.stateNames = new HashMap<>();
@@ -95,7 +96,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         boolean out = false;
 
         try{
-            out = charStream.ready();
+            out = charStream.hasNext();
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -118,24 +119,20 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
 
         try{
-            while(charStream.ready())
+            while(charStream.peek()==' '||charStream.peek()=='\r'||charStream.peek()=='\n'||charStream.peek()=='\t')
             {
-                char whitespace = (char)charStream.read();
-                if(!(whitespace==' '|whitespace=='\n'||whitespace=='\t'||whitespace=='\r'))
-                {
-                    charStream.unread(whitespace);
-                    break;
-                }
+                charStream.read();
             }
 
-            while(charStream.ready()){
+
+            while(charStream.hasNext()){
 
                 lastCharacter = (char)charStream.read();
                 System.out.println(lastCharacter);
                 System.out.println(symbolColumns.get("" + lastCharacter));
-                if(!symbolColumns.containsKey(lastCharacter))
+                if(!symbolColumns.containsKey(""+lastCharacter))
                 {
-                    //
+                    currentColumn = symbolColumns.get("OTHERS");
                 }
                 else
                     currentColumn = symbolColumns.get( "" + lastCharacter );
@@ -158,6 +155,12 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 currentState = stateNames.get(currentRow);
                 tokenBuffer.add(lastCharacter);
             }
+            if(null!=currentState)
+            {
+                return new Token(currentState, Util.stringFromList(tokenBuffer));
+            }
+            else
+                throw new Error("Lexical Error?");
 
         }catch(IOException e){
             e.printStackTrace();

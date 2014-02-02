@@ -37,7 +37,7 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Token(TokenType.OF, "of"));
 
-        assertEquals(scanner.next(), new Token(TokenType.TYPE, "int"));
+        assertEquals(scanner.next(), new Token(TokenType.ID, "int"));  //what is int?
 
         scanner = new Scanner("var row := intArray [ N ] of 0");
 
