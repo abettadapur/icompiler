@@ -1,11 +1,13 @@
 package edu.gatech.facade;
 
+import edu.gatech.icompiler.Token;
+
 /**
  * Created by Stefano on 1/31/14.
  */
 public interface IScanner {
 
-    public String next();
+    public Token next();
 
     public boolean hasNext();
 

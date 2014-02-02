@@ -12,12 +12,12 @@ import edu.gatech.facade.IScanner;
  * Created by Alex on 1/30/14.
  */
 
-public class Scanner implements Iterator<String>, Closeable, AutoCloseable, IScanner {
+public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScanner {
 
     private CharBuffer tokenBuffer;
     private Reader charStream;
     private List<List<Integer>> selectionTable;
-    private HashMap<Integer, String> stateNames;
+    private HashMap<Integer, TokenType> stateNames;
     private HashMap<String, Integer> symbolColumns;
 
     private final int INITIAL_BUFFER_SIZE = 11; //primes are good, right?
@@ -54,14 +54,14 @@ public class Scanner implements Iterator<String>, Closeable, AutoCloseable, ISca
             for(int i=1; i < symbols.length; i++)
                 symbolColumns.put(symbols[i], i );
 
-
             while((line=reader.readLine())!=null)
             {
                 selectionTable.add(new ArrayList<Integer>());
                 String[] items = line.split(",");
 
                 //index state names by row
-                stateNames.put(row, items[0]);
+                if(TokenType.getFromString(items[0]) != null)
+                    stateNames.put(row, TokenType.getFromString(items[0]));
 
                 //add items
                 for(int i=1; i<items.length; i++)
@@ -94,7 +94,7 @@ public class Scanner implements Iterator<String>, Closeable, AutoCloseable, ISca
         return out;
     }
 
-    public String next(){
+    public Token next(){
         //TODO: implement
         return null;
     }
