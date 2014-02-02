@@ -15,7 +15,7 @@ import edu.gatech.facade.IScanner;
 public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScanner {
 
     private CharBuffer tokenBuffer;
-    private Reader charStream;
+    private PushbackReader charStream;
     private List<List<Integer>> selectionTable;
     private HashMap<Integer, TokenType> stateNames;
     private HashMap<String, Integer> symbolColumns;
@@ -33,7 +33,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
     public Scanner(Reader charStream){
 
-        this.charStream = charStream;
+        this.charStream = new PushbackReader(charStream);
         this.tokenBuffer = CharBuffer.allocate(INITIAL_BUFFER_SIZE);
         this.selectionTable = new ArrayList<List<Integer>>();
         this.stateNames = new HashMap<>();
@@ -79,6 +79,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         {
             ioex.printStackTrace();
         }
+
     }
 
     public boolean hasNext(){
