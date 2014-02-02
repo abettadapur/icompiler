@@ -95,6 +95,18 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     }
 
     public Token next(){
+
+        boolean found = false;
+
+        try{
+
+            while(!found && charStream.ready()){
+
+            }
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
         //TODO: implement
         return null;
     }
