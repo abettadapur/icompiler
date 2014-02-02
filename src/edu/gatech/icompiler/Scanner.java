@@ -38,6 +38,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         this.selectionTable = new ArrayList<List<Integer>>();
         this.stateNames = new HashMap<>();
         this.symbolColumns = new HashMap<>();
+        initializeTable();
 
     }
 
@@ -53,7 +54,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
             String[] symbols = reader.readLine().split(",");
 
             for(int i=1; i < symbols.length; i++)
-                symbolColumns.put(symbols[i], i );
+                symbolColumns.put(symbols[i], i-1 );
 
             while((line=reader.readLine())!=null)
             {
@@ -134,7 +135,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 }
 
                 currentState = stateNames.get(currentRow);
-                tokenBuffer.put(lastCharacter);
+                tokenBuffer.append(lastCharacter);
             }
 
         }catch(IOException e){
