@@ -114,7 +114,8 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
             while(charStream.ready()){
 
                 lastCharacter = (char)charStream.read();
-
+                System.out.println(lastCharacter);
+                System.out.println(symbolColumns.get("" + lastCharacter));
                 currentColumn = symbolColumns.get( "" + lastCharacter );
 
                 currentRow = selectionTable.get(currentRow).get(currentColumn);

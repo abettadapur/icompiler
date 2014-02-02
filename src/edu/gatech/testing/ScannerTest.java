@@ -1,8 +1,7 @@
 package edu.gatech.testing;
 
 import edu.gatech.facade.IScanner;
-import edu.gatech.icompiler.Scanner;
-import org.junit.Before;
+import edu.gatech.icompiler.*;
 import org.junit.Test;
 
 /**
@@ -20,6 +19,16 @@ public class ScannerTest {
     @Test
     public void testNext() throws Exception {
         IScanner scanner = new Scanner("var N := 8");
+
+        Token correct = new Token(TokenType.VAR, "var");
+
+        assert(correct.equals(scanner.next()));
+
+        assert(scanner.next().equals( new Token(TokenType.ID, "N" )));
+
+        assert(scanner.next().equals( new Token(TokenType.ASSIGN, ":=" )));
+
+        assert(scanner.next().equals(new Token(TokenType.INTLIT, "8")));
 
         //TODO: figure out failure conditions
 
