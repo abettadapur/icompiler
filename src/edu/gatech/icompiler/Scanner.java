@@ -82,8 +82,16 @@ public class Scanner implements Iterator<String>, Closeable, AutoCloseable, ISca
     }
 
     public boolean hasNext(){
-        //TODO: implement
-        return false;
+
+        boolean out = false;
+
+        try{
+            out = charStream.ready();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+        return out;
     }
 
     public String next(){
@@ -97,7 +105,13 @@ public class Scanner implements Iterator<String>, Closeable, AutoCloseable, ISca
     }
 
     public void close(){
-        //TODO: implement
+
+        try{
+            charStream.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
     }
 
 
