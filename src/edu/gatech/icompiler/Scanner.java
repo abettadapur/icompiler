@@ -1,20 +1,21 @@
 package edu.gatech.icompiler;
 
 import java.io.*;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import edu.gatech.facade.IScanner;
+import edu.gatech.util.Util;
+
 /**
  * Created by Alex on 1/30/14.
  */
 
 public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScanner {
 
-    private CharBuffer tokenBuffer;
+    private List<Character> tokenBuffer;
     private PushbackReader charStream;
     private List<List<Integer>> selectionTable;
     private HashMap<Integer, TokenType> stateNames;
@@ -34,7 +35,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     public Scanner(Reader charStream){
 
         this.charStream = new PushbackReader(charStream);
-        this.tokenBuffer = CharBuffer.allocate(INITIAL_BUFFER_SIZE);
+        this.tokenBuffer = new ArrayList<>();
         this.selectionTable = new ArrayList<List<Integer>>();
         this.stateNames = new HashMap<>();
         this.symbolColumns = new HashMap<>();
@@ -111,6 +112,15 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
 
         try{
+            while(charStream.ready())
+            {
+                char whitespace = (char)charStream.read();
+                if(!(whitespace==' '|whitespace=='\n'||whitespace=='\t'||whitespace=='\r'))
+                {
+                    charStream.unread(whitespace);
+                    break;
+                }
+            }
 
             while(charStream.ready()){
 
@@ -126,7 +136,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                     if(null != currentState)
                     {
                         charStream.unread((char)lastCharacter);
-                        return new Token(currentState, tokenBuffer.toString());
+                        return new Token(currentState, Util.stringFromList(tokenBuffer));
                     }
 
                     else
@@ -135,7 +145,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 }
 
                 currentState = stateNames.get(currentRow);
-                tokenBuffer.append(lastCharacter);
+                tokenBuffer.add(lastCharacter);
             }
 
         }catch(IOException e){
