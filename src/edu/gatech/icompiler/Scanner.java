@@ -64,7 +64,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                     symbols[i]=",";
                 }
                 symbolColumns.put(symbols[i], i-1 );
-            }
+        }
 
             //other lines are the transitions
             while((line=reader.readLine())!=null)

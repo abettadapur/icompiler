@@ -59,6 +59,18 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Token(TokenType.INTLIT, "0"));
 
+        scanner = new Scanner("endif identifier begin end enddo");
+
+        assertEquals(scanner.next(), new Token(TokenType.ENDIF, "endif"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "identifier"));
+
+        assertEquals(scanner.next(), new Token(TokenType.BEGIN, "begin"));
+
+        assertEquals(scanner.next(), new Token(TokenType.END, "end"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ENDDO, "enddo"));
+
 
     }
 
