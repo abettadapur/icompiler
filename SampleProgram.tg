@@ -1,0 +1,4 @@
+for id := 1 to 100 do /*comment*/
+ sum := sum + X[id] * Y[id];
+ enddo
+ printi(sum);

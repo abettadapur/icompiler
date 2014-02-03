@@ -3,6 +3,9 @@ package edu.gatech.testing;
 import edu.gatech.facade.IScanner;
 import edu.gatech.icompiler.*;
 import org.junit.Test;
+
+import java.io.File;
+
 import static org.junit.Assert.*;
 
 /**
@@ -70,6 +73,69 @@ public class ScannerTest {
         assertEquals(scanner.next(), new Token(TokenType.END, "end"));
 
         assertEquals(scanner.next(), new Token(TokenType.ENDDO, "enddo"));
+
+
+    }
+    @Test
+    public void fileTest() throws Exception
+    {
+        Scanner scanner = new Scanner(new File("SampleProgram.tg"));
+
+        assertEquals(scanner.next(), new Token(TokenType.FOR, "for"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "id"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
+
+        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "1"));
+
+        assertEquals(scanner.next(), new Token(TokenType.TO, "to"));
+
+        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "100"));
+
+        assertEquals(scanner.next(), new Token(TokenType.DO, "do"));
+
+        assertEquals(scanner.next(), new Token(TokenType.COMMENT, "/*comment*/"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "sum"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "sum"));
+
+        assertEquals(scanner.next(), new Token(TokenType.PLUS, "+"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "X"));
+
+        assertEquals(scanner.next(), new Token(TokenType.LBRACK, "["));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "id"));
+
+        assertEquals(scanner.next(), new Token(TokenType.RBRACK, "]"));
+
+        assertEquals(scanner.next(), new Token(TokenType.MULT, "*"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "Y"));
+
+        assertEquals(scanner.next(), new Token(TokenType.LBRACK, "["));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "id"));
+
+        assertEquals(scanner.next(), new Token(TokenType.RBRACK, "]"));
+
+        assertEquals(scanner.next(), new Token(TokenType.SEMI, ";"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ENDDO, "enddo"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "printi"));
+
+        assertEquals(scanner.next(), new Token(TokenType.LPAREN, "("));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "sum"));
+
+        assertEquals(scanner.next(), new Token(TokenType.RPAREN, ")"));
+
+        assertEquals(scanner.next(), new Token(TokenType.SEMI, ";"));
 
 
     }
