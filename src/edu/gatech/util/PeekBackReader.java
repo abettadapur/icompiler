@@ -16,23 +16,15 @@ public class PeekBackReader extends PushbackReader
 
     public boolean hasNext() throws IOException
     {
-        char c = (char)read();
-        if(c==Character.MAX_VALUE)
-        {
-            return false;
-        }
-        else
-        {
-            unread(c);
-            return true;
-        }
-
+        return peek()!=Character.MAX_VALUE;
     }
     public char peek() throws IOException
     {
         char c = (char)read();
+
         if(c!=Character.MAX_VALUE)
             unread(c);
+
         return c;
     }
 

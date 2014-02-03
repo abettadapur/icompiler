@@ -45,7 +45,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     }
 
     //Takes the CSV table, makes a transition table and creates a symbol lookup table and state name lookup table
-    public void initializeTable()
+    private void initializeTable()
     {
         try
         {
@@ -53,8 +53,6 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
             BufferedReader reader = new BufferedReader(new FileReader(csv));
             String line="";
             int row = 0;
-
-
 
             String[] symbols = reader.readLine().split(",");
 
@@ -115,8 +113,6 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
         tokenBuffer.clear();
 
-
-
         //currentCol is the current input char, currentRow is the current state
         int currentColumn =-1;
         int currentRow = 0;
@@ -128,10 +124,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         try{
             //eliminate whitespace tokens
             while(charStream.peek()==' '||charStream.peek()=='\r'||charStream.peek()=='\n'||charStream.peek()=='\t')
-            {
                 charStream.read();
-            }
-
 
             //while there are things in the stream, loop
             while(charStream.hasNext()){
@@ -140,9 +133,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
                 //if input is not in our language, default to something
                 if(!symbolColumns.containsKey(""+lastCharacter))
-                {
                     currentColumn = symbolColumns.get("OTHERS");
-                }
                 else
                     currentColumn = symbolColumns.get( "" + lastCharacter );
 
@@ -162,8 +153,10 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                         throw new Error("Lexical Error?");
 
                 }
+
                 //update current state using state names (non accepting states are null in the map)
                 currentState = stateNames.get(currentRow);
+
                 //add to the running token buffer
                 tokenBuffer.add(lastCharacter);
             }
@@ -184,6 +177,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
     public void remove(){
         //TODO: implement
+        throw new UnsupportedOperationException();
 
     }
 
