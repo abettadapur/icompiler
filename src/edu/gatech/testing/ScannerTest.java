@@ -83,7 +83,7 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Token(TokenType.FOR, "for"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "id"));
+        assertEquals(scanner.next(), new Token(TokenType.ID, "i"));
 
         assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
 
@@ -109,7 +109,7 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Token(TokenType.LBRACK, "["));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "id"));
+        assertEquals(scanner.next(), new Token(TokenType.ID, "i"));
 
         assertEquals(scanner.next(), new Token(TokenType.RBRACK, "]"));
 
@@ -119,7 +119,7 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Token(TokenType.LBRACK, "["));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "id"));
+        assertEquals(scanner.next(), new Token(TokenType.ID, "i"));
 
         assertEquals(scanner.next(), new Token(TokenType.RBRACK, "]"));
 

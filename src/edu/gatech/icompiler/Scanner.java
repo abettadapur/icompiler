@@ -145,8 +145,15 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                     //remember, currentState is not null only if there is an end state
                     if(null != currentState)
                     {
+                        String content = Util.stringFromList(tokenBuffer);
                         charStream.unread((char)lastCharacter);
-                        return new Token(currentState, Util.stringFromList(tokenBuffer));
+                        if(currentState==TokenType.ID)
+                        {
+                           TokenType type = TokenType.getFromString(content);
+                            if(type!=null)
+                                currentState=type;
+                        }
+                        return new Token(currentState, content);
                     }
 
                     else
@@ -163,7 +170,15 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
             //we've run out of characters, need to see if we can accept
             if(null!=currentState)
             {
-                return new Token(currentState, Util.stringFromList(tokenBuffer));
+                String content = Util.stringFromList(tokenBuffer);
+                charStream.unread((char)lastCharacter);
+                if(currentState==TokenType.ID)
+                {
+                    TokenType type = TokenType.getFromString(content);
+                    if(type!=null)
+                        currentState=type;
+                }
+                return new Token(currentState, content);
             }
             else
                 throw new Error("Lexical Error?");
