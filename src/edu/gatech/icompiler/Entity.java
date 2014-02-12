@@ -31,6 +31,7 @@ public abstract class Entity<T extends Enum> {
 
     }
 
+    @Override
     public String toString(){
         return "[" + TYPE.name() + ", " + TOKEN_CONTENT + "]";
     }
