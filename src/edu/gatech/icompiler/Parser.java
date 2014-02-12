@@ -2,6 +2,10 @@ package edu.gatech.icompiler;
 
 import org.junit.Rule;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -18,6 +22,20 @@ public class Parser
     private HashMap<RuleType, Integer> ruleRows;
 
 
+    private void initializeTable()
+    {
+        try
+        {
+            File csv = new File("ScannerTable.csv");
+            BufferedReader reader = new BufferedReader(new FileReader(csv));
+            String line= "";
+
+        }
+        catch(IOException ioex)
+        {
+
+        }
+    }
 
     public boolean parse(String program)
     {
@@ -31,7 +49,15 @@ public class Parser
 
             if(top.isToken())
             {
-                //match tokens
+                if(top.TYPE!=token.TYPE)
+                {
+                    //error
+                }
+                else
+                {
+                    //consume token, move on
+                    scanner.next();
+                }
             }
             else
             {
@@ -45,7 +71,7 @@ public class Parser
                 }
                 else if(contents.get(0).TYPE!=RuleType.EPSILON)
                 {
-                    for(int i=contents.size()-1; i>=0; i--)
+                    for(int i=contents.size()-1; i --> 0;)
                     {
                         stack.push(contents.get(i));
                     }
