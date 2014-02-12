@@ -14,7 +14,7 @@ import edu.gatech.util.Util;
  * Created by Alex on 1/30/14.
  */
 
-public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScanner {
+public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoCloseable, IScanner {
 
     private List<Character> tokenBuffer;
     private PeekBackReader charStream;
@@ -22,8 +22,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     private HashMap<Integer, TokenType> stateNames;
     private HashMap<String, Integer> symbolColumns;
     private Character lastCharacter = null;
-
-    private final int INITIAL_BUFFER_SIZE = 11; //primes are good, right?
+    private final int FAIL = -1;
 
     public Scanner(String foo){
         this(new StringReader(foo));
@@ -37,7 +36,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
         this.charStream = new PeekBackReader(charStream);
         this.tokenBuffer = new ArrayList<>();
-        this.selectionTable = new ArrayList<List<Integer>>();
+        this.selectionTable = new ArrayList<>();
         this.stateNames = new HashMap<>();
         this.symbolColumns = new HashMap<>();
         initializeTable();
@@ -51,7 +50,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         {
             File csv = new File("ScannerTable.csv");
             BufferedReader reader = new BufferedReader(new FileReader(csv));
-            String line="";
+            String line= "";
             int row = 0;
 
             String[] symbols = reader.readLine().split(",");
@@ -60,9 +59,8 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
             for(int i=1; i < symbols.length; i++)
             {
                 if(symbols[i].equals("~"))
-                {
                     symbols[i]=",";
-                }
+
                 symbolColumns.put(symbols[i], i-1 );
             }
 
@@ -109,21 +107,21 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     }
 
     //get the next token
-    public Token next(){
+    public Entity<TokenType> next(){
 
         tokenBuffer.clear();
 
         //currentCol is the current input char, currentRow is the current state
-        int currentColumn =-1;
+        int currentColumn =FAIL;
         int currentRow = 0;
 
         //null unless we have an end state
         TokenType currentState = null;
 
-
         try{
             //eliminate whitespace tokens
-            while(charStream.peek()==' '||charStream.peek()=='\r'||charStream.peek()=='\n'||charStream.peek()=='\t')
+            while(charStream.peek()==' ' ||charStream.peek()=='\r'
+                ||charStream.peek()=='\n'||charStream.peek()=='\t')
                 charStream.read();
 
             //while there are things in the stream, loop
@@ -141,7 +139,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 currentRow = selectionTable.get(currentRow).get(currentColumn);
 
                 //if there is no next state (i.e state==-1)
-                if(currentRow < 0) {
+                if(currentRow < 0)
                     //remember, currentState is not null only if there is an end state
                     if(null != currentState)
                     {
@@ -153,13 +151,11 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                             if(type!=null)
                                 currentState=type;
                         }
-                        return new Token(currentState, content);
+                        return new Entity<>(currentState, content);
                     }
 
                     else
                         throw new Error("Lexical Error?");
-
-                }
 
                 //update current state using state names (non accepting states are null in the map)
                 currentState = stateNames.get(currentRow);
@@ -178,7 +174,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                     if(type!=null)
                         currentState=type;
                 }
-                return new Token(currentState, content);
+                return new Entity<TokenType>(currentState, content);
             }
             else
                 throw new Error("Lexical Error?");
@@ -190,7 +186,8 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         return null;
     }
 
-    public Token peek(){
+
+    public Entity<TokenType> peek(){
         //TODO: implement
         return null;
     }

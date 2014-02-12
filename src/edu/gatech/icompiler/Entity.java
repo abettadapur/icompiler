@@ -3,7 +3,7 @@ package edu.gatech.icompiler;
 /**
  * Created by Stefano on 2/12/14.
  */
-public abstract class Entity<T extends Enum> {
+public class Entity<T extends Enum> {
 
     public final T TYPE;
     public final String TOKEN_CONTENT;
@@ -11,6 +11,10 @@ public abstract class Entity<T extends Enum> {
     public Entity(T type, String content){
         TYPE = type;
         TOKEN_CONTENT  = content;
+    }
+
+    public boolean isToken(){
+        return TYPE.getClass() == TokenType.class;
     }
 
     @Override
@@ -24,10 +28,10 @@ public abstract class Entity<T extends Enum> {
 
         if(null == other) return false;
         if(this == other) return true;
-        if(! (other instanceof Token)) return false;
-        Token temp = (Token) other;
+        if(! (other instanceof Entity)) return false;
+        Entity temp = (Entity) other;
         return TOKEN_CONTENT.equals(temp.TOKEN_CONTENT) &&
-                TYPE.equals(temp.TOKEN_TYPE);
+                TYPE.equals(temp.TYPE);
 
     }
 

@@ -20,61 +20,61 @@ public class ScannerTest {
 
         IScanner scanner = new Scanner("var N := 8 &");
 
-        assertEquals(scanner.next(), new Token(TokenType.VAR, "var"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.VAR, "var"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "N" ));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "N" ));
 
-        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":=" ));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ASSIGN, ":=" ));
 
-        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "8"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.INTLIT, "8"));
 
-        assertEquals(scanner.next(), new Token(TokenType.AND, "&"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.AND, "&"));
 
         scanner = new Scanner ("type intArray := array of int\n");
 
-        assertEquals(scanner.next(), new Token(TokenType.TYPE, "type"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.TYPE, "type"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "intArray"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "intArray"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ASSIGN, ":="));
 
-        assertEquals(scanner.next(), new Token(TokenType.ARRAY, "array"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ARRAY, "array"));
 
-        assertEquals(scanner.next(), new Token(TokenType.OF, "of"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.OF, "of"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "int"));  //what is int?
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "int"));  //what is int?
 
         scanner = new Scanner("var row := intArray [ N ] of 0");
 
-        assertEquals(scanner.next(), new Token(TokenType.VAR, "var"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.VAR, "var"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "row"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "row"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ASSIGN, ":="));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "intArray"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "intArray"));
 
-        assertEquals(scanner.next(), new Token(TokenType.LBRACK, "["));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.LBRACK, "["));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "N"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "N"));
 
-        assertEquals(scanner.next(), new Token(TokenType.RBRACK, "]"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.RBRACK, "]"));
 
-        assertEquals(scanner.next(), new Token(TokenType.OF, "of"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.OF, "of"));
 
-        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "0"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.INTLIT, "0"));
 
         scanner = new Scanner("endif identifier begin end enddo");
 
-        assertEquals(scanner.next(), new Token(TokenType.ENDIF, "endif"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ENDIF, "endif"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "identifier"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "identifier"));
 
-        assertEquals(scanner.next(), new Token(TokenType.BEGIN, "begin"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.BEGIN, "begin"));
 
-        assertEquals(scanner.next(), new Token(TokenType.END, "end"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.END, "end"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ENDDO, "enddo"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ENDDO, "enddo"));
 
 
 
@@ -85,61 +85,61 @@ public class ScannerTest {
     {
         Scanner scanner = new Scanner(new File("SampleProgram.tg"));
 
-        assertEquals(scanner.next(), new Token(TokenType.FOR, "for"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.FOR, "for"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "i"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "i"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ASSIGN, ":="));
 
-        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "1"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.INTLIT, "1"));
 
-        assertEquals(scanner.next(), new Token(TokenType.TO, "to"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.TO, "to"));
 
-        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "100"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.INTLIT, "100"));
 
-        assertEquals(scanner.next(), new Token(TokenType.DO, "do"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.DO, "do"));
 
-        assertEquals(scanner.next(), new Token(TokenType.COMMENT, "/*comment*/"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.COMMENT, "/*comment*/"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "sum"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "sum"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ASSIGN, ":="));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "sum"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "sum"));
 
-        assertEquals(scanner.next(), new Token(TokenType.PLUS, "+"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.PLUS, "+"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "X"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "X"));
 
-        assertEquals(scanner.next(), new Token(TokenType.LBRACK, "["));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.LBRACK, "["));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "i"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "i"));
 
-        assertEquals(scanner.next(), new Token(TokenType.RBRACK, "]"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.RBRACK, "]"));
 
-        assertEquals(scanner.next(), new Token(TokenType.MULT, "*"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.MULT, "*"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "Y"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "Y"));
 
-        assertEquals(scanner.next(), new Token(TokenType.LBRACK, "["));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.LBRACK, "["));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "i"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "i"));
 
-        assertEquals(scanner.next(), new Token(TokenType.RBRACK, "]"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.RBRACK, "]"));
 
-        assertEquals(scanner.next(), new Token(TokenType.SEMI, ";"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.SEMI, ";"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ENDDO, "enddo"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ENDDO, "enddo"));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "printi"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "printi"));
 
-        assertEquals(scanner.next(), new Token(TokenType.LPAREN, "("));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.LPAREN, "("));
 
-        assertEquals(scanner.next(), new Token(TokenType.ID, "sum"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.ID, "sum"));
 
-        assertEquals(scanner.next(), new Token(TokenType.RPAREN, ")"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.RPAREN, ")"));
 
-        assertEquals(scanner.next(), new Token(TokenType.SEMI, ";"));
+        assertEquals(scanner.next(), new Entity<TokenType>(TokenType.SEMI, ";"));
 
 
     }
