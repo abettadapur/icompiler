@@ -190,6 +190,11 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         return null;
     }
 
+    public Token peek(){
+        //TODO: implement
+        return null;
+    }
+
     public void remove(){
         //TODO: implement
         throw new UnsupportedOperationException();
