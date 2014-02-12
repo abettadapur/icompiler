@@ -18,7 +18,7 @@ public class ScannerTest {
     @Test
     public void testNext() throws Exception {
 
-        IScanner scanner = new Scanner("var N := 8");
+        IScanner scanner = new Scanner("var N := 8 &");
 
         assertEquals(scanner.next(), new Token(TokenType.VAR, "var"));
 
@@ -27,6 +27,8 @@ public class ScannerTest {
         assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":=" ));
 
         assertEquals(scanner.next(), new Token(TokenType.INTLIT, "8"));
+
+        assertEquals(scanner.next(), new Token(TokenType.AND, "&"));
 
         scanner = new Scanner ("type intArray := array of int\n");
 
@@ -73,6 +75,8 @@ public class ScannerTest {
         assertEquals(scanner.next(), new Token(TokenType.END, "end"));
 
         assertEquals(scanner.next(), new Token(TokenType.ENDDO, "enddo"));
+
+
 
 
     }

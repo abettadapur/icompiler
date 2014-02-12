@@ -64,7 +64,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                     symbols[i]=",";
                 }
                 symbolColumns.put(symbols[i], i-1 );
-        }
+            }
 
             //other lines are the transitions
             while((line=reader.readLine())!=null)
@@ -73,7 +73,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 String[] items = line.split(",");
 
                 //first item is the state name. store that information
-                stateNames.put(row, TokenType.getFromString(items[0]));
+                stateNames.put(row, TokenType.getFromString(items[0].trim()));
 
                 //other items are transitions. Populate table
                 for(int i=1; i<items.length; i++)
