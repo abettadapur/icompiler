@@ -122,8 +122,7 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
 
         try{
             //eliminate whitespace tokens
-            while(charStream.peek()==' ' ||charStream.peek()=='\r'
-                    ||charStream.peek()=='\n'||charStream.peek()=='\t')
+            while(charStream.peek()==' ' ||charStream.peek()=='\r'||charStream.peek()=='\n'||charStream.peek()=='\t')
                 charStream.read();
 
             //while there are things in the stream, loop
@@ -180,7 +179,12 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
                 return new Entity<TokenType>(currentState, content);
             }
             else
-                throw new Error("Lexical Error?");
+            {
+                if(tokenBuffer.size()!=0)
+                    throw new Error("Lexical Error?");
+                else
+                    return null;
+            }
 
         }catch(IOException e){
             e.printStackTrace();
