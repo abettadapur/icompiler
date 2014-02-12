@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.HeaderTokenizer;
 import edu.gatech.facade.IScanner;
 import edu.gatech.util.PeekBackReader;
 import edu.gatech.util.Util;
@@ -24,6 +25,8 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
     private Character lastCharacter = null;
     private final int FAIL = -1;
 
+    private Entity<TokenType> currentToken;
+
     public Scanner(String foo){
         this(new StringReader(foo));
     }
@@ -41,6 +44,7 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
         this.symbolColumns = new HashMap<>();
         initializeTable();
 
+        currentToken = loadNext();
     }
 
     //Takes the CSV table, makes a transition table and creates a symbol lookup table and state name lookup table
@@ -106,9 +110,7 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
         return out;
     }
 
-    //get the next token
-    public Entity<TokenType> next(){
-
+    private Entity<TokenType> loadNext(){
         tokenBuffer.clear();
 
         //currentCol is the current input char, currentRow is the current state
@@ -121,7 +123,7 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
         try{
             //eliminate whitespace tokens
             while(charStream.peek()==' ' ||charStream.peek()=='\r'
-                ||charStream.peek()=='\n'||charStream.peek()=='\t')
+                    ||charStream.peek()=='\n'||charStream.peek()=='\t')
                 charStream.read();
 
             //while there are things in the stream, loop
@@ -130,10 +132,10 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
                 lastCharacter = (char)charStream.read();
 
                 //if input is not in our language, default to something
-                if(!symbolColumns.containsKey(""+lastCharacter))
+                if(!symbolColumns.containsKey("" + lastCharacter))
                     currentColumn = symbolColumns.get("OTHERS");
                 else
-                    currentColumn = symbolColumns.get( "" + lastCharacter );
+                    currentColumn = symbolColumns.get("" + lastCharacter );
 
                 //get next state
                 currentRow = selectionTable.get(currentRow).get(currentColumn);
@@ -144,10 +146,11 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
                     if(null != currentState)
                     {
                         String content = Util.stringFromList(tokenBuffer);
-                        charStream.unread((char)lastCharacter);
+                        charStream.unread(lastCharacter);
                         if(currentState==TokenType.ID)
                         {
-                           TokenType type = TokenType.getFromString(content);
+                            TokenType type = TokenType.getFromString(content);
+
                             if(type!=null)
                                 currentState=type;
                         }
@@ -185,11 +188,21 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
 
         return null;
     }
+    //get the next token
+    public Entity<TokenType> next(){
 
+       Entity<TokenType> temp = currentToken;
+
+        currentToken = loadNext();
+
+       return temp;
+
+    }
 
     public Entity<TokenType> peek(){
-        //TODO: implement
-        return null;
+        if(!hasNext())
+            return null;
+        return currentToken;
     }
 
     public void remove(){

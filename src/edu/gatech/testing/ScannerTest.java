@@ -30,7 +30,7 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Entity<TokenType>(TokenType.AND, "&"));
 
-        scanner = new Scanner ("type intArray := array of int\n");
+        scanner = new Scanner ("type intArray := array of int");
 
         assertEquals(scanner.next(), new Entity<TokenType>(TokenType.TYPE, "type"));
 
