@@ -1,9 +1,9 @@
 TOKENS,COMMA,COLON,SEMI,LPAREN,RPAREN,LBRACK,RBRACK,LBRACE,RBRACE,PERIOD,PLUS,MINUS,MULT,DIV,EQ,NEQ,LESSER,GREATER,LEQ,GEQ,AND,OR,ASSIGN,ARRAY,BREAK,DO,ELSE,FOR,FUNC,IF,IN,LET,NIL,OF,THEN,TO,TYPE,VAR,WHILE,ID,INTLIT,STRLIT,ENDIF,ENDDO,BEGIN,END
 tiger_program,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,let <declaration_segment> in <stat_seq> end,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
-declaration_segment,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, <type_declaration_list> <var_declaration_list> <funct_declaration_list>,-1,-1,-1,-1,-1,-1,-1,<type_declaration_list> <var_declaration_list> <funct_declaration_list>, <type_declaration_list> <var_declaration_list> <funct_declaration_list>,-1,-1,-1,-1,-1,-1,-1,-1
+declaration_segment,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<type_declaration_list> <var_declaration_list> <funct_declaration_list>,-1,-1,-1,-1,-1,-1,-1,<type_declaration_list> <var_declaration_list> <funct_declaration_list>,<type_declaration_list> <var_declaration_list> <funct_declaration_list>,-1,-1,-1,-1,-1,-1,-1,-1
 type_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<type_declaration> <type_declaration_list>,E,E,E,E,E,E,E,E,E
 var_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<var_declaration> <var_declaration_list>,E,E,E,E,E,E,E,E
-funct_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E, <funct_declaration> <funct_declaration_list>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+funct_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<funct_declaration> <funct_declaration_list>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
 type_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,type id = <type> ;,-1,-1,-1,-1,-1,-1,-1,-1,-1
 type,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,array [ INTLIT ] of <type_id >,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<type_id>,-1,-1,-1,-1,-1,-1
 type_id,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,ID,-1,-1,-1,-1,-1,-1

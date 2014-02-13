@@ -13,13 +13,16 @@ import java.util.*;
  */
 public class Parser
 {
-    private Stack<Type> stack;
-    private Scanner scanner;
     private List<List<List<Type>>> parserTable;
     private Map<TokenType, Integer> tokenColumns;
     private Map<RuleType, Integer> ruleRows;
 
     public Parser(){
+
+        parserTable = new ArrayList<>();
+        tokenColumns = new HashMap<>();
+        ruleRows = new HashMap<>();
+
         initializeTable();
     }
 
@@ -27,7 +30,7 @@ public class Parser
     {
         try
         {
-            File csv = new File("ParserTable.csv");
+            File csv = new File("ParseTable.csv");
             BufferedReader reader = new BufferedReader(new FileReader(csv));
             String line= "";
             tokenColumns = new HashMap<>();
@@ -78,51 +81,52 @@ public class Parser
 
     public boolean parse(String program)
     {
-        stack = new Stack<>();
-        scanner = new Scanner(program);
+        Stack<Type> stack = new Stack<>();
+        Scanner scanner = new Scanner(program);
         stack.push(RuleType.TIGER_PROGRAM);
 
+        while(scanner.hasNext() && stack.peek()!= null){
 
-        while(scanner.hasNext())
-        {
+            TokenType token = scanner.peek().TYPE;
 
-            Entity<TokenType> token = scanner.peek();
-            Type top = stack.pop();
+            Type currentType = stack.pop();
 
-            if(top.isToken())
-            {
-                if(top != token.TYPE)
-                {
-                    //error
-                }
-                else
-                {
-                    //consume token, move on
-                    scanner.next();
-                }
-            }
-            else
-            {
-                int row = ruleRows.get(top);
+            if(currentType.isToken() && token == currentType)
+                scanner.next();
+
+            if(currentType.isToken() && token != currentType)
+                return false;
+
+            if(!currentType.isToken()){
+
+                //TODO: Remove after DEBUG:
+                if(!tokenColumns.containsKey(token))
+                    System.err.printf("Unexpected token: %s\n", token.toString());
+
+                //TODO: Remove after DEBUG;
+                if(!ruleRows.containsKey(currentType))
+                    System.err.printf("Unexpected rule: %s\n", currentType.toString());
+
+                int row = ruleRows.get(currentType);
                 int col = tokenColumns.get(token);
-                //index to table
-                List<Type> contents = parserTable.get(row).get(col);
-                if(!contents.get(0).isToken())
-                {
-                        //error
-                }
-                else if(contents.get(0)!=RuleType.EPSILON)
-                {
-                    for(int i=contents.size()-1; i --> 0;)
-                        stack.push(contents.get(i));
 
+                List<Type> nextStates = parserTable.get(row).get(col);
+
+                if(nextStates.size() == 1 && nextStates.get(0) == RuleType.FAIL){
+                    //TODO: log errors
+                    return false;
                 }
+
+                if(!(nextStates.size() == 1 && nextStates.get(0) == RuleType.EPSILON))
+                    for(int i=nextStates.size()-1; i --> 0; )
+                        stack.push(nextStates.get(i));
+
             }
 
-
-            //quit, or push
         }
-        return false;
+
+
+        return stack.empty();
 
     }
 }

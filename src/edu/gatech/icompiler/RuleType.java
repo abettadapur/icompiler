@@ -5,7 +5,7 @@ package edu.gatech.icompiler;
  */
 public enum RuleType implements Type
 {
-    TIGER_PROGRAM, DECLARATION_STATEMENT, TYPE_DECLARATION_LIST, VAR_DECLARATION_LIST,
+    TIGER_PROGRAM, DECLARATION_SEGMENT, TYPE_DECLARATION_LIST, VAR_DECLARATION_LIST,
     FUNCT_DECLARATION_LIST, TYPE_DECLARATION, TYPE, TYPE_ID, VAR_DECLARATION, ID_LIST,
     ID_LIST_TAIL, OPTIONAL_INIT, FUNCT_DECLARATION, PARAM_LIST, PARAM_LIST_TAIL, RET_TYPE,
     PARAM, STAT, STAT_SEQ, STAT_SEQ_TAIL, STAT_ASSIGN, EXPR, MULTEXPR, MULT_TAIL, ADDEXPR,
@@ -13,9 +13,13 @@ public enum RuleType implements Type
     LVALUE, LVALUE_TAIL, EPSILON, FAIL;
 
     public static RuleType getFromString(String foo){
-        //anglebrackets???
+
+
         if( null != foo)
         {
+            if(foo.equals("-1"))
+                return FAIL;
+
             for(RuleType t : RuleType.values())
                 if(foo.equalsIgnoreCase(t.name()))
                     return t;
