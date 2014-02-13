@@ -169,14 +169,14 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
             if(null!=currentState)
             {
                 String content = Util.stringFromList(tokenBuffer);
-                charStream.unread((char)lastCharacter);
+                charStream.unread(lastCharacter);
                 if(currentState==TokenType.ID)
                 {
                     TokenType type = TokenType.getFromString(content);
                     if(type!=null)
                         currentState=type;
                 }
-                return new Entity<TokenType>(currentState, content);
+                return new Entity<>(currentState, content);
             }
             else
             {

@@ -3,7 +3,7 @@ package edu.gatech.icompiler;
 /**
  * Created by Stefano on 2/2/14.
  */
-public enum TokenType {
+public enum TokenType implements Type{
 
     COMMA, COLON, SEMI, LPAREN, RPAREN, LBRACK, RBRACK, LBRACE, RBRACE, PERIOD,
     PLUS, MINUS, MULT, DIV, EQ, NEQ, LESSER, GREATER, LEQ, GEQ, AND,
@@ -19,4 +19,6 @@ public enum TokenType {
 
         return null;
     }
+
+    public boolean isToken(){ return true;}
 }

@@ -12,4 +12,5 @@ public interface IScanner {
 
     public boolean hasNext();
 
+    public Entity<TokenType> peek();
 }

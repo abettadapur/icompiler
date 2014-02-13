@@ -3,7 +3,7 @@ package edu.gatech.icompiler;
 /**
  * Created by Alex on 2/11/14.
  */
-public enum RuleType
+public enum RuleType implements Type
 {
     TIGER_PROGRAM, DECLARATION_STATEMENT, TYPE_DECLARATION_LIST, VAR_DECLARATION_LIST,
     FUNCT_DECLARATION_LIST, TYPE_DECLARATION, TYPE, TYPE_ID, VAR_DECLARATION, ID_LIST,
@@ -22,4 +22,7 @@ public enum RuleType
         }
         return null;
     }
+
+    public boolean isToken(){return false;}
+
 }
