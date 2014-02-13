@@ -69,8 +69,20 @@ public class Parser
 
     private List<Type> rulesListFromString(String foo){
         List<Type> out = new ArrayList<>();
+        foo = foo.trim();
+        if(foo.equals("E"))
+        {
+            out.add(RuleType.EPSILON);
+            return out;
+        }
+        if(foo.equals("-1"))
+        {
+            out.add(RuleType.FAIL);
+            return out;
+        }
 
-        for(String bar: foo.split(" ") )
+        String[] rules = foo.split(" ");
+        for(String bar:rules)
             if(bar.startsWith("<"))
                 out.add(RuleType.getFromString(bar.trim().replace("<", "").replace(">", "")));
             else
@@ -83,9 +95,10 @@ public class Parser
     {
         Stack<Type> stack = new Stack<>();
         Scanner scanner = new Scanner(program);
+
         stack.push(RuleType.TIGER_PROGRAM);
 
-        while(scanner.hasNext() && stack.peek()!= null){
+        while(scanner.hasNext() && stack.size()!=0){
 
             TokenType token = scanner.peek().TYPE;
 
@@ -94,10 +107,10 @@ public class Parser
             if(currentType.isToken() && token == currentType)
                 scanner.next();
 
-            if(currentType.isToken() && token != currentType)
+            else if(currentType.isToken() && token != currentType)
                 return false;
 
-            if(!currentType.isToken()){
+            else if(!currentType.isToken()){
 
                 //TODO: Remove after DEBUG:
                 if(!tokenColumns.containsKey(token))
@@ -118,7 +131,7 @@ public class Parser
                 }
 
                 if(!(nextStates.size() == 1 && nextStates.get(0) == RuleType.EPSILON))
-                    for(int i=nextStates.size()-1; i --> 0; )
+                    for(int i=nextStates.size()-1; i>= 0; i--)
                         stack.push(nextStates.get(i));
 
             }

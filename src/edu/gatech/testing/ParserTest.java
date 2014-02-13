@@ -12,7 +12,7 @@ public class ParserTest extends TestCase {
 
         Parser parser = new Parser( );
 
-        assertEquals(parser.parse("let var i, n: int = 0; in printi(i); printi(n); end"), true);
+        assertEquals(parser.parse("let var i, n: int := 0; in printi(i); printi(n); end"), true);
 
     }
 

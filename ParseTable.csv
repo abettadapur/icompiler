@@ -1,37 +1,37 @@
 TOKENS,COMMA,COLON,SEMI,LPAREN,RPAREN,LBRACK,RBRACK,LBRACE,RBRACE,PERIOD,PLUS,MINUS,MULT,DIV,EQ,NEQ,LESSER,GREATER,LEQ,GEQ,AND,OR,ASSIGN,ARRAY,BREAK,DO,ELSE,FOR,FUNC,IF,IN,LET,NIL,OF,THEN,TO,TYPE,VAR,WHILE,ID,INTLIT,STRLIT,ENDIF,ENDDO,BEGIN,END
 tiger_program,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,let <declaration_segment> in <stat_seq> end,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
-declaration_segment,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<type_declaration_list> <var_declaration_list> <funct_declaration_list>,-1,-1,-1,-1,-1,-1,-1,<type_declaration_list> <var_declaration_list> <funct_declaration_list>,<type_declaration_list> <var_declaration_list> <funct_declaration_list>,-1,-1,-1,-1,-1,-1,-1,-1
+declaration_segment,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, <type_declaration_list> <var_declaration_list> <funct_declaration_list>,-1,-1,-1,-1,-1,-1,-1,<type_declaration_list> <var_declaration_list> <funct_declaration_list>, <type_declaration_list> <var_declaration_list> <funct_declaration_list>,-1,-1,-1,-1,-1,-1,-1,-1
 type_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<type_declaration> <type_declaration_list>,E,E,E,E,E,E,E,E,E
 var_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<var_declaration> <var_declaration_list>,E,E,E,E,E,E,E,E
-funct_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<funct_declaration> <funct_declaration_list>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
-type_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,type id = <type> ;,-1,-1,-1,-1,-1,-1,-1,-1,-1
-type,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,array [ INTLIT ] of <type_id >,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<type_id>,-1,-1,-1,-1,-1,-1
+funct_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E, <funct_declaration> <funct_declaration_list>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+type_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,type id = <type> SEMI,-1,-1,-1,-1,-1,-1,-1,-1,-1
+type,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,array LBRACK INTLIT RBRACK of <type_id >,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<type_id>,-1,-1,-1,-1,-1,-1
 type_id,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,ID,-1,-1,-1,-1,-1,-1
-var_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,var <id_list> : <type_id> <optional_init> ;,-1,-1,-1,-1,-1,-1,-1,-1
-id_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,id<id_list_tail>,E,E,E,E,E,E
+var_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,var <id_list> COLON <type_id> <optional_init> SEMI,-1,-1,-1,-1,-1,-1,-1,-1
+id_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,id <id_list_tail>,E,E,E,E,E,E
 id_list_tail,COMMA <id_list>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
-optional_init,E,:= <const>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
-funct_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,function id (<param_list>) <ret_type> begin <stat_seq> end ;,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
+optional_init,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,ASSIGN <const>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+funct_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,function id LPAREN <param_list> RPAREN <ret_type> begin <stat_seq> end SEMI,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 param_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<param> <param_list_tail>,E,E,E,E,E,E
-param_list_tail,", <param> <param_list_tail>",E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
-ret_type,E,: <type_id>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
-param,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,ID : <type_id>,-1,-1,-1,-1,-1,-1
-stat,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,for id := <expr> to <expr> do <stat_seq> enddo;,-1,if <expr> then <stat_seq> <stat_tail>,-1,-1,-1,-1,-1,-1,-1,-1,while <expr> do <stat_seq> enddo;,id <stat_assign>,-1,-1,-1,-1,-1,-1
+param_list_tail,COMMA <param> <param_list_tail>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+ret_type,E,COLON <type_id>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+param,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,ID COLON <type_id>,-1,-1,-1,-1,-1,-1
+stat,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,for id ASSIGN <expr> to <expr> do <stat_seq> enddo SEMI,-1,if <expr> then <stat_seq> <stat_tail>,-1,-1,-1,-1,-1,-1,-1,-1,while <expr> do <stat_seq> enddo SEMI,id <stat_assign>,-1,-1,-1,-1,-1,-1
 stat_seq,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<stat> <stat_seq_tail>,-1,<stat> <stat_seq_tail>,-1,-1,-1,-1,-1,-1,-1,-1,<stat> <stat_seq_tail>,<stat> <stat_seq_tail>,-1,-1,-1,-1,-1,-1
-stat_seq_tail,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<stat_seq> <stat> <stat_seq_tail>,E,<stat_seq> <stat> <stat_seq_tail>,E,E,E,E,E,E,E,E,<stat_seq> <stat> <stat_seq_tail>,<stat_seq> <stat> <stat_seq_tail>,E,E,E,E,E,E
-stat_assign,-1,: = <expr> ;,-1,( <expr_list> ) ;,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
-expr,-1,-1,-1,( <expr> ),-1,-1,-1,-1,-1,-1,-1,- <expr>,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, <multexpr> <mult tail>, <multexpr> <mult tail>, <multexpr> <mult tail>,-1,-1,-1,-1
-multexpr,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<addexpr> <addtail>,<addexpr> <addtail>,<addexpr> <addtail>,-1,-1,-1,-1
+stat_seq_tail,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<stat> <stat_seq_tail>,E,<stat> <stat_seq_tail>,E,E,E,E,E,E,E,E,<stat> <stat_seq_tail>,<stat> <stat_seq_tail>,E,E,E,E,E,E
+stat_assign,-1, ASSIGN <expr> SEMI,-1, LPAREN <expr_list> RPAREN SEMI,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
+expr,-1,-1,-1,LPAREN <expr> RPAREN,-1,-1,-1,-1,-1,-1,-1,MINUS <expr>,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, <multexpr> <mult_tail>, <multexpr> <mult_tail>, <multexpr> <mult_tail>,-1,-1,-1,-1
+multexpr,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<addexpr> <add_tail>,<addexpr> <add_tail>,<addexpr> <add_tail>,-1,-1,-1,-1
 mult_tail,E,E,E,E,E,E,E,E,E,E,E,E,<multop> <multexpr>,<multop> <multexpr>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
-addexpr,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<binexpr> <bintail>,<binexpr> <bintail>,<binexpr> <bintail>,-1,-1,-1,-1
+addexpr,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<binexpr> <bin_tail>,<binexpr> <bin_tail>,<binexpr> <bin_tail>,-1,-1,-1,-1
 add_tail,E,E,E,E,E,E,E,E,E,E,<addop> <addexpr>,<addop> <addexpr>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
 binexpr,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<lvalue>,<const>,<const>,-1,-1,-1,-1
-bin_tail,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<binop> <binexp> ,<binop> <binexp> ,<binop> <binexp> ,<binop> <binexp>,<binop> <binexp>,<binop> <binexp>,<binop> <binexp>,<binop> <binexp>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+bin_tail,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<binop> <binexpr> ,<binop> <binexpr> ,<binop> <binexpr> ,<binop> <binexpr> ,<binop> <binexpr> ,<binop> <binexpr> ,<binop> <binexpr> ,<binop> <binexpr> ,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
 multop,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,MULT,DIV,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 addop,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,PLUS,MINUS,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 binop,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,EQ,NEQ,LESSER,GREATER,LEQ,GEQ,AND,OR,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 const,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,INTLIT,STRLIT ,-1,-1,-1,-1
 expr_list,-1,-1,-1,<expr> <expr_list_tail>,-1,-1,-1,-1,-1,-1,-1,<expr> <expr_list_tail>,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<expr> <expr_list_tail>,<expr> <expr_list_tail>,-1,-1,-1,-1,-1
-expr_list_tail," , <expr> <expr_list_tail>",E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+expr_list_tail, COMMA <expr> <expr_list_tail>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
 lvalue,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,id <lvalue_tail>,-1,-1,-1,-1,-1,-1
-lvalue_tail,E,E,E,E,E,[ <expr> ] <lvalue_tail>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+lvalue_tail,E,E,E,E,E,LBRACK <expr> RBRACK <lvalue-tail>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E

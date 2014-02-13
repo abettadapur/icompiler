@@ -12,13 +12,15 @@ public enum RuleType implements Type
     ADD_TAIL, BINEXPR, BIN_TAIL, MULTOP, ADDOP, BINOP, CONST, EXPR_LIST, EXPR_LIST_TAIL,
     LVALUE, LVALUE_TAIL, EPSILON, FAIL;
 
-    public static RuleType getFromString(String foo){
-
+    public static RuleType getFromString(String foo)
+    {
 
         if( null != foo)
         {
             if(foo.equals("-1"))
                 return FAIL;
+            if(foo.equals("E"))
+                return EPSILON;
 
             for(RuleType t : RuleType.values())
                 if(foo.equalsIgnoreCase(t.name()))
