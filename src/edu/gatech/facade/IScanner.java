@@ -1,6 +1,6 @@
 package edu.gatech.facade;
 
-import edu.gatech.icompiler.Entity;
+import edu.gatech.icompiler.Token;
 import edu.gatech.icompiler.TokenType;
 /**
  * Created by Stefano on 1/31/14.
@@ -8,9 +8,9 @@ import edu.gatech.icompiler.TokenType;
 
 public interface IScanner {
 
-    public Entity<TokenType> next();
+    public Token next();
 
     public boolean hasNext();
 
-    public Entity<TokenType> peek();
+    public Token peek();
 }

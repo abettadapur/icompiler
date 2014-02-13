@@ -15,7 +15,7 @@ import edu.gatech.util.Util;
  * Created by Alex on 1/30/14.
  */
 
-public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoCloseable, IScanner {
+public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScanner {
 
     private List<Character> tokenBuffer;
     private PeekBackReader charStream;
@@ -25,7 +25,7 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
     private Character lastCharacter = null;
     private final int FAIL = -1;
 
-    private Entity<TokenType> currentToken;
+    private Token currentToken;
 
     public Scanner(String foo){
         this(new StringReader(foo));
@@ -110,7 +110,7 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
         return out;
     }
 
-    private Entity<TokenType> loadNext(){
+    private Token loadNext(){
         tokenBuffer.clear();
 
         //currentCol is the current input char, currentRow is the current state
@@ -153,7 +153,7 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
                             if(type!=null)
                                 currentState=type;
                         }
-                        return new Entity<>(currentState, content);
+                        return new Token(currentState, content);
                     }
 
                     else
@@ -176,7 +176,7 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
                     if(type!=null)
                         currentState=type;
                 }
-                return new Entity<>(currentState, content);
+                return new Token(currentState, content);
             }
             else
             {
@@ -193,17 +193,17 @@ public class Scanner implements Iterator<Entity<TokenType>>, Closeable, AutoClos
         return null;
     }
     //get the next token
-    public Entity<TokenType> next(){
+    public Token next(){
 
-       Entity<TokenType> temp = currentToken;
+        Token temp = currentToken;
 
         currentToken = loadNext();
 
-       return temp;
+        return temp;
 
     }
 
-    public Entity<TokenType> peek(){
+    public Token peek(){
         if(!hasNext())
             return null;
         return currentToken;
