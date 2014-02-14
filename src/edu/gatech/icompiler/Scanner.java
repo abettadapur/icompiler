@@ -142,22 +142,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 //if there is no next state (i.e state==-1)
                 if(currentRow < 0)
                     //remember, currentState is not null only if there is an end state
-                    if(null != currentState)
-                    {
-                        String content = Util.stringFromList(tokenBuffer);
-                        charStream.unread(lastCharacter);
-                        if(currentState==TokenType.ID)
-                        {
-                            TokenType type = TokenType.getFromString(content);
-
-                            if(type!=null)
-                                currentState=type;
-                        }
-                        return new Token(currentState, content);
-                    }
-
-                    else
-                        throw new Error("Lexical Error?");
+                    return checkState(currentState);
 
                 //update current state using state names (non accepting states are null in the map)
                 currentState = stateNames.get(currentRow);
@@ -166,25 +151,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
                 tokenBuffer.add(lastCharacter);
             }
             //we've run out of characters, need to see if we can accept
-            if(null!=currentState)
-            {
-                String content = Util.stringFromList(tokenBuffer);
-                charStream.unread(lastCharacter);
-                if(currentState==TokenType.ID)
-                {
-                    TokenType type = TokenType.getFromString(content);
-                    if(type!=null)
-                        currentState=type;
-                }
-                return new Token(currentState, content);
-            }
-            else
-            {
-                if(tokenBuffer.size()!=0)
-                    throw new Error("Lexical Error?");
-                else
-                    return null;
-            }
+            return checkState(currentState);
 
         }catch(IOException e){
             e.printStackTrace();
@@ -192,6 +159,34 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
         return null;
     }
+
+    private Token checkState(TokenType currentState) throws IOException {
+        if(null != currentState)
+        {
+            String content = Util.stringFromList(tokenBuffer);
+            charStream.unread(lastCharacter);
+            if(currentState==TokenType.ID)
+            {
+                TokenType type = TokenType.getFromString(content);
+
+                if(type!=null)
+                    currentState=type;
+            }
+
+            //these types are no longer supported, easier to check than change the table :/
+            if(currentState==TokenType.PERIOD||currentState==TokenType.LBRACE||currentState==TokenType.RBRACE)
+            {
+                throw new Error("Lexical Error: "+tokenBuffer.toString()+" was an unexpected sequence");
+            }
+
+            return new Token(currentState, content);
+        }
+
+        else if(tokenBuffer.size()!=0)
+            throw new Error("Lexical Error: "+tokenBuffer.toString()+" was an unexpected sequence");
+        else return null;
+    }
+
     //get the next token
     public Token next(){
 
