@@ -2,10 +2,7 @@ package edu.gatech.icompiler;
 
 import org.junit.Rule;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -91,6 +88,19 @@ public class Parser
         return out;
     }
 
+    public boolean parse(File f) throws FileNotFoundException, IOException
+    {
+        BufferedReader reader = new BufferedReader(new FileReader(f));
+        StringBuilder sb = new StringBuilder();
+        String line = "";
+        while((line = reader.readLine())!=null)
+        {
+            sb.append(line+"\n");
+        }
+       return parse(sb.toString());
+
+    }
+
     public boolean parse(String program)
     {
         Stack<Type> stack = new Stack<>();
@@ -103,6 +113,13 @@ public class Parser
             TokenType token = scanner.peek().TYPE;
 
             Type currentType = stack.pop();
+
+            if(token==TokenType.COMMENT)
+            {
+                stack.push(currentType);
+                scanner.next();
+                continue;
+            }
 
             if(currentType.isToken() && token == currentType)
                 scanner.next();

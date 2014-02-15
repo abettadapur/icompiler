@@ -1,4 +1,10 @@
+let
+     var X, Y : ArrayInt := 10;
+in
+
 for i := 1 to 100 do /*comment*/
  sum := sum + X[i] * Y[i];
  enddo
  printi(sum);
+
+end

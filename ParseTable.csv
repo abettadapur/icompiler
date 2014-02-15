@@ -19,7 +19,7 @@ param,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 stat,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,break semi,-1,-1,for id ASSIGN <expr> to <expr> do <stat_seq> enddo SEMI,-1,if <expr> then <stat_seq> <stat_tail>,-1,-1,-1,-1,-1,-1,-1,-1,while <expr> do <stat_seq> enddo SEMI,id <stat_assign>,-1,-1,-1,-1,-1,-1
 stat_seq,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<stat> <stat_seq_tail>,-1,<stat> <stat_seq_tail>,-1,-1,-1,-1,-1,-1,-1,-1,<stat> <stat_seq_tail>,<stat> <stat_seq_tail>,-1,-1,-1,-1,-1,-1
 stat_seq_tail,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<stat> <stat_seq_tail>,E,<stat> <stat_seq_tail>,E,E,E,E,E,E,E,E,<stat> <stat_seq_tail>,<stat> <stat_seq_tail>,E,E,E,E,E,E
-stat_assign,-1, ASSIGN <expr> SEMI,-1, LPAREN <expr_list> RPAREN SEMI,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
+stat_assign,-1,-1,-1, LPAREN <expr_list> RPAREN SEMI,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, ASSIGN <expr> SEMI,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 expr,-1,-1,-1,LPAREN <expr> RPAREN,-1,-1,-1,-1,-1,-1,-1,MINUS <expr>,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, <multexpr> <mult_tail>, <multexpr> <mult_tail>, <multexpr> <mult_tail>,-1,-1,-1,-1
 multexpr,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<addexpr> <add_tail>,<addexpr> <add_tail>,<addexpr> <add_tail>,-1,-1,-1,-1
 mult_tail,E,E,E,E,E,E,E,E,E,E,E,E,<multop> <multexpr>,<multop> <multexpr>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
@@ -34,4 +34,4 @@ const,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
 expr_list,-1,-1,-1,<expr> <expr_list_tail>,-1,-1,-1,-1,-1,-1,-1,<expr> <expr_list_tail>,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<expr> <expr_list_tail>,<expr> <expr_list_tail>,-1,-1,-1,-1,-1
 expr_list_tail, COMMA <expr> <expr_list_tail>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
 lvalue,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,id <lvalue_tail>,-1,-1,-1,-1,-1,-1
-lvalue_tail,E,E,E,E,E,LBRACK <expr> RBRACK <lvalue-tail>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
+lvalue_tail,E,E,E,E,E,LBRACK <expr> RBRACK <lvalue_tail>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
