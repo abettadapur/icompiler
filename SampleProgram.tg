@@ -4,7 +4,7 @@ in
 
 for i := 1 to 100 do /*comment*/
  sum := sum + X[i] * Y[i];
- enddo
+ enddo;
  printi(sum);
 
 end

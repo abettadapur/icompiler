@@ -4,8 +4,8 @@ declaration_segment,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 type_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<type_declaration> <type_declaration_list>,E,E,E,E,E,E,E,E,E
 var_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,<var_declaration> <var_declaration_list>,E,E,E,E,E,E,E,E
 funct_declaration_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E, <funct_declaration> <funct_declaration_list>,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E
-type_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,type id = <type> SEMI,-1,-1,-1,-1,-1,-1,-1,-1,-1
-type,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,array LBRACK INTLIT RBRACK of <type_id >,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<type_id>,-1,-1,-1,-1,-1,-1
+type_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,type id EQ <type> SEMI,-1,-1,-1,-1,-1,-1,-1,-1,-1
+type,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,array LBRACK INTLIT RBRACK of <type_id>,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,<type_id>,-1,-1,-1,-1,-1,-1
 type_id,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,ID,-1,-1,-1,-1,-1,-1
 var_declaration,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,var <id_list> COLON <type_id> <optional_init> SEMI,-1,-1,-1,-1,-1,-1,-1,-1
 id_list,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,E,id <id_list_tail>,E,E,E,E,E,E
