@@ -32,7 +32,8 @@ public class ParserTest  {
     {
         Parser parser = new Parser();
         File f = new File("ex1.tiger");
-        assertEquals(parser.parse(f),true);
+        assertEquals(parser.parse(f),false);
+        System.out.println(parser.getErrors());
     }
 
 }

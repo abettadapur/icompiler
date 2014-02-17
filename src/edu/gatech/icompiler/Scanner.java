@@ -24,6 +24,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     private HashMap<String, Integer> symbolColumns;
     private Character lastCharacter = null;
     private final int FAIL = -1;
+    private int lineCount;
 
     private Token currentToken;
 
@@ -45,6 +46,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         initializeTable();
 
         currentToken = loadNext();
+        lineCount=1;
     }
 
     //Takes the CSV table, makes a transition table and creates a symbol lookup table and state name lookup table
@@ -123,7 +125,13 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         try{
             //eliminate whitespace tokens
             while(charStream.peek()==' ' ||charStream.peek()=='\r'||charStream.peek()=='\n'||charStream.peek()=='\t')
+            {
+               if(charStream.peek()=='\n')
+               {
+                    lineCount++;
+               }
                 charStream.read();
+            }
 
             //while there are things in the stream, loop
             while(charStream.hasNext()){
@@ -176,14 +184,14 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
             //these types are no longer supported, easier to check than change the table :/
             if(currentState==TokenType.PERIOD||currentState==TokenType.LBRACE||currentState==TokenType.RBRACE)
             {
-                throw new Error("Lexical Error: "+tokenBuffer.toString()+" was an unexpected sequence");
+                return new Token(TokenType.ERROR,"Lexical Error: "+tokenBuffer.toString()+" was an unexpected sequence");
             }
 
             return new Token(currentState, content);
         }
 
         else if(tokenBuffer.size()!=0)
-            throw new Error("Lexical Error: "+tokenBuffer.toString()+" was an unexpected sequence");
+            return new Token(TokenType.ERROR,"Lexical Error: "+tokenBuffer.toString()+" was an unexpected sequence");
         else return null;
     }
 
@@ -220,6 +228,12 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
     }
 
-
-
+    public int getLineCount()
+    {
+        return lineCount;
+    }
 }
+
+
+
+

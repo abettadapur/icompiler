@@ -13,12 +13,14 @@ public class Parser
     private List<List<List<Type>>> parserTable;
     private Map<TokenType, Integer> tokenColumns;
     private Map<RuleType, Integer> ruleRows;
+    private List<CompileError> errors;
 
     public Parser(){
 
         parserTable = new ArrayList<>();
         tokenColumns = new HashMap<>();
         ruleRows = new HashMap<>();
+        errors = new ArrayList<>();
 
         initializeTable();
     }
@@ -103,6 +105,7 @@ public class Parser
 
     public boolean parse(String program)
     {
+        errors.clear();
         Stack<Type> stack = new Stack<>();
         Scanner scanner = new Scanner(program);
 
@@ -110,41 +113,49 @@ public class Parser
 
         while(scanner.hasNext() && stack.size()!=0){
 
-            TokenType token = scanner.peek().TYPE;
+            Token token = scanner.peek();
+
+            TokenType tokenType = token.TYPE;
 
             Type currentType = stack.pop();
 
-            if(token==TokenType.COMMENT)
+            if(tokenType==TokenType.COMMENT)
             {
                 stack.push(currentType);
                 scanner.next();
                 continue;
             }
 
-            if(currentType.isToken() && token == currentType)
+            if(tokenType==TokenType.ERROR)
+            {
+                errors.add(new CompileError(ErrorType.LEXICAL, token.TOKEN_CONTENT, scanner.getLineCount()));
+            }
+
+            if(currentType.isToken() && tokenType == currentType)
                 scanner.next();
 
-            else if(currentType.isToken() && token != currentType)
+            else if(currentType.isToken() && tokenType != currentType)
                 return false;
 
             else if(!currentType.isToken()){
 
                 //TODO: Remove after DEBUG:
-                if(!tokenColumns.containsKey(token))
-                    System.err.printf("Unexpected token: %s\n", token.toString());
+                if(!tokenColumns.containsKey(tokenType))
+                    System.err.printf("Unexpected token: %s\n", tokenType.toString());
 
                 //TODO: Remove after DEBUG;
                 if(!ruleRows.containsKey(currentType))
                     System.err.printf("Unexpected rule: %s\n", currentType.toString());
 
                 int row = ruleRows.get(currentType);
-                int col = tokenColumns.get(token);
+                int col = tokenColumns.get(tokenType);
 
                 List<Type> nextStates = parserTable.get(row).get(col);
 
-                if(nextStates.size() == 1 && nextStates.get(0) == RuleType.FAIL){
-                    //TODO: log errors
-                    return false;
+                if(nextStates.size() == 1 && nextStates.get(0) == RuleType.FAIL)
+                {
+                    errors.add(new CompileError(ErrorType.SYNTAX, "" ,scanner.getLineCount()));
+                    scanner.next();
                 }
 
                 if(!(nextStates.size() == 1 && nextStates.get(0) == RuleType.EPSILON))
@@ -158,5 +169,10 @@ public class Parser
 
         return stack.empty();
 
+    }
+
+    public List<CompileError> getErrors()
+    {
+        return errors;
     }
 }
