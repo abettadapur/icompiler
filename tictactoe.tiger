@@ -33,7 +33,7 @@ let
                                         if board[i*3+j] = 0 then
                                                 print("O");
                                         else
-                                                if board[i*3+j] < -1 then
+                                                if board[i*3+j] <> -1 then
                                                         printi(i * 3 + j - 1);
                                                 else
                                                         print(" ");
@@ -41,12 +41,12 @@ let
                                         endif;
                                 endif;
 
-                                if j < 2 then
+                                if j <> 2 then
                                         print(" | ");
                                 endif;
                         enddo;        
 
-                        if i < 2 then
+                        if i <> 2 then
                                 print("-----------------");
                         else
                                 print("\n");
@@ -68,7 +68,7 @@ let
         function get_input(turn : string) begin
 
                 /* print to stdout: "Where would you like to place X/O (1-9)? " */
-                tmp_str := concat("Where would you like to place ", turn); 
+                tmp_str := concat("Where would you like to place ", turn);
                 tmp_str := concat(tmp_str, " (1-9)?\n");
                 print(tmp_str);
 
@@ -155,7 +155,7 @@ let
                 win := 0;
                 move := 0;
 
-                while win > 1 do
+                while win <> 1 do
 
                         print_board(board);
 

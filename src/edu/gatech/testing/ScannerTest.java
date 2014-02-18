@@ -149,5 +149,11 @@ public class ScannerTest {
         assertEquals(scanner.next(), new Token(TokenType.SEMI, ";"));
 
     }
+    @Test
+    public void eqTest()
+    {
+        Scanner scanner = new Scanner("<>");
+        assertEquals(scanner.next(), new Token(TokenType.EQ, "<>"));
+    }
 
 }
