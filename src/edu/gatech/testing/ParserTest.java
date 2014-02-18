@@ -23,7 +23,7 @@ public class ParserTest  {
     public void fileParse() throws Exception
     {
         Parser parser = new Parser();
-        File f = new File("SampleProgram.tg");
+        File f = new File("ex1.tiger");
         assertEquals(parser.parse(f),true);
 
     }
@@ -31,9 +31,52 @@ public class ParserTest  {
     public void fileParse2() throws Exception
     {
         Parser parser = new Parser();
-        File f = new File("ex1.tiger");
-        assertEquals(parser.parse(f),false);
-        System.out.println(parser.getErrors());
+        File f = new File("ex2.tiger");
+        assertEquals(parser.parse(f),true);
     }
+    @Test
+    public void fileParse3() throws Exception
+    {
+        Parser parser = new Parser();
+        File f = new File("ex3.tiger");
+        assertEquals(parser.parse(f),true);
+    }
+    @Test
+    public void fileParse4() throws Exception
+    {
+        Parser parser = new Parser();
+        File f = new File("ex4.tiger");
+        assertEquals(parser.parse(f),false);
+    }
+    @Test
+    public void fileParse5() throws Exception
+    {
+        Parser parser = new Parser();
+        File f = new File("ex5.tiger");
+        assertEquals(parser.parse(f),true);
+    }
+    @Test
+    public void fileParse6() throws Exception
+    {
+        Parser parser = new Parser();
+        File f = new File("ex6.tiger");
+        assertEquals(parser.parse(f),false);
+    }
+    @Test
+    public void fileParse7() throws Exception
+    {
+        Parser parser = new Parser();
+        File f = new File("ex7.tiger");
+        assertEquals(parser.parse(f),false);
+    }
+
+    @Test
+    public void masterTest() throws Exception
+    {
+        Parser parser = new Parser();
+        File f = new File("tictactoe.tiger");
+        assertEquals(parser.parse(f),true);
+    }
+
 
 }

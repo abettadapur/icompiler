@@ -1,0 +1,8 @@
+let
+
+        function print ( n : int ) begin
+                printi("Hello\n");
+        end;
+in
+        print(5);
+end

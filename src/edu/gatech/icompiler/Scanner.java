@@ -192,6 +192,8 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
         else if(tokenBuffer.size()!=0)
             return new Token(TokenType.ERROR,"Lexical Error: "+tokenBuffer.toString()+" was an unexpected sequence");
+        else if(lastCharacter!=null)
+            return new Token(TokenType.ERROR,"Lexical Error: "+lastCharacter+" was an unexpected sequence");
         else return null;
     }
 

@@ -129,13 +129,24 @@ public class Parser
             if(tokenType==TokenType.ERROR)
             {
                 errors.add(new CompileError(ErrorType.LEXICAL, token.TOKEN_CONTENT, scanner.getLineCount()));
+                //scanner.next();
+                System.out.println("LEXICAL ERROR");
+                return false;
             }
 
             if(currentType.isToken() && tokenType == currentType)
+            {
+                System.out.println(tokenType.name() + " ");
+                //System.out.println(stack);
                 scanner.next();
+            }
+
 
             else if(currentType.isToken() && tokenType != currentType)
+            {
+                System.out.println("TOKEN MISMATCH "+tokenType.name()+" instead of " +((TokenType)currentType).name());
                 return false;
+            }
 
             else if(!currentType.isToken()){
 
@@ -154,8 +165,10 @@ public class Parser
 
                 if(nextStates.size() == 1 && nextStates.get(0) == RuleType.FAIL)
                 {
-                    errors.add(new CompileError(ErrorType.SYNTAX, "" ,scanner.getLineCount()));
-                    scanner.next();
+                    System.out.println("RULE TOKEN MISMATCH");
+                    errors.add(new CompileError(ErrorType.SYNTAX, "", scanner.getLineCount()));
+                    return false;
+                    //scanner.next();
                 }
 
                 if(!(nextStates.size() == 1 && nextStates.get(0) == RuleType.EPSILON))
