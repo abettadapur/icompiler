@@ -83,7 +83,13 @@ public class Parser
         String[] rules = foo.split(" ");
         for(String bar:rules)
             if(bar.startsWith("<"))
-                out.add(RuleType.getFromString(bar.trim().replace("<", "").replace(">", "")));
+            {
+                RuleType type = RuleType.getFromString(bar.trim().replace("<", "").replace(">", ""));
+                if(type!=null)
+                    out.add(RuleType.getFromString(bar.trim().replace("<", "").replace(">", "")));
+                else
+                    System.out.println("TABLE FAILURE: "+bar);
+            }
             else
                 out.add(TokenType.getFromString(bar.trim()))  ;
         
@@ -117,6 +123,11 @@ public class Parser
 
             TokenType tokenType = token.TYPE;
 
+            if(token.TOKEN_CONTENT.equals("init_win_cond"))
+            {
+                int a = 0;
+            }
+
             Type currentType = stack.pop();
 
             if(tokenType==TokenType.COMMENT)
@@ -136,7 +147,7 @@ public class Parser
 
             if(currentType.isToken() && tokenType == currentType)
             {
-                System.out.println(tokenType.name() + " ");
+                System.out.println(tokenType.name() + ": "+ token.TOKEN_CONTENT);
                 //System.out.println(stack);
                 scanner.next();
             }
@@ -165,7 +176,7 @@ public class Parser
 
                 if(nextStates.size() == 1 && nextStates.get(0) == RuleType.FAIL)
                 {
-                    System.out.println("RULE TOKEN MISMATCH");
+                    System.out.println("RULE TOKEN MISMATCH: "+tokenType.name()+" matched with <"+((RuleType)currentType).name()+">");
                     errors.add(new CompileError(ErrorType.SYNTAX, "", scanner.getLineCount()));
                     return false;
                     //scanner.next();

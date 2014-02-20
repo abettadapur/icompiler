@@ -126,6 +126,7 @@ let
                 win_cond[21] := 3;
                 win_cond[22] := 5;
                 win_cond[23] := 7;
+                a:=(a)+(b);
         end;
 
 
