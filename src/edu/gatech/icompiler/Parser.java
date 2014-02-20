@@ -13,14 +13,14 @@ public class Parser
     private List<List<List<Type>>> parserTable;
     private Map<TokenType, Integer> tokenColumns;
     private Map<RuleType, Integer> ruleRows;
-    private List<CompileError> errors;
+
 
     public Parser(){
 
         parserTable = new ArrayList<>();
         tokenColumns = new HashMap<>();
         ruleRows = new HashMap<>();
-        errors = new ArrayList<>();
+
 
         initializeTable();
     }
@@ -111,92 +111,103 @@ public class Parser
 
     public boolean parse(String program)
     {
-        errors.clear();
+        boolean error = false;
+
         Stack<Type> stack = new Stack<>();
         Scanner scanner = new Scanner(program);
 
         stack.push(RuleType.TIGER_PROGRAM);
 
-        while(scanner.hasNext() && stack.size()!=0){
-
-            Token token = scanner.peek();
-
-            TokenType tokenType = token.TYPE;
-
-            if(token.TOKEN_CONTENT.equals("init_win_cond"))
+        while(scanner.hasNext() && stack.size()!=0)
+        {
+            if(!error)
             {
-                int a = 0;
-            }
-
-            Type currentType = stack.pop();
-
-            if(tokenType==TokenType.COMMENT)
-            {
-                stack.push(currentType);
-                scanner.next();
-                continue;
-            }
-
-            if(tokenType==TokenType.ERROR)
-            {
-                errors.add(new CompileError(ErrorType.LEXICAL, token.TOKEN_CONTENT, scanner.getLineCount()));
-                //scanner.next();
-                System.out.println("LEXICAL ERROR");
-                return false;
-            }
-
-            if(currentType.isToken() && tokenType == currentType)
-            {
-                System.out.println(tokenType.name() + ": "+ token.TOKEN_CONTENT);
-                //System.out.println(stack);
-                scanner.next();
-            }
 
 
-            else if(currentType.isToken() && tokenType != currentType)
-            {
-                System.out.println("TOKEN MISMATCH "+tokenType.name()+" instead of " +((TokenType)currentType).name());
-                return false;
-            }
+                Token token = scanner.peek();
 
-            else if(!currentType.isToken()){
+                TokenType tokenType = token.TYPE;
 
-                //TODO: Remove after DEBUG:
-                if(!tokenColumns.containsKey(tokenType))
-                    System.err.printf("Unexpected token: %s\n", tokenType.toString());
-
-                //TODO: Remove after DEBUG;
-                if(!ruleRows.containsKey(currentType))
-                    System.err.printf("Unexpected rule: %s\n", currentType.toString());
-
-                int row = ruleRows.get(currentType);
-                int col = tokenColumns.get(tokenType);
-
-                List<Type> nextStates = parserTable.get(row).get(col);
-
-                if(nextStates.size() == 1 && nextStates.get(0) == RuleType.FAIL)
+                if(token.TOKEN_CONTENT.equals("init_win_cond"))
                 {
-                    System.out.println("RULE TOKEN MISMATCH: "+tokenType.name()+" matched with <"+((RuleType)currentType).name()+">");
-                    errors.add(new CompileError(ErrorType.SYNTAX, "", scanner.getLineCount()));
-                    return false;
-                    //scanner.next();
+                    int a = 0;
                 }
 
-                if(!(nextStates.size() == 1 && nextStates.get(0) == RuleType.EPSILON))
-                    for(int i=nextStates.size()-1; i>= 0; i--)
-                        stack.push(nextStates.get(i));
+                Type currentType = stack.pop();
+
+                if(tokenType==TokenType.COMMENT)
+                {
+                    stack.push(currentType);
+                    scanner.next();
+                    continue;
+                }
+
+                if(tokenType==TokenType.ERROR)
+                {
+
+                    //scanner.next();
+                    System.out.println("LEXICAL ERROR "+scanner.getLineCount()+": "+token.TOKEN_CONTENT);
+                    error = true;
+                    continue;
+                }
+
+                if(currentType.isToken() && tokenType == currentType)
+                {
+                    System.out.println(tokenType.name() + ": "+ token.TOKEN_CONTENT);
+                    //System.out.println(stack);
+                    scanner.next();
+                }
+
+
+                else if(currentType.isToken() && tokenType != currentType)
+                {
+                    System.out.println("TOKEN MISMATCH "+scanner.getLineCount()+": "+tokenType.name()+"instead of " +((TokenType)currentType).name());
+                    error = true;
+                    continue;
+                }
+
+                else if(!currentType.isToken()){
+
+                    //TODO: Remove after DEBUG:
+                    if(!tokenColumns.containsKey(tokenType))
+                        System.err.printf("Unexpected token: %s\n", tokenType.toString());
+
+                    //TODO: Remove after DEBUG;
+                    if(!ruleRows.containsKey(currentType))
+                        System.err.printf("Unexpected rule: %s\n", currentType.toString());
+
+                    int row = ruleRows.get(currentType);
+                    int col = tokenColumns.get(tokenType);
+
+                    List<Type> nextStates = parserTable.get(row).get(col);
+
+                    if(nextStates.size() == 1 && nextStates.get(0) == RuleType.FAIL)
+                    {
+                        System.out.println("RULE TOKEN MISMATCH: "+tokenType.name()+" matched with <"+((RuleType)currentType).name()+">");
+
+                        error=true;
+                        //scanner.next();
+                        continue;
+                    }
+
+                    if(!(nextStates.size() == 1 && nextStates.get(0) == RuleType.EPSILON))
+                        for(int i=nextStates.size()-1; i>= 0; i--)
+                            stack.push(nextStates.get(i));
+
+                }
 
             }
-
+            else
+            {
+                Token token = scanner.next();
+                if(token.TYPE!=TokenType.ERROR)
+                    System.out.println(token.TYPE.name() + ": "+ token.TOKEN_CONTENT);
+            }
         }
 
+        if(!error)
+            System.out.println("Successful Parse");
+        return !error;
 
-        return stack.empty();
-
-    }
-
-    public List<CompileError> getErrors()
-    {
-        return errors;
     }
 }
