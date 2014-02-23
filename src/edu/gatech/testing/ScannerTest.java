@@ -92,6 +92,28 @@ public class ScannerTest {
     {
         Scanner scanner = new Scanner(new File("SampleProgram.tg"));
 
+        assertEquals(scanner.next(), new Token(TokenType.LET, "let"));
+
+        assertEquals(scanner.next(), new Token(TokenType.VAR, "var"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "X"));
+
+        assertEquals(scanner.next(), new Token(TokenType.COMMA, ","));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "Y"));
+
+        assertEquals(scanner.next(), new Token(TokenType.COLON, ":"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ID, "ArrayInt"));
+
+        assertEquals(scanner.next(), new Token(TokenType.ASSIGN, ":="));
+
+        assertEquals(scanner.next(), new Token(TokenType.INTLIT, "10"));
+
+        assertEquals(scanner.next(), new Token(TokenType.SEMI, ";"));
+
+        assertEquals(scanner.next(), new Token(TokenType.IN, "in"));
+
         assertEquals(scanner.next(), new Token(TokenType.FOR, "for"));
 
         assertEquals(scanner.next(), new Token(TokenType.ID, "i"));
@@ -137,6 +159,8 @@ public class ScannerTest {
         assertEquals(scanner.next(), new Token(TokenType.SEMI, ";"));
 
         assertEquals(scanner.next(), new Token(TokenType.ENDDO, "enddo"));
+
+        assertEquals(scanner.next(), new Token(TokenType.SEMI, ";"));
 
         assertEquals(scanner.next(), new Token(TokenType.ID, "printi"));
 
