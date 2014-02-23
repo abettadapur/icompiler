@@ -1,6 +1,8 @@
 package edu.gatech.icompiler;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,8 +65,8 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     {
         try
         {
-            File csv = new File("ScannerTable.csv");
-            BufferedReader reader = new BufferedReader(new FileReader(csv));
+            InputStream stream = this.getClass().getResourceAsStream("/ScannerTable.csv");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String line= "";
             int row = 0;
 
@@ -104,6 +106,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
         {
             ioex.printStackTrace();
         }
+
 
     }
 

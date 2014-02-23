@@ -3,6 +3,9 @@ package edu.gatech.icompiler;
 import org.junit.Rule;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -33,9 +36,8 @@ public class Parser
     {
         try
         {
-
-            File csv = new File("ParseTable.csv");
-            BufferedReader reader = new BufferedReader(new FileReader(csv));
+            InputStream stream = this.getClass().getResourceAsStream("/ParseTable.csv");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String line= "";
             tokenColumns = new HashMap<>();
             ruleRows = new HashMap<>();
@@ -69,6 +71,7 @@ public class Parser
             System.err.println("Missing ParseTable.csv");
             ioex.printStackTrace();
         }
+
     }
 
     private List<Type> rulesListFromString(String foo){
