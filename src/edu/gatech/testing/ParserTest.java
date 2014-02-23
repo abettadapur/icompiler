@@ -44,28 +44,28 @@ public class ParserTest  {
     @Test
     public void fileParse4() throws Exception
     {
-        Parser parser = new Parser(true);
+        Parser parser = new Parser(false);
         File f = new File("ex4.tiger");
         assertEquals(parser.parse(f),false);
     }
     @Test
     public void fileParse5() throws Exception
     {
-        Parser parser = new Parser(true);
+        Parser parser = new Parser(false);
         File f = new File("ex5.tiger");
         assertEquals(parser.parse(f),true);
     }
     @Test
     public void fileParse6() throws Exception
     {
-        Parser parser = new Parser(true);
+        Parser parser = new Parser(false);
         File f = new File("ex6.tiger");
         assertEquals(parser.parse(f),false);
     }
     @Test
     public void fileParse7() throws Exception
     {
-        Parser parser = new Parser(true);
+        Parser parser = new Parser(false);
         File f = new File("ex7.tiger");
         assertEquals(parser.parse(f),false);
     }

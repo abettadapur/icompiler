@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.HeaderTokenizer;
 import edu.gatech.facade.IScanner;
 import edu.gatech.util.PeekBackReader;
 import edu.gatech.util.Util;

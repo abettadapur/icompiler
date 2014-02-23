@@ -33,6 +33,7 @@ public class Parser
     {
         try
         {
+
             File csv = new File("ParseTable.csv");
             BufferedReader reader = new BufferedReader(new FileReader(csv));
             String line= "";
@@ -196,8 +197,8 @@ public class Parser
             else
             {
                 Token token = scanner.next();
-                if(token.TYPE!=TokenType.ERROR)
-                    System.err.println(token.TYPE.name() + ": "+ token.TOKEN_CONTENT);
+                //if(token.TYPE!=TokenType.ERROR)
+                  //  System.err.println(token.TYPE.name() + ": "+ token.TOKEN_CONTENT);
             }
         }
 
