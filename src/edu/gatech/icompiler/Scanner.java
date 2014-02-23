@@ -113,6 +113,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     //are there more tokens?
     public boolean hasNext(){
 
+
         boolean out = false;
 
         try{
@@ -214,7 +215,7 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
 
         Token temp = currentToken;
 
-        if(DEBUG)
+        if(DEBUG&&currentToken.TYPE!=TokenType.ERROR)
             System.out.println(currentToken);
 
         currentToken = loadNext();
