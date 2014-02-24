@@ -17,7 +17,7 @@ public class ScannerTest {
     public void testNext() throws Exception {
 
         System.out.println("Starting test 1");
-        IScanner scanner = new Scanner("var N := 8 &", true);
+        IScanner scanner = new Scanner("var N := 8 &");
 
         assertEquals(scanner.peek(), new Token(TokenType.VAR, "var"));
 
@@ -39,7 +39,7 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Token(TokenType.AND, "&"));
 
-        scanner = new Scanner ("type intArray := array of int\n", true);
+        scanner = new Scanner ("type intArray := array of int\n");
 
         assertEquals(scanner.next(), new Token(TokenType.TYPE, "type"));
 
@@ -53,7 +53,7 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Token(TokenType.ID, "int"));  //what is int?
 
-        scanner = new Scanner("var row := intArray [ N ] of 0", true);
+        scanner = new Scanner("var row := intArray [ N ] of 0");
 
         assertEquals(scanner.next(), new Token(TokenType.VAR, "var"));
 
@@ -73,7 +73,7 @@ public class ScannerTest {
 
         assertEquals(scanner.next(), new Token(TokenType.INTLIT, "0"));
 
-        scanner = new Scanner("endif identifier begin end enddo", true);
+        scanner = new Scanner("endif identifier begin end enddo");
 
         assertEquals(scanner.next(), new Token(TokenType.ENDIF, "endif"));
 
@@ -91,7 +91,7 @@ public class ScannerTest {
     {
         System.out.println("Starting SampleProgram.tg test:");
 
-        Scanner scanner = new Scanner(new File("SampleProgram.tg"));
+        Scanner scanner = new Scanner(new File("SampleProgram.tg"), true);
 
         assertEquals(scanner.next(), new Token(TokenType.LET, "let"));
 
