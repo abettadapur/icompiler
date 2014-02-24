@@ -13,14 +13,18 @@ public class Parser
     private List<List<List<Type>>> parserTable;
     private Map<TokenType, Integer> tokenColumns;
     private Map<RuleType, Integer> ruleRows;
-
+    private final boolean DEBUG;
 
     public Parser(){
+    this(false);
+}
 
+    public Parser(boolean DEBUG){
+
+        this.DEBUG = DEBUG;
         parserTable = new ArrayList<>();
         tokenColumns = new HashMap<>();
         ruleRows = new HashMap<>();
-
 
         initializeTable();
     }
@@ -88,7 +92,7 @@ public class Parser
                 if(type!=null)
                     out.add(RuleType.getFromString(bar.trim().replace("<", "").replace(">", "")));
                 else
-                    System.out.println("TABLE FAILURE: "+bar);
+                    System.err.println("TABLE FAILURE: "+bar);
             }
             else
                 out.add(TokenType.getFromString(bar.trim()))  ;
@@ -114,7 +118,7 @@ public class Parser
         boolean error = false;
 
         Stack<Type> stack = new Stack<>();
-        Scanner scanner = new Scanner(program);
+        Scanner scanner = new Scanner(program, DEBUG);
 
         stack.push(RuleType.TIGER_PROGRAM);
 
@@ -146,14 +150,14 @@ public class Parser
                 {
 
                     //scanner.next();
-                    System.out.println("LEXICAL ERROR "+scanner.getLineCount()+": "+token.TOKEN_CONTENT);
+                    System.err.println("LEXICAL ERROR "+scanner.getLineCount()+": "+token.TOKEN_CONTENT);
                     error = true;
                     continue;
                 }
 
                 if(currentType.isToken() && tokenType == currentType)
                 {
-                    System.out.println(tokenType.name() + ": "+ token.TOKEN_CONTENT);
+
                     //System.out.println(stack);
                     scanner.next();
                 }
@@ -168,14 +172,6 @@ public class Parser
 
                 else if(!currentType.isToken()){
 
-                    //TODO: Remove after DEBUG:
-                    if(!tokenColumns.containsKey(tokenType))
-                        System.err.printf("Unexpected token: %s\n", tokenType.toString());
-
-                    //TODO: Remove after DEBUG;
-                    if(!ruleRows.containsKey(currentType))
-                        System.err.printf("Unexpected rule: %s\n", currentType.toString());
-
                     int row = ruleRows.get(currentType);
                     int col = tokenColumns.get(tokenType);
 
@@ -183,7 +179,7 @@ public class Parser
 
                     if(nextStates.size() == 1 && nextStates.get(0) == RuleType.FAIL)
                     {
-                        System.out.println("RULE TOKEN MISMATCH: "+tokenType.name()+" matched with <"+((RuleType)currentType).name()+">");
+                        System.err.println("RULE TOKEN MISMATCH: "+tokenType.name()+" matched with <"+((RuleType)currentType).name()+">");
 
                         error=true;
                         //scanner.next();
@@ -201,7 +197,7 @@ public class Parser
             {
                 Token token = scanner.next();
                 if(token.TYPE!=TokenType.ERROR)
-                    System.out.println(token.TYPE.name() + ": "+ token.TOKEN_CONTENT);
+                    System.err.println(token.TYPE.name() + ": "+ token.TOKEN_CONTENT);
             }
         }
 

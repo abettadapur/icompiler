@@ -38,7 +38,7 @@ public class Token {
 
     @Override
     public String toString(){
-        return "[" + TYPE.name() + ", " + TOKEN_CONTENT + "]";
+        return TYPE.name() + ": " + TOKEN_CONTENT;
     }
 
 }

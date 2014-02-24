@@ -25,19 +25,29 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     private Character lastCharacter = null;
     private final int FAIL = -1;
     private int lineCount;
+    private final boolean DEBUG;
 
     private Token currentToken;
 
+    public Scanner(String foo, boolean DEBUG){
+        this(new StringReader(foo), DEBUG);
+    }
+
     public Scanner(String foo){
-        this(new StringReader(foo));
+        this(foo, false);
     }
 
     public Scanner(File foo) throws FileNotFoundException{
-        this(new FileReader(foo));
+        this(foo, false);
     }
 
-    public Scanner(Reader charStream){
+    public Scanner(File foo, boolean DEBUG) throws FileNotFoundException{
+        this(new FileReader(foo), DEBUG);
+    }
 
+    public Scanner(Reader charStream, boolean DEBUG){
+
+        this.DEBUG = DEBUG;
         this.charStream = new PeekBackReader(charStream);
         this.tokenBuffer = new ArrayList<>();
         this.selectionTable = new ArrayList<>();
@@ -201,6 +211,9 @@ public class Scanner implements Iterator<Token>, Closeable, AutoCloseable, IScan
     public Token next(){
 
         Token temp = currentToken;
+
+        if(DEBUG)
+            System.out.println(currentToken);
 
         currentToken = loadNext();
 
