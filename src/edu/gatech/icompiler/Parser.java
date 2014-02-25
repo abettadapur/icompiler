@@ -1,11 +1,8 @@
 package edu.gatech.icompiler;
 
-import org.junit.Rule;
+import edu.gatech.util.Node;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -16,6 +13,8 @@ public class Parser
     private List<List<List<Type>>> parserTable;
     private Map<TokenType, Integer> tokenColumns;
     private Map<RuleType, Integer> ruleRows;
+    private Node<Type> parseTree;
+    private Node<Type> currentNode;
     private final boolean DEBUG;
 
     public Parser(){
@@ -28,7 +27,6 @@ public class Parser
         parserTable = new ArrayList<>();
         tokenColumns = new HashMap<>();
         ruleRows = new HashMap<>();
-
         initializeTable();
     }
 
@@ -125,21 +123,16 @@ public class Parser
         Scanner scanner = new Scanner(program, DEBUG);
 
         stack.push(RuleType.TIGER_PROGRAM);
+        parseTree = new Node<Type>(RuleType.TIGER_PROGRAM);
+        currentNode = parseTree;
 
         while(scanner.hasNext() && stack.size()!=0)
         {
             if(!error)
             {
-
-
                 Token token = scanner.peek();
 
                 TokenType tokenType = token.TYPE;
-
-                if(token.TOKEN_CONTENT.equals("init_win_cond"))
-                {
-                    int a = 0;
-                }
 
                 Type currentType = stack.pop();
 
@@ -161,8 +154,7 @@ public class Parser
 
                 if(currentType.isToken() && tokenType == currentType)
                 {
-
-                    //System.out.println(stack);
+                    //need to add terminal, then go up a level
                     scanner.next();
                 }
 
@@ -191,8 +183,18 @@ public class Parser
                     }
 
                     if(!(nextStates.size() == 1 && nextStates.get(0) == RuleType.EPSILON))
+                    {
                         for(int i=nextStates.size()-1; i>= 0; i--)
+                        {
                             stack.push(nextStates.get(i));
+                            currentNode.addChild(new Node<Type>(nextStates.get(nextStates.size() - 1 - i)));
+                        }
+                        currentNode = currentNode.getChildren().get(0);
+                    }
+                    else if(nextStates.get(0)==RuleType.EPSILON)
+                    {
+                        //need to add epsilon terminal, go up a tree level
+                    }
 
                 }
 
