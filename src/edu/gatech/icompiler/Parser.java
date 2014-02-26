@@ -137,10 +137,7 @@ public class Parser
 
                 Type currentType = stack.pop();
 
-                if(currentType instanceof RuleType && ((RuleType)currentType)==RuleType.ID_LIST_TAIL)
-                {
-                    int a=0;
-                }
+
                 if(tokenType==TokenType.COMMENT)
                 {
                     stack.push(currentType);

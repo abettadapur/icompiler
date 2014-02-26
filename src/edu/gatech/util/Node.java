@@ -79,10 +79,6 @@ public class Node<T>
     {
        if(node!=null)
        {
-            if(node.data.toString().equals("ID_LIST_TAIL"))
-            {
-                int a=0;
-            }
            System.out.println(node.data);
            for(int i=0; i<node.children.size(); i++)
            {
