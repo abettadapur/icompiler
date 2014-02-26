@@ -14,6 +14,7 @@ public class Node<T>
     private Node<T> parent;
     private int currentChild;
     private T data;
+    private static int tabLevel=0;
 
     public Node(T data)
     {
@@ -74,16 +75,33 @@ public class Node<T>
     public void printPreOrder()
     {
         preOrder(this);
+        tabLevel=0;
     }
     private void preOrder(Node<T> node)
     {
        if(node!=null)
        {
-           System.out.println(node.data);
-           for(int i=0; i<node.children.size(); i++)
+           for(int i=0; i<tabLevel; i++)
+               System.out.print('\t');
+           if(!node.isLeaf())
            {
-               preOrder(node.children.get(i));
+            System.out.println("<"+node.data+">");
+            tabLevel++;
+
+            for(int i=0; i<node.children.size(); i++)
+            {
+                preOrder(node.children.get(i));
+            }
+
+           tabLevel--;
+           for(int i=0; i<tabLevel; i++)
+               System.out.print('\t');
+           System.out.println("</"+node.data+">");
            }
+           else
+               System.out.println("<"+node.data+"/>");
+
+
        }
 
     }

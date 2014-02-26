@@ -25,6 +25,6 @@ public class Terminal implements Type
     }
     public String toString()
     {
-        return content;
+        return "\""+content+"\"";
     }
 }
