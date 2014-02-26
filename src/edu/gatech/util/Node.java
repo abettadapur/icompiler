@@ -70,4 +70,25 @@ public class Node<T>
     {
         return children.size()==0;
     }
+
+    public void printPreOrder()
+    {
+        preOrder(this);
+    }
+    private void preOrder(Node<T> node)
+    {
+       if(node!=null)
+       {
+            if(node.data.toString().equals("ID_LIST_TAIL"))
+            {
+                int a=0;
+            }
+           System.out.println(node.data);
+           for(int i=0; i<node.children.size(); i++)
+           {
+               preOrder(node.children.get(i));
+           }
+       }
+
+    }
 }

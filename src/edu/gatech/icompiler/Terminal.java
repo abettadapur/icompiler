@@ -23,4 +23,8 @@ public class Terminal implements Type
     {
         return true;
     }
+    public String toString()
+    {
+        return content;
+    }
 }

@@ -1,6 +1,7 @@
 package edu.gatech.icompiler;
 
 import edu.gatech.util.Node;
+import org.junit.Rule;
 
 import java.io.*;
 import java.util.*;
@@ -136,7 +137,7 @@ public class Parser
 
                 Type currentType = stack.pop();
 
-                if(token.TOKEN_CONTENT.equals("main"))
+                if(currentType instanceof RuleType && ((RuleType)currentType)==RuleType.ID_LIST_TAIL)
                 {
                     int a=0;
                 }
@@ -201,7 +202,6 @@ public class Parser
                     {
                         //need to add epsilon terminal, go up a tree level
                         currentNode.addChild(new Node<Type>(new Terminal("")));
-                        currentNode.addChild(new Node<Type>(new Terminal(token.TOKEN_CONTENT)));
                         currentNode = currentNode.getParent().getNextChild();
 
                     }
@@ -218,7 +218,10 @@ public class Parser
         }
 
         if(!error)
+        {
             System.out.println("Successful Parse");
+            parseTree.printPreOrder();
+        }
         return !error;
 
     }
