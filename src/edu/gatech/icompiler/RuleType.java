@@ -30,5 +30,6 @@ public enum RuleType implements Type
     }
 
     public boolean isToken(){return false;}
+    public boolean isTerminal(){return false;}
 
 }

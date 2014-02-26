@@ -6,4 +6,5 @@ package edu.gatech.icompiler;
 public interface Type {
 
     public boolean isToken();
+    public boolean isTerminal();
 }

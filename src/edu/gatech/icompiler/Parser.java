@@ -136,6 +136,10 @@ public class Parser
 
                 Type currentType = stack.pop();
 
+                if(token.TOKEN_CONTENT.equals("main"))
+                {
+                    int a=0;
+                }
                 if(tokenType==TokenType.COMMENT)
                 {
                     stack.push(currentType);
@@ -155,6 +159,8 @@ public class Parser
                 if(currentType.isToken() && tokenType == currentType)
                 {
                     //need to add terminal, then go up a level
+                    currentNode.addChild(new Node<Type>(new Terminal(token.TOKEN_CONTENT)));
+                    currentNode = currentNode.getParent().getNextChild();
                     scanner.next();
                 }
 
@@ -189,11 +195,15 @@ public class Parser
                             stack.push(nextStates.get(i));
                             currentNode.addChild(new Node<Type>(nextStates.get(nextStates.size() - 1 - i)));
                         }
-                        currentNode = currentNode.getChildren().get(0);
+                        currentNode = currentNode.getNextChild();
                     }
                     else if(nextStates.get(0)==RuleType.EPSILON)
                     {
                         //need to add epsilon terminal, go up a tree level
+                        currentNode.addChild(new Node<Type>(new Terminal("")));
+                        currentNode.addChild(new Node<Type>(new Terminal(token.TOKEN_CONTENT)));
+                        currentNode = currentNode.getParent().getNextChild();
+
                     }
 
                 }

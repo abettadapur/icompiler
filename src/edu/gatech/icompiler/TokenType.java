@@ -21,4 +21,5 @@ public enum TokenType implements Type{
     }
 
     public boolean isToken(){ return true;}
+    public boolean isTerminal(){return false;}
 }

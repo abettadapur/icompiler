@@ -2,6 +2,7 @@ package edu.gatech.util;
 
 import edu.gatech.icompiler.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,16 +12,23 @@ public class Node<T>
 {
     private List<Node<T>> children;
     private Node<T> parent;
+    private int currentChild;
     private T data;
 
     public Node(T data)
     {
         this.data=data;
+        this.currentChild=-1;
+        children = new ArrayList<>();
     }
 
     public void setParent(Node<T> parent)
     {
         this.parent=parent;
+    }
+
+    public Node<T> getParent() {
+        return parent;
     }
 
     public void setData(T data)
@@ -34,6 +42,22 @@ public class Node<T>
         {
             child.parent=this;
             children.add(child);
+            if(currentChild==-1)
+                currentChild=0;
+        }
+    }
+    public Node<T> getNextChild()
+    {
+        if(currentChild==children.size())
+        {
+            if(parent!=null)
+                return parent.getNextChild();
+            else
+                return null;
+        }
+        else
+        {
+            return children.get(currentChild++);
         }
     }
 
