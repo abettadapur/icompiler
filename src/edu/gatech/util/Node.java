@@ -62,6 +62,10 @@ public class Node<T>
         return children;
     }
 
+    public T getData(){
+        return data;
+    }
+
     public boolean isLeaf()
     {
         return children.size()==0;
@@ -74,7 +78,7 @@ public class Node<T>
     }
     private String preOrder(Node<T> node)
     {
-        StringBuilder out = new StringBuilder();
+       StringBuilder out = new StringBuilder();
        if(node!=null)
        {
            for(int i=0; i<tabLevel; i++)
@@ -86,7 +90,7 @@ public class Node<T>
 
             for(int i=0; i<node.children.size(); i++)
             {
-                preOrder(node.children.get(i));
+                out.append(preOrder(node.children.get(i)));
             }
 
            tabLevel--;

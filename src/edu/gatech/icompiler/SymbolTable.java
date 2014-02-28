@@ -1,6 +1,7 @@
 package edu.gatech.icompiler;
 
 import edu.gatech.util.Node;
+import org.junit.Rule;
 
 import java.util.*;
 
@@ -25,50 +26,41 @@ public class SymbolTable {
 
         while(!open.isEmpty()){
             Node<Type> probe = open.remove(0);
-            List<Node<Type>> kids = probe.getChildren();
 
-            //TODO: Add things to table here plz
+            Type nodeType = probe.getData();
 
-            //TODO: find declaration block
-            //TODO: find function declaration block
-            //TODO: find literals
-            //TODO: find binary operators
+            if(nodeType.equals(RuleType.TYPE_DECLARATION)){
 
-            closed.add(probe);
+            }
+            else if(nodeType.equals(RuleType.TYPE_DECLARATION_LIST)){
 
-            for(Node<Type> node : kids)
-                if(null != node)
-                    open.add(node);
+            }
+            else if(nodeType.equals(RuleType.FUNCT_DECLARATION)){
 
+            }
+            else if(nodeType.equals(RuleType.FUNCT_DECLARATION_LIST)){
+
+            }
+            else if(nodeType.equals(RuleType.VAR_DECLARATION)){
+
+
+            }else if(nodeType.equals(RuleType.VAR_DECLARATION_LIST)){
+
+            }
+            else{ //Carry on, bold explorer
+
+                List<Node<Type>> kids = probe.getChildren();
+
+                closed.add(probe);
+
+                for(Node<Type> node : kids)
+                    if(null != node)
+                        open.add(node);
+
+            }
         }
-
     }
-    /*
-      Entries
-        variable names
-        defined constants
-        defined types
-        procedure and function names
-        literal constants and strings
-        source text labels
-        compiler­generated temporaries
 
-     */
-
-    /*
-    Details per entry:
-        textual name
-        data type
-        dimension information (for aggregates)
-        declaring procedure
-        lexical level of declaration
-        storage class (base address)
-        offset in storage
-        if record, pointer to structure table
-        if parameter, by­reference or by­value?
-        can it be aliased? to what other names?
-        number and type of arguments to functions
-     */
     private static class Entry{
 
         private String name;

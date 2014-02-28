@@ -18,6 +18,7 @@ public class ParserTest  {
 
         assertEquals(parser.parse("let var i, n: int := 0; in printi(i); printi(n); end"), true);
 
+
     }
     @Test
     public void fileParse() throws Exception
