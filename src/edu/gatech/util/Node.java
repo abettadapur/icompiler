@@ -23,11 +23,6 @@ public class Node<T>
         children = new ArrayList<>();
     }
 
-    public void setParent(Node<T> parent)
-    {
-        this.parent=parent;
-    }
-
     public Node<T> getParent() {
         return parent;
     }
@@ -77,15 +72,16 @@ public class Node<T>
         preOrder(this);
         tabLevel=0;
     }
-    private void preOrder(Node<T> node)
+    private String preOrder(Node<T> node)
     {
+        StringBuilder out = new StringBuilder();
        if(node!=null)
        {
            for(int i=0; i<tabLevel; i++)
-               System.out.print('\t');
+               out.append('\t');
            if(!node.isLeaf())
            {
-            System.out.println("<"+node.data+">");
+            out.append("<"+node.data+">\n");
             tabLevel++;
 
             for(int i=0; i<node.children.size(); i++)
@@ -95,14 +91,14 @@ public class Node<T>
 
            tabLevel--;
            for(int i=0; i<tabLevel; i++)
-               System.out.print('\t');
-           System.out.println("</"+node.data+">");
+               out.append('\t');
+           out.append("</"+node.data+">\n");
            }
            else
-               System.out.println("<"+node.data+"/>");
+               out.append("<"+node.data+"/>\n");
 
 
        }
-
+        return out.toString();
     }
 }
