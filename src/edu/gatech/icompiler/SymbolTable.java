@@ -9,15 +9,38 @@ import java.util.*;
  */
 public class SymbolTable {
 
-    Map backingTable = new LinkedHashMap();
+    Map<String, Entry> backingTable = new LinkedHashMap<>();
 
     //every time we declare a type add it to this set for maintenance
-    Set<DeclaredType> declaredTypes = new HashSet<DeclaredType>();
+    Set<DeclaredType> declaredTypes = new HashSet<>();
 
+    Set<DeclaredType> declaredFunctions = new HashSet<>();
 
     public SymbolTable(Node<Type> root){
 
+        List<Node<Type>> open = new ArrayList<>();
+        List<Node<Type>> closed = new ArrayList<>();
 
+        open.add(root);
+
+        while(!open.isEmpty()){
+            Node<Type> probe = open.remove(0);
+            List<Node<Type>> kids = probe.getChildren();
+
+            //TODO: Add things to table here plz
+
+            //TODO: find declaration block
+            //TODO: find function declaration block
+            //TODO: find literals
+            //TODO: find binary operators
+
+            closed.add(probe);
+
+            for(Node<Type> node : kids)
+                if(null != node)
+                    open.add(node);
+
+        }
 
     }
     /*
@@ -79,7 +102,6 @@ public class SymbolTable {
             this.referenceP = referenceP;
             this.parameters = parameters;
         }
-
 
         public String toString(){
             return "["+name + " " +type+"]";

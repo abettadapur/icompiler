@@ -69,7 +69,7 @@ public class Node<T>
 
     public void printPreOrder()
     {
-        preOrder(this);
+        System.out.println(preOrder(this));
         tabLevel=0;
     }
     private String preOrder(Node<T> node)
@@ -92,10 +92,10 @@ public class Node<T>
            tabLevel--;
            for(int i=0; i<tabLevel; i++)
                out.append('\t');
-           out.append("</"+node.data+">\n");
+           out.append("</" + node.data + ">\n");
            }
            else
-               out.append("<"+node.data+"/>\n");
+               out.append("<" + node.data + "/>\n");
 
 
        }
