@@ -64,7 +64,7 @@ public class SymbolTable {
 			// adding inner scope symbols to the front
 			table.get(name).add(0,curAttributes);
 		}
-		// adding first symbol with this name 
+        // adding first symbol with this name
 		else
 		{
 			ArrayList<Attributes> attributeList = new ArrayList<Attributes>();
