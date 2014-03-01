@@ -1,0 +1,2 @@
+Ok so this is a separate implementation of the symbol table and semantic checking in one parse. I have not integrated it with our code yet. lets discuss to see if this 
+is a good approach and how we can modify what we have so far. 
