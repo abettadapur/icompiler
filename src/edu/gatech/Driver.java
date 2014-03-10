@@ -33,8 +33,11 @@ public class Driver {
 
         try{
             Node<Type> parseTree =  parser.parse(new File(args[0]));
-            Semantics checker = new Semantics(parseTree);
-            checker.performChecks();
+            if(parseTree!=null)
+            {
+                Semantics checker = new Semantics(parseTree, null); //MUST CHANGE
+                checker.performChecks();
+            }
         }catch(Exception e){
             e.printStackTrace();
         }

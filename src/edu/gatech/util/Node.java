@@ -16,9 +16,11 @@ public class Node<T> implements Iterable<Node<T>>
     private int currentChild;
     private T data;
     private static int tabLevel=0;
+    private boolean isEpsilon;
 
-    public Node(T data)
+    public Node(T data, boolean isEpsilon)
     {
+        this.isEpsilon=isEpsilon;
         this.data=data;
         this.currentChild=-1;
         children = new ArrayList<>();
@@ -105,6 +107,16 @@ public class Node<T> implements Iterable<Node<T>>
 
        }
         return out.toString();
+    }
+    public boolean hasChildOfType(Type target )
+    {
+        for(int i=0; i<children.size(); i++)
+        {
+            Node<T> type = children.get(i);
+            if(type.data.equals(target)&&!type.isEpsilon)
+                return true;
+        }
+        return false;
     }
 
     @Override

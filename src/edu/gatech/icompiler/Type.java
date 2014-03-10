@@ -7,4 +7,5 @@ public interface Type {
 
     public boolean isToken();
     public boolean isTerminal();
+
 }
