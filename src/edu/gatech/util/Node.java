@@ -3,12 +3,13 @@ package edu.gatech.util;
 import edu.gatech.icompiler.Type;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by Alex on 2/25/14.
  */
-public class Node<T>
+public class Node<T> implements Iterable<Node<T>>
 {
     private List<Node<T>> children;
     private Node<T> parent;
@@ -104,5 +105,11 @@ public class Node<T>
 
        }
         return out.toString();
+    }
+
+    @Override
+    public Iterator<Node<T>> iterator()
+    {
+        return new PreOrderIterator<>(this);
     }
 }

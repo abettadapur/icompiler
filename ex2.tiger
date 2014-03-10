@@ -1,6 +1,6 @@
 let
 
-        function print ( n : int ) begin
+        function print ( n : int, b:int ) begin
                 printi("Hello\n");
         end;
 in
