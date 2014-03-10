@@ -103,7 +103,7 @@ public class Parser
         return out;
     }
 
-    public boolean parse(File f) throws FileNotFoundException, IOException
+    public Node<Type> parse(File f) throws FileNotFoundException, IOException
     {
         BufferedReader reader = new BufferedReader(new FileReader(f));
         StringBuilder sb = new StringBuilder();
@@ -116,7 +116,7 @@ public class Parser
 
     }
 
-    public boolean parse(String program)
+    public Node<Type> parse(String program)
     {
         boolean error = false;
 
@@ -218,8 +218,9 @@ public class Parser
         {
             System.out.println("Successful Parse");
             parseTree.printPreOrder();
+            return parseTree;
         }
-        return !error;
+        return null;
 
     }
 }

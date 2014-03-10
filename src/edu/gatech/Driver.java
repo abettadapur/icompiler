@@ -1,6 +1,10 @@
 package edu.gatech;
 
 import edu.gatech.icompiler.Parser;
+import edu.gatech.icompiler.Semantics;
+import edu.gatech.icompiler.Type;
+import edu.gatech.util.Node;
+
 import java.io.File;
 
 /**
@@ -28,7 +32,9 @@ public class Driver {
         Parser parser = new Parser(debug);
 
         try{
-            parser.parse(new File(args[0]));
+            Node<Type> parseTree =  parser.parse(new File(args[0]));
+            Semantics checker = new Semantics(parseTree);
+            checker.performChecks();
         }catch(Exception e){
             e.printStackTrace();
         }

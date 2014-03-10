@@ -22,10 +22,21 @@ public class Semantics
 
     private void getStatements()
     {
-
+        for(Node<Type> node: tree )
+        {
+            if(node.getData().isToken() && ((RuleType)node.getData())==RuleType.STAT)
+            {
+                statements.add(node);
+            }
+        }
     }
+
     public boolean performChecks()
     {
+        for(Node<Type> statement: statements)
+        {
+            //checks here
+        }
         return false;
     }
 }
