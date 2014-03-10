@@ -11,8 +11,7 @@ import java.util.Stack;
 public class PreOrderIterator<T>implements Iterator<Node<T>>{
     Node<T> root;
     Stack<Node<T>> stack;
-    public PreOrderIterator(Node<T> root)
-    {
+    public PreOrderIterator(Node<T> root){
         this.root=root;
         this.stack = new Stack<>();
         stack.push(root);
@@ -20,14 +19,12 @@ public class PreOrderIterator<T>implements Iterator<Node<T>>{
 
 
     @Override
-    public boolean hasNext()
-    {
+    public boolean hasNext(){
         return !stack.isEmpty();
     }
 
     @Override
-    public Node<T> next()
-    {
+    public Node<T> next(){
         Node<T> ret = stack.pop();
 
         for(int i=ret.getChildren().size()-1; i>=0; i--)
@@ -38,8 +35,8 @@ public class PreOrderIterator<T>implements Iterator<Node<T>>{
     }
 
     @Override
-    public void remove()
-    {
+    public void remove(){
         throw new UnsupportedOperationException();
     }
+
 }
