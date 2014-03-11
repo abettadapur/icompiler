@@ -29,7 +29,8 @@ public class PreOrderIterator<T>implements Iterator<Node<T>>{
 
         for(int i=ret.getChildren().size()-1; i>=0; i--)
         {
-            stack.push(ret.getChildren().get(i));
+            if(!ret.getChildren().get(i).isEpsilon())
+                stack.push(ret.getChildren().get(i));
         }
         return ret;
     }

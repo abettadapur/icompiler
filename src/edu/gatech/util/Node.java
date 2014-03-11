@@ -16,6 +16,15 @@ public class Node<T> implements Iterable<Node<T>>
     private int currentChild;
     private T data;
     private static int tabLevel=0;
+
+
+
+    private String scope;
+
+    public boolean isEpsilon() {
+        return isEpsilon;
+    }
+
     private boolean isEpsilon;
 
     public Node(T data, boolean isEpsilon)
@@ -117,6 +126,13 @@ public class Node<T> implements Iterable<Node<T>>
                 return true;
         }
         return false;
+    }
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    public String getScope() {
+        return scope;
     }
 
     @Override
