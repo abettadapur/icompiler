@@ -218,7 +218,7 @@ public class Semantics
         if(type1==PrimitiveType.integer)
         {
             //all possible operators
-            if(operator!=TokenType.EQ&&operator!=TokenType.GEQ&&operator!=TokenType.ASSIGN&&operator!=TokenType.NEQ&&operator!=TokenType.LEQ&&operator!=TokenType.MINUS&&operator!=TokenType.MULT&&operator!=TokenType.PLUS&&operator!=TokenType.DIV&&operator!=TokenType.GREATER&&operator!=TokenType.LESSER&&)
+            if(operator!=TokenType.EQ&&operator!=TokenType.GEQ&&operator!=TokenType.ASSIGN&&operator!=TokenType.NEQ&&operator!=TokenType.LEQ&&operator!=TokenType.MINUS&&operator!=TokenType.MULT&&operator!=TokenType.PLUS&&operator!=TokenType.DIV&&operator!=TokenType.GREATER&&operator!=TokenType.LESSER)
             {
                 return false;
             }
@@ -234,7 +234,7 @@ public class Semantics
         {
             if(sel.getData()==TokenType.ID)
             {
-                curType = getPrimitiveFromId(sel.getChildren().get(0).toString().replace("\"",""));
+                curType = getPrimitiveFromId(sel.getChildren().get(0).toString().replace("\"",""), sel.getScope());
                 if(curType==PrimitiveType.unknown)
                 {
                     //problem with ID
