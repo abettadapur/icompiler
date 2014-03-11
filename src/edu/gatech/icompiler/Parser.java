@@ -124,7 +124,7 @@ public class Parser
         Scanner scanner = new Scanner(program, DEBUG);
 
         stack.push(RuleType.TIGER_PROGRAM);
-        parseTree = new Node<Type>(RuleType.TIGER_PROGRAM, false);
+        parseTree = new Node<Type>(RuleType.TIGER_PROGRAM, false, scanner.getLineCount());
         currentNode = parseTree;
 
         while(scanner.hasNext() && stack.size()!=0)
@@ -157,7 +157,7 @@ public class Parser
                 if(currentType.isToken() && tokenType == currentType)
                 {
                     //need to add terminal, then go up a level
-                    currentNode.addChild(new Node<Type>(new Terminal(token.TOKEN_CONTENT),false));
+                    currentNode.addChild(new Node<Type>(new Terminal(token.TOKEN_CONTENT),false, scanner.getLineCount()));
                     currentNode = currentNode.getParent().getNextChild();
                     scanner.next();
                 }
@@ -191,14 +191,14 @@ public class Parser
                         for(int i=nextStates.size()-1; i>= 0; i--)
                         {
                             stack.push(nextStates.get(i));
-                            currentNode.addChild(new Node<Type>(nextStates.get(nextStates.size() - 1 - i), false));
+                            currentNode.addChild(new Node<Type>(nextStates.get(nextStates.size() - 1 - i), false, scanner.getLineCount()));
                         }
                         currentNode = currentNode.getNextChild();
                     }
                     else if(nextStates.get(0)==RuleType.EPSILON)
                     {
                         //need to add epsilon terminal, go up a tree level
-                        currentNode.addChild(new Node<Type>(new Terminal(""), true));
+                        currentNode.setEpsilon(true);
                         currentNode = currentNode.getParent().getNextChild();
 
                     }

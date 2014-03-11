@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class Semantics
 {
+    private final List<String> errors;
     private final Node<Type> tree;
     private final List<Node<Type>> declarations;
     private final List<Node<Type>> statements;
@@ -24,6 +25,7 @@ public class Semantics
         this.symbolTable = symbolTable;
         declarations = new ArrayList<>();
         statements = new ArrayList<>();
+        errors = new ArrayList<>();
         annotateTree();
         getStatements();
         
@@ -77,15 +79,16 @@ public class Semantics
         {
             if(declaration.hasChildOfType(RuleType.OPTIONAL_INIT))
             {
-                String typeId="";
-                PrimitiveType constType;
+                PrimitiveType typeId = PrimitiveType.unknown;
+                PrimitiveType constType = PrimitiveType.unknown;
                 for(int i=0; i<declaration.getChildren().size(); i++)
                 {
                     Node<Type> child = declaration.getChildren().get(i);
                     if(child.getData().equals(RuleType.TYPE_ID))
                     {
-                        typeId=child.getChildren().get(0).toString().replace("\"", "");
+                        typeId= getPrimitiveFromId(child.getChildren().get(0).toString().replace("\"", ""),"");
                     }
+
                     if(child.getData().equals(RuleType.OPTIONAL_INIT))
                     {
                         Node<Type> constant = child.getChildren().get(1);
@@ -93,6 +96,9 @@ public class Semantics
                     }
                 }
                 //TODO: Compare Types
+               // if(!(typeId==PrimitiveType.unknown))
+                    //if(typeId!=constType)
+                        //errors.add()
             }
         }
         //TODO: MUST SEARCH FOR RETURN STATEMENTS

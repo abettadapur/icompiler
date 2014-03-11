@@ -16,10 +16,8 @@ public class Node<T> implements Iterable<Node<T>>
     private int currentChild;
     private T data;
     private static int tabLevel=0;
-
-
-
     private String scope;
+    private int lineNumber;
 
     public boolean isEpsilon() {
         return isEpsilon;
@@ -27,12 +25,21 @@ public class Node<T> implements Iterable<Node<T>>
 
     private boolean isEpsilon;
 
-    public Node(T data, boolean isEpsilon)
+    public Node(T data, boolean isEpsilon, int lineNumber)
     {
         this.isEpsilon=isEpsilon;
         this.data=data;
         this.currentChild=-1;
+        this.lineNumber=lineNumber;
         children = new ArrayList<>();
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+    public void setEpsilon(boolean epsilon)
+    {
+        this.isEpsilon=epsilon;
     }
 
     public Node<T> getParent() {
@@ -95,24 +102,26 @@ public class Node<T> implements Iterable<Node<T>>
        {
            for(int i=0; i<tabLevel; i++)
                out.append('\t');
-           if(!node.isLeaf())
+           if(!node.isEpsilon())
            {
-            out.append("<"+node.data+">\n");
-            tabLevel++;
+               if(!node.isLeaf())
+               {
+                out.append("<"+node.data+">\n");
+                tabLevel++;
 
-            for(int i=0; i<node.children.size(); i++)
-            {
-                out.append(preOrder(node.children.get(i)));
-            }
+                for(int i=0; i<node.children.size(); i++)
+                {
+                    out.append(preOrder(node.children.get(i)));
+                }
 
-           tabLevel--;
-           for(int i=0; i<tabLevel; i++)
-               out.append('\t');
-           out.append("</" + node.data + ">\n");
+               tabLevel--;
+               for(int i=0; i<tabLevel; i++)
+                   out.append('\t');
+               out.append("</" + node.data + ">\n");
+               }
+               else
+                   out.append("<" + node.data + "/>\n");
            }
-           else
-               out.append("<" + node.data + "/>\n");
-
 
        }
         return out.toString();
