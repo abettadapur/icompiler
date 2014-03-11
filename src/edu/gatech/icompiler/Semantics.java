@@ -129,40 +129,39 @@ public class Semantics
         return errors;
     }
 
-    public PrimitiveType evaluateExpression(Node<Type> subRoot)
+    public PrimitiveType evaluateExpression(Node<Type> subRoot, boolean seenComparator)
     {
         PrimitiveType currType = PrimitiveType.unknown;
         PrimitiveType compareType = PrimitiveType.unknown;
-        boolean seenComparator=false;
         TokenType currentOperator = null;
         if(subRoot.getData()==RuleType.EXPR)
         {
             if(subRoot.getChildren().get(0).getData()==TokenType.LPAREN)
             {
-                PrimitiveType exprType = evaluateExpression(subRoot.getChildren().get(1));
+                PrimitiveType exprType = evaluateExpression(subRoot.getChildren().get(1), seenComparator);
                 Node<Type> opexpr = subRoot.getChildren().get(3);
                 if(!opexpr.isEpsilon())
                 {
                     TokenType operator = (TokenType)opexpr.getChildren().get(0).getData();
+                    boolean comparator = operator==TokenType.EQ||operator==TokenType.NEQ||operator==TokenType.GEQ||operator==TokenType.LEQ||operator==TokenType.GREATER||operator==TokenType.LESSER;
                     Node<Type> expression = opexpr.getChildren().get(1);
-                    PrimitiveType newType = evaluateExpression(expression);
+                    PrimitiveType newType = evaluateExpression(expression,comparator);
                     if( typeCompatibility(exprType, operator, newType));
                     {
-                        if(currentOperator==TokenType.EQ||currentOperator==TokenType.NEQ||currentOperator==TokenType.GEQ||currentOperator==TokenType.LEQ||currentOperator==TokenType.GREATER||currentOperator==TokenType.LESSER)
-                        {
+                        if(comparator)
                             return PrimitiveType.integer;
-                        }
                         else
                             return exprType;
                     }
 
                 }
+                else
+                    return exprType;
 
-                currType = exprType;
             }
             else if(subRoot.getChildren().get(0).getData()==TokenType.MINUS)
             {
-                return evaluateExpression(subRoot.getChildren().get(1));
+                return evaluateExpression(subRoot.getChildren().get(1),false);
             }
             else
             {
@@ -319,7 +318,7 @@ public class Semantics
                     break;
                 }
                 //TODO: getArrayDimensions....
-                if(evaluateExpression(sel)!=PrimitiveType.integer)
+                if(evaluateExpression(sel,false)!=PrimitiveType.integer)
                 {
                     errors.add(sel.getLineNumber()+": Expression contained [] evaluated to unsupported type");
                     curType = PrimitiveType.unknown;
@@ -350,12 +349,12 @@ public class Semantics
                 errors.add(id.getLineNumber()+": For loops only support integer types");
                 return false;
             }
-            if((errorType = evaluateExpression(expression1))!=PrimitiveType.integer)
+            if((errorType = evaluateExpression(expression1,false))!=PrimitiveType.integer)
             {
                 errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+errorType.name());
                 return false;
             }
-            if((errorType= evaluateExpression(expression2))!=PrimitiveType.integer)
+            if((errorType= evaluateExpression(expression2,false))!=PrimitiveType.integer)
             {
                 errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+errorType.name());
                 return false;
@@ -370,7 +369,7 @@ public class Semantics
         if(subRoot.hasChildOfType(TokenType.WHILE))
         {
             Node<Type> expression = subRoot.getChildren().get(1);
-            if(evaluateExpression(expression)!=PrimitiveType.integer)
+            if(evaluateExpression(expression,false)!=PrimitiveType.integer)
             {
                errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
                return false;
@@ -386,7 +385,7 @@ public class Semantics
         if(subRoot.hasChildOfType(TokenType.IF))
         {
             Node<Type> expression = subRoot.getChildren().get(1);
-            if(evaluateExpression(expression)!=PrimitiveType.integer)
+            if(evaluateExpression(expression,false)!=PrimitiveType.integer)
             {
                 errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
                 return false;
