@@ -4,5 +4,7 @@ let
                 printi("Hello\n");
         end;
 in
-        print(5);
+        if(a+b+c>3) then
+        sum:=a;
+        endif;
 end
