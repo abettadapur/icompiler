@@ -60,11 +60,11 @@ public class Semantics
     {
         for(Node<Type> node: tree )
         {
-            if(node.getData().equals(RuleType.STAT))
+            if(node.getData()==RuleType.STAT)
             {
                 statements.add(node);
             }
-            if(node.getData().equals(RuleType.VAR_DECLARATION))
+            if(node.getData()==RuleType.VAR_DECLARATION)
             {
                 declarations.add(node);
             }
@@ -84,12 +84,12 @@ public class Semantics
                 for(int i=0; i<declaration.getChildren().size(); i++)
                 {
                     Node<Type> child = declaration.getChildren().get(i);
-                    if(child.getData().equals(RuleType.TYPE_ID))
+                    if(child.getData()==RuleType.TYPE_ID)
                     {
                         typeId= getPrimitiveFromId(child.getChildren().get(0).toString().replace("\"", ""),"");
                     }
 
-                    if(child.getData().equals(RuleType.OPTIONAL_INIT))
+                    if(child.getData()==RuleType.OPTIONAL_INIT)
                     {
                         Node<Type> constant = child.getChildren().get(1);
                         constType = getConstType(constant);
@@ -135,91 +135,124 @@ public class Semantics
         PrimitiveType compareType = PrimitiveType.unknown;
         boolean seenComparator=false;
         TokenType currentOperator = null;
-        if(subRoot.getData().equals(RuleType.EXPR))
+        if(subRoot.getData()==RuleType.EXPR)
         {
-            for(Node<Type> current: subRoot)
+            if(subRoot.getChildren().get(0).getData()==TokenType.LPAREN)
             {
-                if(current.getData().equals(RuleType.LVALUE))
+                PrimitiveType exprType = evaluateExpression(subRoot.getChildren().get(1));
+                Node<Type> opexpr = subRoot.getChildren().get(3);
+                if(!opexpr.isEpsilon())
                 {
-                    PrimitiveType newType = evaluateLValue(current);
-                    if(newType==PrimitiveType.unknown)
+                    TokenType operator = (TokenType)opexpr.getChildren().get(0).getData();
+                    Node<Type> expression = opexpr.getChildren().get(1);
+                    PrimitiveType newType = evaluateExpression(expression);
+                    if( typeCompatibility(exprType, operator, newType));
                     {
-                        currType = PrimitiveType.unknown; //error with the lvalue, should have been logged
-                        break;
-                    }
-                    //this is the first type we have seen
-                    if(currType==PrimitiveType.unknown)
-                    {
-                        currType = newType;
-                    }
-                    //we have an operator, must see if types are compatible
-                    else if(currentOperator!=null)
-                    {
-
-                        if(!typeCompatibility(currType, currentOperator, newType))
+                        if(currentOperator==TokenType.EQ||currentOperator==TokenType.NEQ||currentOperator==TokenType.GEQ||currentOperator==TokenType.LEQ||currentOperator==TokenType.GREATER||currentOperator==TokenType.LESSER)
                         {
-                            errors.add(current.getLineNumber()+": "+currentOperator.name()+" does not support arguments "+currType.name() +" and "+  newType.name() );
-                            currType = PrimitiveType.unknown;
-                            break;
+                            return PrimitiveType.integer;
                         }
                         else
-                        {
-                            //check passed, reset operator
-                            currentOperator=null;
-                        }
-                    }
-                    else
-                    {
-                        errors.add("Unknown parse tree error. Missing operator");
-                        currType = PrimitiveType.unknown;
-                        break;
+                            return exprType;
                     }
 
                 }
-                if(current.getData().equals(RuleType.CONST))
+
+                currType = exprType;
+            }
+            else if(subRoot.getChildren().get(0).getData()==TokenType.MINUS)
+            {
+                return evaluateExpression(subRoot.getChildren().get(1));
+            }
+            else
+            {
+                for(Node<Type> current: subRoot)
                 {
-                    PrimitiveType newType = getConstType(current);
-                    if(currType==PrimitiveType.unknown)
-                        currType = newType;
-                    else if(currentOperator!=null)
+                    if(current.getData()==RuleType.LVALUE)
                     {
-                        if(!typeCompatibility(currType, currentOperator, newType))
+                        PrimitiveType newType = evaluateLValue(current);
+                        if(newType==PrimitiveType.unknown)
                         {
-                            errors.add(current.getLineNumber()+": "+currentOperator.name()+" does not support arguments "+currType.name() +" and "+  newType.name() );
-                            currType = PrimitiveType.unknown;
+                            currType = PrimitiveType.unknown; //error with the lvalue, should have been logged
                             break;
                         }
-                    }
-                    else
-                    {
-                        errors.add("Unknown parse tree error. Missing operator");
-                        currType = PrimitiveType.unknown;
-                        break;
-                    }
-                }
-                //here is an operator
-                if(current.getData().equals(RuleType.MULTOP)||current.getData().equals(RuleType.ADDOP)||current.getData().equals(RuleType.BINOP))
-                {
-                    //grab that operator
-                    currentOperator = (TokenType)current.getChildren().get(0).getData();
-                    if(currentOperator==TokenType.EQ||currentOperator==TokenType.NEQ||currentOperator==TokenType.GEQ||currentOperator==TokenType.LEQ||currentOperator==TokenType.GREATER||currentOperator==TokenType.LESSER)
-                    {
-                        if(!seenComparator)
+                        //this is the first type we have seen
+                        if(currType==PrimitiveType.unknown)
                         {
-                            seenComparator=true;
-                            compareType = currType;
-                            currType=PrimitiveType.unknown;
-                            currentOperator=null;
+                            currType = newType;
+                        }
+                        //we have an operator, must see if types are compatible
+                        else if(currentOperator!=null)
+                        {
+
+                            if(!typeCompatibility(currType, currentOperator, newType))
+                            {
+                                errors.add(current.getLineNumber()+": "+currentOperator.name()+" does not support arguments "+currType.name() +" and "+  newType.name() );
+                                currType = PrimitiveType.unknown;
+                                break;
+                            }
+                            else
+                            {
+                                //check passed, reset operator
+                                currentOperator=null;
+                            }
                         }
                         else
                         {
-                            //ERRORS
+                            errors.add("Unknown parse tree error. Missing operator");
                             currType = PrimitiveType.unknown;
                             break;
+                        }
+
+                    }
+                    if(current.getData()==RuleType.CONST)
+                    {
+                        PrimitiveType newType = getConstType(current);
+                        if(currType==PrimitiveType.unknown)
+                            currType = newType;
+                        else if(currentOperator!=null)
+                        {
+                            if(!typeCompatibility(currType, currentOperator, newType))
+                            {
+                                errors.add(current.getLineNumber()+": "+currentOperator.name()+" does not support arguments "+currType.name() +" and "+  newType.name() );
+                                currType = PrimitiveType.unknown;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            errors.add("Unknown parse tree error. Missing operator");
+                            currType = PrimitiveType.unknown;
+                            break;
+                        }
+                    }
+                    //here is an operator
+                    if(current.getData()==RuleType.MULTOP||current.getData()==RuleType.ADDOP||current.getData()==RuleType.BINOP)
+                    {
+                        //grab that operator
+                        currentOperator = (TokenType)current.getChildren().get(0).getData();
+                        if(currentOperator==TokenType.EQ||currentOperator==TokenType.NEQ||currentOperator==TokenType.GEQ||currentOperator==TokenType.LEQ||currentOperator==TokenType.GREATER||currentOperator==TokenType.LESSER)
+                        {
+                            if(!seenComparator)
+                            {
+                                seenComparator=true;
+                                compareType = currType;
+                                currType=PrimitiveType.unknown;
+                                currentOperator=null;
+                            }
+                            else
+                            {
+                                //ERRORS
+                                currType = PrimitiveType.unknown;
+                                break;
+                            }
                         }
                     }
                 }
             }
+
+
+
             if(seenComparator)
             {
                 if(compareType==currType)
@@ -384,8 +417,8 @@ public class Semantics
 
     public PrimitiveType getConstType(Node<Type> constant)
     {
-        if(constant.getData().equals(RuleType.CONST))
-            if(constant.getChildren().get(0).equals(TokenType.INTLIT))
+        if(constant.getData()==RuleType.CONST)
+            if(constant.getChildren().get(0).getData()==TokenType.INTLIT)
                 return PrimitiveType.integer;
             else
                 return PrimitiveType.str;
