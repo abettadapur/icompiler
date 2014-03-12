@@ -3,6 +3,8 @@ package edu.gatech.fallback;
 import edu.gatech.facade.ITable;
 import edu.gatech.icompiler.*;
 import edu.gatech.util.Node;
+import org.junit.Rule;
+import sun.print.resources.serviceui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +15,7 @@ import java.util.List;
  */
 public class SymbolTable implements ITable
 {
-    HashMap<String, Binding> identifiers;
+    HashMap<String, List<Binding>> identifiers;
     HashMap<String, DeclaredType> typeLookup;
     HashMap<DeclaredType, DeclaredType> typeMapping;
 
@@ -26,109 +28,260 @@ public class SymbolTable implements ITable
         typeMapping = new HashMap<>();
     }
 
+    public List<String> populateTable(Node<Type> declaration)
+    {
+        if(declaration.getData()==RuleType.DECLARATION_SEGMENT)
+        {
+            List<String> errors = new ArrayList<String>();
+            errors.addAll(populateTypes(declaration.getChildren().get(0)));
+            errors.addAll(populateVars(declaration.getChildren().get(1)));
+            errors.addAll(populateFunctions(declaration.getChildren().get(2)));
+            return errors;
+        }
+        else
+            throw new IllegalArgumentException();
+    }
+
     //TODO: Figure out arrays
-    public void populateTypes(Node<Type> subRoot)
+    public List<String> populateTypes(Node<Type> subRoot)
     {
+        List<String> errors = new ArrayList<String>();
+        if(subRoot.getData()==RuleType.TYPE_DECLARATION_LIST)
+        {
         //subRoot is of type TypeDeclarationList
-        for(Node<Type> currentNode:subRoot)
-        {
-            if(currentNode.getData()== RuleType.TYPE_DECLARATION)
+            for(Node<Type> currentNode:subRoot)
             {
-                String alias = ((Terminal)currentNode.getChildren().get(1).getData()).getContent();
-
-                Node<Type> typeNode = currentNode.getChildren().get(3);
-
-                if(typeNode.getChildren().get(0).getData() == TokenType.ARRAY)
+                if(currentNode.getData()== RuleType.TYPE_DECLARATION)
                 {
-                    //this is a new type, no mapping needed
-                    int dimension = 0;
-                    for(Node<Type> node: typeNode)
+                    String alias = ((Terminal)currentNode.getChildren().get(1).getChildren().get(0).getData()).getContent();
+
+                    Node<Type> typeNode = currentNode.getChildren().get(3);
+
+                    if(typeNode.getChildren().get(0).getData() == TokenType.ARRAY)
                     {
-                        if(node.getData()==TokenType.LBRACK)
+                        //this is a new type, no mapping needed
+                        int dimension = 0;
+                        for(Node<Type> node: typeNode)
                         {
-                            dimension++;
+                            if(node.getData()==TokenType.LBRACK)
+                            {
+                                dimension++;
+                            }
                         }
-                    }
-                    String containerId = ((Terminal)typeNode.getChildren().get(6).getChildren().get(0).getChildren().get(0).getData()).getContent();
-                    if(!typeLookup.containsKey(containerId))
-                    {
-                        //undeclared type
+                        String containerId = ((Terminal)typeNode.getChildren().get(6).getChildren().get(0).getChildren().get(0).getData()).getContent();
+                        if(!typeLookup.containsKey(containerId))
+                        {
+                            errors.add(currentNode.getLineNumber()+": Type "+containerId+" is not a declared type");
+
+                        }
+                        else
+                        {
+                            DeclaredType arrayType = new DeclaredType(dimension, typeLookup.get(containerId), "");
+                            if(!addType(alias, arrayType))
+                            {
+                                errors.add(currentNode.getLineNumber()+": Type "+alias+" has already been declared");
+
+                            }
+                        }
+
                     }
                     else
                     {
-                        DeclaredType arrayType = new DeclaredType(dimension, typeLookup.get(containerId));
-                        if(!addType(alias, arrayType))
+                        String id = ((Terminal)typeNode.getChildren().get(0).getChildren().get(0).getChildren().get(0).getData()).getContent();
+                        if(!typeLookup.containsKey(id))
                         {
-                            //error alias already delclared
+                            errors.add(currentNode.getLineNumber()+": Type "+id+" is not a declared type");
+
                         }
+                        else
+                        {
+                            DeclaredType oldType = typeLookup.get(id);
+                            DeclaredType newType = new DeclaredType(alias, "");
+                            if(!addType(alias, newType))
+                            {
+                                errors.add(currentNode.getLineNumber()+": Type "+alias+" has already been declared");
+
+                            }
+                            else
+                                if(!addTypeMap(newType, oldType))
+                                {
+                                    errors.add(currentNode.getLineNumber()+": Type "+alias+" has already been declared");
+
+                                }
+
+                        }
+
                     }
 
                 }
-                else
+            }
+        }
+        else
+            throw new IllegalArgumentException();
+
+        return errors;
+
+    }
+
+    public List<String> populateVars(Node<Type> subRoot)
+    {
+        if(subRoot.getData()==RuleType.VAR_DECLARATION_LIST)
+        {
+            //subRoot is a var_decl-list
+            List<String> errors = new ArrayList<>();
+            for(Node<Type> currentNode:subRoot)
+            {
+                if(currentNode.getData()==RuleType.VAR_DECLARATION)
                 {
-                    String id = ((Terminal)typeNode.getChildren().get(0).getChildren().get(0).getChildren().get(0).getData()).getContent();
-                    if(!typeLookup.containsKey(id))
+                    //new variable declaration
+                    Node<Type> id_list = currentNode.getChildren().get(1);
+                    Node<Type> type_id = currentNode.getChildren().get(3);
+                    String typeid = ((Terminal)type_id.getChildren().get(0).getChildren().get(0).getData()).getContent();   //type-id->id->terminal
+                    DeclaredType type = findType(typeid);
+                    if(type!=null)
                     {
-                        //error undeclared type
+                        List<String> ids = new ArrayList<>();
+                        for(Node<Type> node: id_list)
+                        {
+                            if(node.getData()==TokenType.ID)
+                            {
+                                ids.add(((Terminal)node.getChildren().get(0).getData()).getContent()); //add id to list to add
+                            }
+                        }
+                        for(String id:ids)
+                        {
+
+                           String error = addVariable(id, type, "");
+                            if(!error.equals(""))
+                            {
+                                errors.add(currentNode.getLineNumber()+": "+error);
+                            }
+
+                        }
                     }
                     else
                     {
-                        DeclaredType oldType = typeLookup.get(id);
-                        DeclaredType newType = new DeclaredType(alias);
-                        if(!addTypeMap(newType, oldType))
-                        {
-                            //error
-                        }
+                        errors.add(currentNode.getLineNumber()+": Type "+typeid+" has not been declared");
 
                     }
 
                 }
-
             }
+            return errors;
         }
+        else
+            throw new IllegalArgumentException();
 
     }
-
-    public void populateVars(Node<Type> subRoot)
+    private String addVariable(String id, DeclaredType type, String scope)
     {
-        //subRoot is a var_decl-list
-        for(Node<Type> currentNode:subRoot)
+        Binding entry = new Binding(id,type,scope);
+        if(identifiers.containsKey(id))
         {
-            if(currentNode.getData()==RuleType.VAR_DECLARATION)
+            if(identifiers.get(id).contains(entry))
             {
-                //new variable declaration
-                Node<Type> id_list = currentNode.getChildren().get(1);
-                Node<Type> type_id = currentNode.getChildren().get(3);
-                String typeid = ((Terminal)type_id.getChildren().get(0).getChildren().get(0).getData()).getContent();   //type-id->id->terminal
-                if(!findType(typeid).equals(""))
-                {
-                    List<String> ids = new ArrayList<>();
-                    for(Node<Type> node: id_list)
-                    {
-                        if(node.getData()==TokenType.ID)
-                        {
-                            ids.add(((Terminal)node.getChildren().get(0).getData()).getContent()); //add id to list to add
-                        }
-                    }
-                    for(String id:ids)
-                    {
-                       // Binding entry = new Binding()
-                    }
-                }
-
+                return id+" has already been declared in this context";
+            }
+            else
+            {
+                identifiers.get(id).add(entry);
             }
         }
+        else
+        {
+            List<Binding> entries = new ArrayList<Binding>();
+            entries.add(entry);
+            identifiers.put(id, entries);
+        }
+        return "";
     }
-    public void populateFunctions(Node<Type> subRoot)
+    private String addFunction(String id, DeclaredType returnType, List<DeclaredType> params)
     {
-        //sub root is a funct declaration
+        Binding entry = new Binding(id,returnType,"", params);
+        if(identifiers.containsKey(id))
+        {
+            if(identifiers.get(id).contains(entry))
+            {
+                //error, var of this scope and name exists in the table already
+                return id+" has already been declared in this context";
+            }
+            else
+            {
+                identifiers.get(id).add(entry);
+            }
+        }
+        else
+        {
+            List<Binding> entries = new ArrayList<Binding>();
+            entries.add(entry);
+            identifiers.put(id, entries);
+        }
+        return "";
     }
+    public List<String> populateFunctions(Node<Type> subRoot)
+    {
+        if(subRoot.getData()== RuleType.FUNCT_DECLARATION_LIST)
+        {
+            List<String> errors = new ArrayList<>();
+            for(Node<Type> currentNode: subRoot)
+            {
+                if(currentNode.getData()==RuleType.FUNCT_DECLARATION)
+                {
+                    List<DeclaredType> parameters = new ArrayList<DeclaredType>();
+                    String funcId = ((Terminal)currentNode.getChildren().get(1).getChildren().get(0).getData()).getContent();
+                    Node<Type> param_list = currentNode.getChildren().get(3);
+                    Node<Type> return_type = currentNode.getChildren().get(5);
+                    if(!param_list.isEpsilon())
+                    {
+                        for(Node<Type> param: param_list)
+                        {
+                            if(param.getData()==RuleType.PARAM)
+                            {
+                                String paramId = ((Terminal)param.getChildren().get(0).getChildren().get(0).getData()).getContent();
+                                String paramTypeId = ((Terminal)param.getChildren().get(2).getChildren().get(0).getChildren().get(0).getData()).getContent();
+                                DeclaredType paramType = findType(paramTypeId);
+                                if(paramType!=null)
+                                {
+                                    addVariable(paramId, paramType, funcId);
+                                    parameters.add(paramType);
+                                }
+                                else
+                                {
+                                    errors.add(currentNode.getLineNumber()+": Type "+paramTypeId+" has not been declared");
+                                }
 
-    public boolean addIdentifier(String name, Binding bindings)
-    {
-        //check bindings are valid first
-        identifiers.put(name,bindings);
-        return false;
+
+
+                            }
+                        }
+                    }
+                    //grab return type
+                    DeclaredType returnType = null;
+                    if(!return_type.isEpsilon())
+                    {
+                        String returnId = ((Terminal)return_type.getChildren().get(1).getChildren().get(0).getChildren().get(0).getData()).getContent();
+                        returnType = findType(returnId);
+                        if(returnType==null)
+                        {
+                            errors.add(currentNode.getLineNumber()+": Type "+returnId+" has not been declared");
+                            continue;
+                        }
+
+                    }
+                   String error =  addFunction(funcId, returnType, parameters);
+                    if(!error.equals(""))
+                    {
+                        errors.add(currentNode.getLineNumber()+": "+error);
+                    }
+
+
+
+                }
+            }
+            return errors;
+        }
+        else
+            throw new IllegalArgumentException();
     }
     public boolean addTypeMap(DeclaredType alias, DeclaredType aliased)
     {
@@ -142,6 +295,7 @@ public class SymbolTable implements ITable
         if(typeLookup.containsKey(id))
             return false;
         typeLookup.put(id, type);
+        return true;
     }
 
 
@@ -159,6 +313,7 @@ public class SymbolTable implements ITable
     {
         return typeLookup.get(name);
     }
+    //TODO: does not work
     public DeclaredType findPrimitive(String name,String scope)
     {
         while(true)

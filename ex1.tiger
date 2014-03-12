@@ -1,6 +1,8 @@
 
 let
         type ArrayInt = array [100] of int; /*Declare ArrayInt as a new type */
+        type A = int;
+        type B = A;
         var X, Y : ArrayInt := 10; /* Declare vars X and Y as arrays with initialization */
         var i, sum :int := 0;
 in

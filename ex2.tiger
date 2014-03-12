@@ -1,6 +1,10 @@
 let
 
-        function print ( n : int, b:int ) begin
+		type A = int;
+		type B = int;
+		type B = C;
+		type D = E;
+        function print ( n : int, b:int ) : string begin
                 printi("Hello\n");
         end;
 in

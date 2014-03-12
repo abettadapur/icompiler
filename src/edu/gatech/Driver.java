@@ -1,11 +1,13 @@
 package edu.gatech;
 
+import edu.gatech.fallback.SymbolTable;
 import edu.gatech.icompiler.Parser;
 import edu.gatech.icompiler.Semantics;
 import edu.gatech.icompiler.Type;
 import edu.gatech.util.Node;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by Stefano on 2/23/14.
@@ -35,8 +37,20 @@ public class Driver {
             Node<Type> parseTree =  parser.parse(new File(args[0]));
             if(parseTree!=null)
             {
-                Semantics checker = new Semantics(parseTree, null); //MUST CHANGE
-                checker.performChecks();
+                SymbolTable table = new SymbolTable();
+                List<String> errors = table.populateTable(parseTree.getChildren().get(1));
+                if(errors.size()==0)
+                {
+                    Semantics checker = new Semantics(parseTree, null); //MUST CHANGE
+                    checker.performChecks();
+                }
+                else
+                {
+                    for(String s: errors)
+                    {
+                        System.out.println(s);
+                    }
+                }
             }
         }catch(Exception e){
             e.printStackTrace();

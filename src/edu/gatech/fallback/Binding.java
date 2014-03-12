@@ -4,31 +4,53 @@ import java.util.List;
 public  class Binding
 {
     private String name;
-    private String type;
+    private DeclaredType type;
     private String scope;
-    private String isFunction;
-    private List<String> params;
+    private boolean isFunction;
+    private List<DeclaredType> params;
 
-    public String toString(){
-        return "["+name + " " +type+"]";
+    public Binding(String name, DeclaredType type, String scope, List<DeclaredType> params) {
+        this.name = name;
+        this.type = type;
+        this.scope = scope;
+        this.params = params;
+        isFunction=true;
     }
-    private class DeclaredType{
-        String typeName;
 
-        public DeclaredType(String typeName){
-            this.typeName = typeName;
-        }
+    public Binding(String name, DeclaredType type, String scope) {
 
-        public int hashCode(){
-            return typeName.hashCode();
-        }
+        this.name = name;
+        this.type = type;
+        this.scope = scope;
+        isFunction=false;
+    }
 
-        public boolean equals(Object other ){
-            if(null == other) return false;
-            if(this == other) return true;
-            if(!(other instanceof DeclaredType)) return false;
-            DeclaredType temp = (DeclaredType) other;
-            return temp.typeName.equals(typeName);
-        }
+    public String getName() {
+        return name;
+    }
+
+    public DeclaredType getType() {
+        return type;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public boolean isFunction() {
+        return isFunction;
+    }
+
+    public List<DeclaredType> getParams() {
+        return params;
+    }
+
+    public boolean equals(Object other)
+    {
+        if(null == other) return false;
+        if(this == other) return true;
+        if(!(other instanceof DeclaredType)) return false;
+        Binding temp = (Binding) other;
+        return temp.name.equals(name)&&temp.scope.equals(scope);
     }
 }
