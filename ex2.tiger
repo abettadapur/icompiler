@@ -2,9 +2,8 @@ let
 
 		type A = int;
 		type B = int;
-		type B = C;
-		type D = E;
-        function print ( n : int, b:int ) : string begin
+		var X : B;
+        function print ( n : int, b:int ) : B begin
                 printi("Hello\n");
         end;
 in

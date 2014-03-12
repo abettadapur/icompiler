@@ -6,6 +6,7 @@ import edu.gatech.icompiler.Semantics;
 import edu.gatech.icompiler.Type;
 import edu.gatech.util.Node;
 
+import javax.sound.midi.SysexMessage;
 import java.io.File;
 import java.util.List;
 
@@ -41,11 +42,13 @@ public class Driver {
                 List<String> errors = table.populateTable(parseTree.getChildren().get(1));
                 if(errors.size()==0)
                 {
-                    Semantics checker = new Semantics(parseTree, null); //MUST CHANGE
+                    System.out.println(table.findPrimitive("X", "").getTypeName());
+                    Semantics checker = new Semantics(parseTree, table); //MUST CHANGE
                     checker.performChecks();
                 }
                 else
                 {
+
                     for(String s: errors)
                     {
                         System.out.println(s);

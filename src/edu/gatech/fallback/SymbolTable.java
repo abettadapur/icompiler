@@ -42,8 +42,7 @@ public class SymbolTable implements ITable
             throw new IllegalArgumentException();
     }
 
-    //TODO: Figure out arrays
-    public List<String> populateTypes(Node<Type> subRoot)
+    private List<String> populateTypes(Node<Type> subRoot)
     {
         List<String> errors = new ArrayList<String>();
         if(subRoot.getData()==RuleType.TYPE_DECLARATION_LIST)
@@ -123,7 +122,7 @@ public class SymbolTable implements ITable
 
     }
 
-    public List<String> populateVars(Node<Type> subRoot)
+    private List<String> populateVars(Node<Type> subRoot)
     {
         if(subRoot.getData()==RuleType.VAR_DECLARATION_LIST)
         {
@@ -218,7 +217,7 @@ public class SymbolTable implements ITable
         }
         return "";
     }
-    public List<String> populateFunctions(Node<Type> subRoot)
+    private List<String> populateFunctions(Node<Type> subRoot)
     {
         if(subRoot.getData()== RuleType.FUNCT_DECLARATION_LIST)
         {
@@ -283,14 +282,14 @@ public class SymbolTable implements ITable
         else
             throw new IllegalArgumentException();
     }
-    public boolean addTypeMap(DeclaredType alias, DeclaredType aliased)
+    private boolean addTypeMap(DeclaredType alias, DeclaredType aliased)
     {
         if(typeMapping.containsKey(alias))
             return false;
         typeMapping.put(alias, aliased);
         return true;
     }
-    public boolean addType(String id, DeclaredType type)
+    private boolean addType(String id, DeclaredType type)
     {
         if(typeLookup.containsKey(id))
             return false;
@@ -300,12 +299,24 @@ public class SymbolTable implements ITable
 
 
     @Override
-    public List<Binding> find(String name) {
-        return null;
+    public List<Binding> find(String name)
+    {
+        return identifiers.get(name);
     }
 
     @Override
-    public Binding findByNameScope(String name, String scope) {
+    public Binding findByNameScope(String name, String scope)
+    {
+        List<Binding> entries = find(name);
+        if(entries == null)
+            return null;
+        for(Binding b: entries)
+        {
+            if(b.getScope().equals(scope))
+            {
+                return b;
+            }
+        }
         return null;
     }
 
@@ -316,16 +327,17 @@ public class SymbolTable implements ITable
     //TODO: does not work
     public DeclaredType findPrimitive(String name,String scope)
     {
+        Binding b = findByNameScope(name, scope);
+        if(b==null)
+            return null;
+        DeclaredType type = b.getType();
         while(true)
         {
-            DeclaredType type = findType(name);
-            if(type==null)
-                return null;
-            if(type.isArray())
+            if(type.equals(DeclaredType.integer)||type.equals(DeclaredType.str)||type.isArray())
+            {
                 return type;
-            DeclaredType mapping = typeMapping.get(type);
-            if(mapping.equals(DeclaredType.integer)|| mapping.equals(DeclaredType.str))
-                return mapping;
+            }
+            type = typeMapping.get(type);
         }
 
 
