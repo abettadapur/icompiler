@@ -258,7 +258,7 @@ public class Semantics
                     currType=PrimitiveType.integer;
                 else
                 {
-                    //error, compare two different ops;
+                    errors.add(subRoot.getLineNumber()+": Cannot compare "+compareType.name()+" to "+currType.name());
                     currType=PrimitiveType.unknown;
                 }
             }
@@ -335,7 +335,7 @@ public class Semantics
         return PrimitiveType.integer;
     }
 
-    public boolean evaluateFor(Node<Type> subRoot)
+    public void evaluateFor(Node<Type> subRoot)
     {
         if(subRoot.hasChildOfType(TokenType.FOR))
         {
@@ -347,24 +347,24 @@ public class Semantics
             if(getPrimitiveFromId(id.getChildren().get(0).getData().toString().replace("\"",""), id.getScope())!=PrimitiveType.integer)
             {
                 errors.add(id.getLineNumber()+": For loops only support integer types");
-                return false;
+
             }
             if((errorType = evaluateExpression(expression1,false))!=PrimitiveType.integer)
             {
                 errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+errorType.name());
-                return false;
+
             }
             if((errorType= evaluateExpression(expression2,false))!=PrimitiveType.integer)
             {
                 errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+errorType.name());
-                return false;
+
             }
-            return true;
+
         }
         else
             throw new IllegalArgumentException();
     }
-    public boolean evaluateWhile(Node<Type> subRoot)
+    public void evaluateWhile(Node<Type> subRoot)
     {
         if(subRoot.hasChildOfType(TokenType.WHILE))
         {
@@ -372,15 +372,15 @@ public class Semantics
             if(evaluateExpression(expression,false)!=PrimitiveType.integer)
             {
                errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
-               return false;
+
             }
-            return true;
+
         }
         else
             throw new IllegalArgumentException();
 
     }
-    public boolean evaluateIf(Node<Type> subRoot)
+    public void evaluateIf(Node<Type> subRoot)
     {
         if(subRoot.hasChildOfType(TokenType.IF))
         {
@@ -388,14 +388,14 @@ public class Semantics
             if(evaluateExpression(expression,false)!=PrimitiveType.integer)
             {
                 errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
-                return false;
+
             }
-            return true;
+
         }
         else
             throw new IllegalArgumentException();
     }
-    public boolean evaluateReturn(Node<Type> subRoot)
+    public void evaluateReturn(Node<Type> subRoot)
     {
         if(subRoot.hasChildOfType(TokenType.RETURN))
         {
@@ -403,15 +403,85 @@ public class Semantics
             //TODO: lookup symbol table;
 
         }
-        return false;
+
     }
-    public boolean evaluateStatAssign(Node<Type> subRoot)
+    public void evaluateStatAssign(Node<Type> subRoot)
     {
         if(subRoot.hasChildOfType(RuleType.STAT_ASSIGN))
         {
+            Node<Type> identifier = subRoot.getChildren().get(0);
+
+            Node<Type> statAssign = subRoot.getChildren().get(1);
+
+            if(statAssign.getChildren().get(0).getData()==TokenType.LPAREN)
+            {
+                //TODO: check existence of function. If exist, ok.
+            }
+            else if(statAssign.getChildren().get(0).getData()==RuleType.LVALUE_TAIL||statAssign.getChildren().get(0).getData()==TokenType.ASSIGN)
+            {
+                PrimitiveType idType;
+                PrimitiveType secondType = null;
+                Node<Type> expr_or_id=null;
+                if(statAssign.hasChildOfType(RuleType.LVALUE_TAIL))
+                {
+                    //make fake subtree, test lvalue
+                    Node<Type> lvalueSurrogate = new Node<Type>(RuleType.LVALUE, false, 0);
+                    lvalueSurrogate.getChildren().add(identifier);
+                    lvalueSurrogate.getChildren().add(statAssign.getChildren().get(0));
+
+                    idType = evaluateLValue(lvalueSurrogate);
+
+                    expr_or_id = statAssign.getChildren().get(2);
+                }
+                else
+                {
+                    expr_or_id = statAssign.getChildren().get(1);
+                    idType = getPrimitiveFromId(identifier.getChildren().get(0).getData().toString().replace("\"", ""), subRoot.getScope());
+                }
+
+                if(expr_or_id.getChildren().get(0).getData()==RuleType.EXPR_NO_LVALUE)
+                {
+                    Node<Type> expr_no_lvalue = expr_or_id.getChildren().get(0);
+                    if(expr_no_lvalue.getChildren().get(0).getData()==RuleType.CONST)
+                    {
+                        secondType = getConstType(expr_no_lvalue.getChildren().get(0));
+                    }
+                    else
+                    {
+                        //this is now an expression
+                        expr_no_lvalue.setData(RuleType.EXPR);
+                        secondType = evaluateExpression(expr_no_lvalue, false);
+                    }
+                }
+                else if(expr_or_id.getChildren().get(0).getData()==TokenType.ID)
+                {
+                    Node<Type> expr_or_funcId = expr_or_id.getChildren().get(0);
+                    Node<Type> expr_or_func = expr_or_id.getChildren().get(1);
+                    if(expr_or_func.getChildren().get(0).getData()==TokenType.LPAREN)
+                    {
+                        //TODO:function call
+                        //check return type
+                    }
+                    else
+                    {
+                        //TODO: opexpression..........
+                        //lvalue_tail opexpr
+                        //TODO:make fake lvalue again, figure out how to use opexpr without rewriting eval expr
+                    }
+
+
+                }
+                if(idType!=null&&secondType!=null)
+                {
+                    if(idType!=secondType)
+                        errors.add(subRoot.getLineNumber()+": Tried to assign "+idType.name()+" to "+secondType.name());
+                }
+            }
+
+
 
         }
-        return false;
+
     }
 
     public PrimitiveType getConstType(Node<Type> constant)

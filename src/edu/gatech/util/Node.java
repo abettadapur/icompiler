@@ -61,6 +61,7 @@ public class Node<T> implements Iterable<Node<T>>
                 currentChild=0;
         }
     }
+
     public Node<T> getNextChild()
     {
         if(currentChild==children.size())
