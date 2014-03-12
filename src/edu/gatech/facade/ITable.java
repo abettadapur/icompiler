@@ -1,6 +1,7 @@
 package edu.gatech.facade;
 
-import edu.gatech.icompiler.Entry;
+import edu.gatech.fallback.DeclaredType;
+import edu.gatech.fallback.Binding;
 
 import java.util.List;
 
@@ -9,7 +10,9 @@ import java.util.List;
  */
 public interface ITable
 {
-    public List<Entry> find(String name);
-    public Entry findByNameScope(String name, String scope);
+    public List<Binding> find(String name);
+    public Binding findByNameScope(String name, String scope);
+    public DeclaredType findType(String id);
+    public DeclaredType findPrimitive(String id,String scope);
 }
 

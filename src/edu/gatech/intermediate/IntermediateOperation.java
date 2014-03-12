@@ -1,7 +1,6 @@
 package edu.gatech.intermediate;
 
-import edu.gatech.icompiler.Entry;
-import edu.gatech.icompiler.Token;
+import edu.gatech.fallback.Binding;
 
 import java.util.List;
 
@@ -11,16 +10,16 @@ import java.util.List;
 public class IntermediateOperation {
 
     private Operator op;
-    private Entry x;
-    private Entry y;
-    private Entry z;
+    private Binding x;
+    private Binding y;
+    private Binding z;
 
     private String label;
-    private List<Entry> parameters;
+    private List<Binding> parameters;
 
 
 
-    public IntermediateOperation(Operator op, Entry x, Entry y, Entry z, String label, List<Entry> parameters){
+    public IntermediateOperation(Operator op, Binding x, Binding y, Binding z, String label, List<Binding> parameters){
         this.op = op;
         this.x = x;
         this.y =y;
