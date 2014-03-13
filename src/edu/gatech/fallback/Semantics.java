@@ -423,6 +423,19 @@ public class Semantics
             if(statAssign.getChildren().get(0).getData()==TokenType.LPAREN)
             {
                 //TODO: check existence of function. If exist, ok.
+                String id = ((Terminal)identifier.getChildren().get(0).getData()).getContent();
+                Binding binding = symbolTable.findByNameScope(id,"");
+                if(binding == null)
+                {
+                    errors.add(subRoot.getLineNumber()+": Cannot find symbol "+id+" in current context");
+                }
+                else
+                {
+                    if(!binding.isFunction())
+                    {
+                        errors.add(subRoot.getLineNumber()+": "+id+" is not a function");
+                    }
+                }
             }
             else if(statAssign.getChildren().get(0).getData()==RuleType.LVALUE_TAIL||statAssign.getChildren().get(0).getData()==TokenType.ASSIGN)
             {
