@@ -310,6 +310,11 @@ public class SymbolTable implements ITable
         List<Binding> entries = find(name);
         if(entries == null)
             return null;
+        if(entries.size()==1)
+        {
+            if(entries.get(0).getScope().equals(""))
+                return entries.get(0);
+        }
         for(Binding b: entries)
         {
             if(b.getScope().equals(scope))

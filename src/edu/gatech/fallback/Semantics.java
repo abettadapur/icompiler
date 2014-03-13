@@ -94,7 +94,7 @@ public class Semantics
                     Node<Type> child = declaration.getChildren().get(i);
                     if(child.getData()==RuleType.TYPE_ID)
                     {
-                        typeId= getPrimitiveFromId(((Terminal)child.getChildren().get(0).getData()).getContent(), "");
+                        typeId= getPrimitiveFromId(((Terminal)child.getChildren().get(0).getChildren().get(0).getData()).getContent(), "");
                     }
 
                     if(child.getData()==RuleType.OPTIONAL_INIT)
@@ -147,6 +147,10 @@ public class Semantics
             if(subRoot.getChildren().get(0).getData()==TokenType.LPAREN)
             {
                 DeclaredType exprType = evaluateExpression(subRoot.getChildren().get(1), seenComparator);
+                if(exprType==null)
+                {
+                    return null;
+                }
                 Node<Type> opexpr = subRoot.getChildren().get(3);
                 if(!opexpr.isEpsilon())
                 {
@@ -262,6 +266,9 @@ public class Semantics
 
             if(seenComparator)
             {
+
+                if(compareType==null)
+                    return currType;
                 if(compareType==currType)
                     currType=DeclaredType.integer;
                 else
@@ -278,7 +285,7 @@ public class Semantics
 
     public boolean typeCompatibility(DeclaredType type1, TokenType operator, DeclaredType type2)
     {
-        if(type1.equals(type2))
+        if(!type1.equals(type2))
             return false;
         if(type1.equals(DeclaredType.str))
         {
@@ -310,10 +317,11 @@ public class Semantics
         {
             if(sel.getData()==TokenType.ID)
             {
-                curType = getPrimitiveFromId(((Terminal)sel.getChildren().get(0).getData()).getContent(), sel.getScope());
+                String id = ((Terminal)sel.getChildren().get(0).getData()).getContent();
+                curType = getPrimitiveFromId(id, sel.getScope());
                 if(curType==null)
                 {
-                    //error with ID
+                    errors.add(subRoot.getLineNumber()+": "+id+" could not be found in the current context");
                     return null;
                 }
             }
@@ -348,7 +356,9 @@ public class Semantics
         {
             Node<Type> id = subRoot.getChildren().get(1);
             Node<Type> expression1 = subRoot.getChildren().get(3);
+            DeclaredType expression1Type = evaluateExpression(expression1, false);
             Node<Type> expression2 = subRoot.getChildren().get(5);
+            DeclaredType expression2Type = evaluateExpression(expression2, false);
             DeclaredType errorType;
 
             if(!getPrimitiveFromId(((Terminal)id.getChildren().get(0).getData()).getContent(), id.getScope()).equals(DeclaredType.integer))
@@ -356,14 +366,15 @@ public class Semantics
                 errors.add(id.getLineNumber()+": For loops only support integer types");
 
             }
-            if(!(errorType = evaluateExpression(expression1,false)).equals(DeclaredType.integer))
+
+            if(expression1Type!=null&&!expression1Type.equals(DeclaredType.integer))
             {
-                errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+errorType.getTypeName());
+                errors.add(id.getLineNumber() + ": Expected int, expression evaluated to " + expression1Type.getTypeName());
 
             }
-            if(!(errorType= evaluateExpression(expression2,false)).equals(DeclaredType.integer))
+            if(expression2Type!=null&&!expression2Type.equals(DeclaredType.integer))
             {
-                errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+errorType.getTypeName());
+                errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+expression2Type.getTypeName());
 
             }
 
@@ -376,7 +387,8 @@ public class Semantics
         if(subRoot.hasChildOfType(TokenType.WHILE))
         {
             Node<Type> expression = subRoot.getChildren().get(1);
-            if(!evaluateExpression(expression,false).equals(DeclaredType.integer))
+            DeclaredType expressionType = evaluateExpression(expression,false);
+            if(expressionType!=null&&!expression.equals(DeclaredType.integer))
             {
                 errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
 
@@ -392,7 +404,8 @@ public class Semantics
         if(subRoot.hasChildOfType(TokenType.IF))
         {
             Node<Type> expression = subRoot.getChildren().get(1);
-            if(!evaluateExpression(expression,false).equals(DeclaredType.integer))
+            DeclaredType expressionType = evaluateExpression(expression, false);
+            if(expressionType!=null&&expression.equals(DeclaredType.integer))
             {
                 errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
 
@@ -407,7 +420,13 @@ public class Semantics
         if(subRoot.hasChildOfType(TokenType.RETURN))
         {
             String functionId = subRoot.getScope();
-            //TODO: lookup symbol table;
+            DeclaredType expressionType = evaluateExpression(subRoot.getChildren().get(1), false);
+            DeclaredType returnType = symbolTable.findPrimitive(functionId, "");
+            if(expressionType!=null&&!expressionType.equals(returnType))
+            {
+                errors.add(subRoot.getLineNumber()+": "+expressionType.getTypeName()+" does not match expected return type "+returnType.getTypeName());
+
+            }
 
         }
 
@@ -437,6 +456,7 @@ public class Semantics
                     }
                 }
             }
+
             else if(statAssign.getChildren().get(0).getData()==RuleType.LVALUE_TAIL||statAssign.getChildren().get(0).getData()==TokenType.ASSIGN)
             {
                 DeclaredType idType;
@@ -455,8 +475,14 @@ public class Semantics
                 }
                 else
                 {
-                    expr_or_id = statAssign.getChildren().get(1);
-                    idType = getPrimitiveFromId(((Terminal)identifier.getChildren().get(0).getData()).getContent(), subRoot.getScope());
+                    expr_or_id = statAssign.getChildren().get(2);
+                    String idStr = ((Terminal)identifier.getChildren().get(0).getData()).getContent();
+                    idType = getPrimitiveFromId(idStr, subRoot.getScope());
+                    if(idType == null)
+                    {
+                        errors.add(subRoot.getLineNumber()+": Could not find "+idStr+" in current context");
+                        return;
+                    }
                 }
 
                 if(expr_or_id.getChildren().get(0).getData()==RuleType.EXPR_NO_LVALUE)
@@ -476,17 +502,53 @@ public class Semantics
                 else if(expr_or_id.getChildren().get(0).getData()==TokenType.ID)
                 {
                     Node<Type> expr_or_funcId = expr_or_id.getChildren().get(0);
+                    String expr_or_funcIdStr = ((Terminal)expr_or_funcId.getChildren().get(0).getData()).getContent();
                     Node<Type> expr_or_func = expr_or_id.getChildren().get(1);
-                    if(expr_or_func.getChildren().get(0).getData()==TokenType.LPAREN)
+                    if(expr_or_func.isEpsilon())
+                    {
+                        //simple assignment
+                        secondType = getPrimitiveFromId(expr_or_funcIdStr,subRoot.getScope());
+                    }
+                    else if(expr_or_func.getChildren().get(0).getData()==TokenType.LPAREN)
                     {
                         //TODO:function call
-                        //check return type
+                        secondType = getPrimitiveFromId(expr_or_funcIdStr, "");
+
                     }
                     else
                     {
+                        DeclaredType lvalType = null;
                         //TODO: opexpression..........
                         //lvalue_tail opexpr
                         //TODO:make fake lvalue again, figure out how to use opexpr without rewriting eval expr
+
+                            Node<Type> lvalueSurrogate = new Node<Type>(RuleType.LVALUE, false, 0);
+                            lvalueSurrogate.getChildren().add(expr_or_funcId);
+                            lvalueSurrogate.getChildren().add(expr_or_func.getChildren().get(0));
+                            lvalType = evaluateLValue(lvalueSurrogate);
+
+                        if(lvalType!=null)
+                        {
+                            TokenType operator = (TokenType)expr_or_func.getChildren().get(1).getChildren().get(0).getChildren().get(0).getData();
+                            boolean seenComparator = operator==TokenType.EQ||operator==TokenType.NEQ||operator==TokenType.GEQ||operator==TokenType.LEQ||operator==TokenType.GREATER||operator==TokenType.LESSER;
+                            Node<Type> expression = expr_or_func.getChildren().get(1).getChildren().get(1);
+                            DeclaredType exprType = evaluateExpression(expression, seenComparator);
+                            if(typeCompatibility(lvalType, operator, exprType))
+                            {
+                                if(seenComparator)
+                                    secondType = DeclaredType.integer;
+                                else
+                                    secondType = exprType;
+                            }
+                            else
+                            {
+                                errors.add(subRoot.getLineNumber()+": "+operator.name()+" does not support types of "+lvalType.getTypeName()+" and "+exprType.getTypeName());
+
+                                return;
+                            }
+                        }
+                        else
+                            return;
                     }
 
 
@@ -494,7 +556,7 @@ public class Semantics
                 if(idType!=null&&secondType!=null)
                 {
                     if(idType!=secondType)
-                        errors.add(subRoot.getLineNumber()+": Tried to assign "+idType.getTypeName()+" to "+secondType.getTypeName());
+                        errors.add(subRoot.getLineNumber()+": Tried to assign "+secondType.getTypeName()+" to "+idType.getTypeName());
                 }
             }
 

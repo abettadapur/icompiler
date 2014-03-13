@@ -1,13 +1,23 @@
 let
 
-		type A = int;
+		type A = string;
 		type B = int;
+		var a: string;
+		var b: string;
+		var c: int;
+		var sum: string;
 		var X : B;
-        function print ( n : int, b:int ) : B begin
+		var bvar: B;
+		var avar: A;
+        function print ( n : int, b:int ) : A begin
                 printi("Hello\n");
+                return avar;
+
         end;
+
 in
         if(a+b+c>3) then
-        sum:=a;
+        sum := b = a;
         endif;
 end
+

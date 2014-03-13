@@ -42,9 +42,13 @@ public class Driver {
                 List<String> errors = table.populateTable(parseTree.getChildren().get(1));
                 if(errors.size()==0)
                 {
-                    System.out.println(table.findPrimitive("X", "").getTypeName());
                     Semantics checker = new Semantics(parseTree, table); //MUST CHANGE
-                    checker.performChecks();
+                    errors = checker.performChecks();
+                    if(errors.size()!=0)
+                    {
+                        for(String s:errors)
+                            System.out.println(s);
+                    }
                 }
                 else
                 {
