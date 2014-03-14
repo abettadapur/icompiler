@@ -23,6 +23,7 @@ public class DeclaredType
     }
     public DeclaredType(int dimensions, DeclaredType container, String scope)
     {
+        this.typeName="";
         this.scope=scope;
         this.isArray=true;
         this.dimensions=dimensions;
@@ -56,5 +57,10 @@ public class DeclaredType
         DeclaredType temp = (DeclaredType) other;
         return temp.typeName.equals(typeName);
     }
+    public String toString()
+    {
+        return typeName;
+    }
+
 
 }

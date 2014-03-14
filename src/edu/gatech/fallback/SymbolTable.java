@@ -347,4 +347,26 @@ public class SymbolTable implements ITable
 
 
     }
+    public DeclaredType findTypeMap(DeclaredType type)
+    {
+        if(type!=null&&(type.equals(DeclaredType.integer)||type.equals(DeclaredType.str)||type.isArray()))
+        {
+            return type;
+        }
+        else
+        {
+            while(true)
+            {
+
+                DeclaredType map = typeMapping.get(type);
+                if(map==null)
+                    return null;
+                else  if(map.equals(DeclaredType.integer)||map.equals(DeclaredType.str)||map.isArray())
+                {
+                    return map;
+                }
+            }
+        }
+    }
+
 }

@@ -14,5 +14,6 @@ public interface ITable
     public Binding findByNameScope(String name, String scope);
     public DeclaredType findType(String id);
     public DeclaredType findPrimitive(String id,String scope);
+    public DeclaredType findTypeMap(DeclaredType type);
 }
 

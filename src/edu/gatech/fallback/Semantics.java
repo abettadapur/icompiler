@@ -285,19 +285,23 @@ public class Semantics
 
     public boolean typeCompatibility(DeclaredType type1, TokenType operator, DeclaredType type2)
     {
-        if(!type1.equals(type2))
+        DeclaredType type1prim = getPrimitiveFromType(type1);
+        DeclaredType type2prim = getPrimitiveFromType(type2);
+        if(type1prim!=null&&!type1prim.equals(type2prim))
+        {
             return false;
-        if(type1.equals(DeclaredType.str))
+        }
+        if(type1prim.equals(DeclaredType.str))
         {
             if(operator!=TokenType.EQ && operator!=TokenType.NEQ&&operator!=TokenType.ASSIGN)
                 return false;
         }
-        if(type1.isArray())
+        if(type1prim.isArray())
         {
             if(operator!=TokenType.ASSIGN)
                 return false;
         }
-        if(type1.equals(DeclaredType.integer))
+        if(type1prim.equals(DeclaredType.integer))
         {
             //all possible operators
             if(operator!=TokenType.EQ&&operator!=TokenType.GEQ&&operator!=TokenType.ASSIGN&&operator!=TokenType.NEQ&&operator!=TokenType.LEQ&&operator!=TokenType.MINUS&&operator!=TokenType.MULT&&operator!=TokenType.PLUS&&operator!=TokenType.DIV&&operator!=TokenType.GREATER&&operator!=TokenType.LESSER)
@@ -306,6 +310,11 @@ public class Semantics
             }
         }
         return true;
+    }
+
+    private DeclaredType getPrimitiveFromType(DeclaredType type2)
+    {
+        return symbolTable.findTypeMap(type2);
     }
 
     //TODO: getArrayTypes
@@ -328,7 +337,7 @@ public class Semantics
             if(sel.getData()==RuleType.EXPR)
             {
                 //we are dealing with array
-                //dimension++;
+                dimension++;
                 if(!(curType.isArray()))
                 {
                     errors.add(sel.getLineNumber()+": "+curType.getTypeName()+" does not support []");
@@ -340,6 +349,16 @@ public class Semantics
                     errors.add(sel.getLineNumber()+": Expression contained [] evaluated to unsupported type");
                     return null;
                 }
+            }
+        }
+        if(dimension>0)
+        {
+            if(curType.isArray()&&curType.getDimensions()==dimension)
+                return curType.getContainer();
+            else
+            {
+                errors.add(subRoot.getLineNumber()+": Array dimension mismatch");
+                return null;
             }
         }
         return curType;
@@ -388,7 +407,7 @@ public class Semantics
         {
             Node<Type> expression = subRoot.getChildren().get(1);
             DeclaredType expressionType = evaluateExpression(expression,false);
-            if(expressionType!=null&&!expression.equals(DeclaredType.integer))
+            if(expressionType!=null&&!expressionType.equals(DeclaredType.integer))
             {
                 errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
 
@@ -405,7 +424,7 @@ public class Semantics
         {
             Node<Type> expression = subRoot.getChildren().get(1);
             DeclaredType expressionType = evaluateExpression(expression, false);
-            if(expressionType!=null&&expression.equals(DeclaredType.integer))
+            if(expressionType!=null&&!expressionType.equals(DeclaredType.integer))
             {
                 errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
 
@@ -441,7 +460,7 @@ public class Semantics
 
             if(statAssign.getChildren().get(0).getData()==TokenType.LPAREN)
             {
-                //TODO: check existence of function. If exist, ok.
+                //TODO: check existence of function. If exist, ok. Must Also check parameters
                 String id = ((Terminal)identifier.getChildren().get(0).getData()).getContent();
                 Binding binding = symbolTable.findByNameScope(id,"");
                 if(binding == null)
@@ -453,6 +472,31 @@ public class Semantics
                     if(!binding.isFunction())
                     {
                         errors.add(subRoot.getLineNumber()+": "+id+" is not a function");
+                    }
+                    else
+                    {
+                        //TODO: parameter checking
+                        List<DeclaredType> expParameters = binding.getParams();
+                        List<DeclaredType> actParameters = new ArrayList<DeclaredType>();
+                        Node<Type> expressionList = statAssign.getChildren().get(1);
+                        for(Node<Type> currentNode: expressionList)
+                        {
+                            if(currentNode.getData()==RuleType.EXPR)
+                                actParameters.add(evaluateExpression(currentNode, false));
+                        }
+                        if(expParameters.size()!=actParameters.size())
+                        {
+                            errors.add(subRoot.getLineNumber()+": "+id+" takes parameters "+expParameters+" found parameters"+actParameters);
+                        }
+                        else
+                        {
+                            for(int i=0; i<expParameters.size(); i++)
+                            {
+                                if(!typeCompatibility(expParameters.get(i), TokenType.ASSIGN, actParameters.get(i)))
+                                    errors.add(subRoot.getLineNumber()+": "+id+" takes parameters "+expParameters+" found parameters"+actParameters);
+                            }
+                        }
+
                     }
                 }
             }
@@ -512,7 +556,19 @@ public class Semantics
                     else if(expr_or_func.getChildren().get(0).getData()==TokenType.LPAREN)
                     {
                         //TODO:function call
-                        secondType = getPrimitiveFromId(expr_or_funcIdStr, "");
+                        Binding b = symbolTable.findByNameScope(expr_or_funcIdStr,"");
+                        if(b!=null&&b.isFunction())
+                        {
+                            //TODO: check function parameters
+                            List<DeclaredType> expParameters = b.getParams();
+                            //TODO: get parameters from token stream. EXPR LIST
+
+                        }
+                        else
+                        {
+                            errors.add(subRoot.getLineNumber()+": "+expr_or_funcIdStr+" is not a function");
+                        }
+
 
                     }
                     else
@@ -555,7 +611,7 @@ public class Semantics
                 }
                 if(idType!=null&&secondType!=null)
                 {
-                    if(idType!=secondType)
+                    if(!typeCompatibility(idType, TokenType.ASSIGN, secondType))
                         errors.add(subRoot.getLineNumber()+": Tried to assign "+secondType.getTypeName()+" to "+idType.getTypeName());
                 }
             }

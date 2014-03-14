@@ -1,23 +1,23 @@
 let
 
-		type A = string;
-		type B = int;
-		var a: string;
-		var b: string;
-		var c: int;
-		var sum: string;
-		var X : B;
-		var bvar: B;
-		var avar: A;
-        function print ( n : int, b:int ) : A begin
-                printi("Hello\n");
-                return avar;
+    type u32 = int;
+    type u16 = int;
+    type array_int = array[20] of u32;
+    var X,Y,Z : u32;
+    var i : u32 := 0;
+    var b : u16 := 0;
+    var arrayofint : array_int;
 
-        end;
+    function print(b:int, n:string) begin
+    	i:=b;
+    end;
 
 in
-        if(a+b+c>3) then
-        sum := b = a;
-        endif;
+        while(i>0) do
+            i := b ;
+            arrayofint[0] := 4;
+        enddo;
+
+        print(i,b);
 end
 
