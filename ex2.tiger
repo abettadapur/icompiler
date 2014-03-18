@@ -8,7 +8,7 @@ let
     var b : u16 := 0;
     var arrayofint : array_int;
 
-    function print(b:int, n:string) begin
+    function print(b:int, n:int) : string begin
     	i:=b;
     end;
 
@@ -18,6 +18,6 @@ in
             arrayofint[0] := 4;
         enddo;
 
-        print(i,b);
+        arrayofint[0] := print(i,b);
 end
 

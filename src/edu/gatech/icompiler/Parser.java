@@ -217,7 +217,8 @@ public class Parser
         if(!error)
         {
             System.out.println("Successful Parse");
-            parseTree.printPreOrder();
+            if(DEBUG)
+                parseTree.printPreOrder();
             return parseTree;
         }
         return null;

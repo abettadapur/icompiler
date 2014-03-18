@@ -561,7 +561,34 @@ public class Semantics
                         {
                             //TODO: check function parameters
                             List<DeclaredType> expParameters = b.getParams();
-                            //TODO: get parameters from token stream. EXPR LIST
+                            List<DeclaredType> actParameters = new ArrayList<DeclaredType>();
+                            Node<Type> expressionList = expr_or_func.getChildren().get(1);
+                            for(Node<Type> currentNode: expressionList)
+                            {
+                                if(currentNode.getData()==RuleType.EXPR)
+                                    actParameters.add(evaluateExpression(currentNode, false));
+                            }
+                            if(expParameters.size()!=actParameters.size())
+                            {
+                                errors.add(subRoot.getLineNumber()+": "+expr_or_funcIdStr+" takes parameters "+expParameters+" found parameters"+actParameters);
+                            }
+                            else
+                            {
+                                for(int i=0; i<expParameters.size(); i++)
+                                {
+                                    if(!typeCompatibility(expParameters.get(i), TokenType.ASSIGN, actParameters.get(i)))
+                                    {
+                                        errors.add(subRoot.getLineNumber()+": "+expr_or_funcIdStr+" takes parameters "+expParameters+" found parameters"+actParameters);
+                                        return;
+                                    }
+                                }
+                                secondType = b.getType();
+                                if(secondType == null)
+                                {
+                                    errors.add(subRoot.getLineNumber()+": "+expr_or_funcIdStr+" doesn't return anything");
+                                }
+
+                            }
 
                         }
                         else
