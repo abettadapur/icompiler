@@ -115,7 +115,7 @@ public class SemanticsTest
                     System.out.println(error);
                 }
                 System.out.println(errors.size()+" errors");
-                assertEquals(errors.size(), 0);
+                assertEquals(errors.size(), 2);
             }
         }
         catch(Exception ex)
@@ -142,7 +142,7 @@ public class SemanticsTest
                     System.out.println(error);
                 }
                 System.out.println(errors.size()+" errors");
-                assertEquals(errors.size(), 0);
+                assertEquals(errors.size(), 1);
             }
         }
         catch(Exception ex)

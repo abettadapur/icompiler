@@ -1,6 +1,7 @@
 let
-        var _a : int;
+        var a : int;
+        var b: int;
 in
-        a := 1;
+        c := 1;
         printi(a);
 end
