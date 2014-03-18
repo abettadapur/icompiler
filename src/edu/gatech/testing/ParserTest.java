@@ -1,11 +1,11 @@
 package edu.gatech.testing;
 
 import edu.gatech.icompiler.Parser;
-import junit.framework.TestCase;
 import org.junit.Test;
 
 import java.io.File;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 /**
  * Created by Stefano on 2/12/14.
  */

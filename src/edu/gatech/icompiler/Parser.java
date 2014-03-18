@@ -1,7 +1,6 @@
 package edu.gatech.icompiler;
 
 import edu.gatech.util.Node;
-import org.junit.Rule;
 
 import java.io.*;
 import java.util.*;

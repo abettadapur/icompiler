@@ -1,16 +1,14 @@
 package edu.gatech.icompiler;
 
+import edu.gatech.facade.IScanner;
+import edu.gatech.util.PeekBackReader;
+import edu.gatech.util.Util;
+
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import edu.gatech.facade.IScanner;
-import edu.gatech.util.PeekBackReader;
-import edu.gatech.util.Util;
 
 /**
  * Created by Alex on 1/30/14.

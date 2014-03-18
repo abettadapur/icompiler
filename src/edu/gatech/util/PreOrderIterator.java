@@ -1,7 +1,5 @@
 package edu.gatech.util;
 
-import edu.gatech.icompiler.Type;
-
 import java.util.Iterator;
 import java.util.Stack;
 

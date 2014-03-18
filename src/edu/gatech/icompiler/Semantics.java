@@ -3,7 +3,6 @@ package edu.gatech.icompiler;
 import edu.gatech.facade.ITable;
 import edu.gatech.util.Node;
 
-
 import javax.lang.model.type.PrimitiveType;
 import java.util.ArrayList;
 import java.util.List;

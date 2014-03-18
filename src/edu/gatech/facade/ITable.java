@@ -1,7 +1,7 @@
 package edu.gatech.facade;
 
-import edu.gatech.icompiler.DeclaredType;
 import edu.gatech.icompiler.Binding;
+import edu.gatech.icompiler.DeclaredType;
 
 import java.util.List;
 

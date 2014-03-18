@@ -1,7 +1,6 @@
 package edu.gatech.facade;
 
 import edu.gatech.icompiler.Token;
-import edu.gatech.icompiler.TokenType;
 /**
  * Created by Stefano on 1/31/14.
  */

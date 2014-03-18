@@ -1,12 +1,14 @@
 package edu.gatech.testing;
 
 import edu.gatech.facade.IScanner;
-import edu.gatech.icompiler.*;
+import edu.gatech.icompiler.Scanner;
+import edu.gatech.icompiler.Token;
+import edu.gatech.icompiler.TokenType;
 import org.junit.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Stefano on 1/31/14.
