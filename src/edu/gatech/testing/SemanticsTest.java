@@ -56,6 +56,7 @@ public class SemanticsTest
             {
                 SymbolTable table = new SymbolTable();
                 table.populateTable(node.getChildren().get(1));
+                System.out.println(table);
                 Semantics s = new Semantics(node,table);
                 List<String> errors = s.performChecks();
                 for(String error:errors)
@@ -82,6 +83,7 @@ public class SemanticsTest
             {
                 SymbolTable table = new SymbolTable();
                 table.populateTable(node.getChildren().get(1));
+                System.out.println(table);
                 Semantics s = new Semantics(node,table);
                 List<String> errors = s.performChecks();
                 for(String error:errors)
@@ -108,6 +110,7 @@ public class SemanticsTest
             {
                 SymbolTable table = new SymbolTable();
                 table.populateTable(node.getChildren().get(1));
+                System.out.println(table);
                 Semantics s = new Semantics(node,table);
                 List<String> errors = s.performChecks();
                 for(String error:errors)
@@ -134,7 +137,7 @@ public class SemanticsTest
             {
                 SymbolTable table = new SymbolTable();
                 table.populateTable(node.getChildren().get(1));
-
+                System.out.println(table);
                 Semantics s = new Semantics(node,table);
                 List<String> errors = s.performChecks();
                 for(String error:errors)

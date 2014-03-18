@@ -72,7 +72,7 @@ public  class Binding
         }
         else
         {
-            return name+" "+type+" Context: "+scope==""?"global":scope;
+            return name+" "+type.toVerboseString()+" Context: "+(scope.equals("")?"global":scope);
         }
     }
 

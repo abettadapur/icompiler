@@ -375,7 +375,7 @@ public class SymbolTable implements ITable
         {
             sb.append(e.getKey());
             sb.append(": ");
-            sb.append(e.getValue()+"\n");
+            sb.append(e.getValue().toVerboseString()+"\n");
         }
         sb.append("VARIABLES\n---------\n");
         for(Map.Entry<String, List<Binding> >e: identifiers.entrySet())
@@ -392,7 +392,7 @@ public class SymbolTable implements ITable
             }
         }
         sb.append("FUNCTIONS\n---------\n");
-        for(Map.Entry<String, List<Binding> >e: identifiers.entrySet())
+        for(Map.Entry<String, List<Binding>> e: identifiers.entrySet())
         {
             for(Binding b:e.getValue())
             {
