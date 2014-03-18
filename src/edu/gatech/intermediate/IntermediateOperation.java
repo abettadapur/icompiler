@@ -1,6 +1,6 @@
 package edu.gatech.intermediate;
 
-import edu.gatech.fallback.Binding;
+import edu.gatech.icompiler.Binding;
 
 import java.util.List;
 

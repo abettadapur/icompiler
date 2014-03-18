@@ -1,6 +1,6 @@
 package edu.gatech.testing;
 
-import edu.gatech.fallback.SymbolTable;
+import edu.gatech.icompiler.SymbolTable;
 import edu.gatech.icompiler.Parser;
 import edu.gatech.icompiler.Semantics;
 import edu.gatech.icompiler.Type;

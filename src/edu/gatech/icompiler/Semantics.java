@@ -2,9 +2,9 @@ package edu.gatech.icompiler;
 
 import edu.gatech.facade.ITable;
 import edu.gatech.util.Node;
-import org.junit.Rule;
 
-import javax.lang.model.type.DeclaredType;
+
+import javax.lang.model.type.PrimitiveType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class Semantics
         errors = new ArrayList<>();
         annotateTree();
         getStatements();
-        
+
     }
 
     private void annotateTree()
@@ -36,13 +36,13 @@ public class Semantics
         String scope="";
         for(Node<Type> node: tree)
         {
-            if(node.getData()==RuleType.FUNCT_DECLARATION)
+            if(node.getData()== RuleType.FUNCT_DECLARATION)
             {
                 for(Node<Type> child:node.getChildren())
                 {
-                    if(child.getData()==TokenType.ID)
+                    if(child.getData()== TokenType.ID)
                     {
-                        scope = child.getChildren().get(0).getData().toString().replace("\"","");
+                        scope = ((Terminal)child.getChildren().get(0).getData()).getContent();
                         break;
                     }
                 }
@@ -69,7 +69,7 @@ public class Semantics
                 declarations.add(node);
             }
         }
-        
+
     }
 
     public List<String> performChecks()
@@ -79,14 +79,14 @@ public class Semantics
         {
             if(declaration.hasChildOfType(RuleType.OPTIONAL_INIT))
             {
-                PrimitiveType typeId = PrimitiveType.unknown;
-                PrimitiveType constType = PrimitiveType.unknown;
+                DeclaredType typeId = null;
+                DeclaredType constType = null;
                 for(int i=0; i<declaration.getChildren().size(); i++)
                 {
                     Node<Type> child = declaration.getChildren().get(i);
                     if(child.getData()==RuleType.TYPE_ID)
                     {
-                        typeId= getPrimitiveFromId(child.getChildren().get(0).toString().replace("\"", ""),"");
+                        typeId= getPrimitiveFromId(((Terminal)child.getChildren().get(0).getChildren().get(0).getData()).getContent(), "");
                     }
 
                     if(child.getData()==RuleType.OPTIONAL_INIT)
@@ -96,14 +96,18 @@ public class Semantics
                     }
                 }
                 //compare types for initialization
-                if(!(typeId==PrimitiveType.unknown))
-                    if(typeId!=constType)
-                        errors.add(declaration.getLineNumber()+": "+typeId.name()+" does not match "+constType.name());
+                if(!(typeId==null))
+                    if(!typeId.equals(constType))
+                        errors.add(declaration.getLineNumber()+": "+typeId.getTypeName()+" does not match "+constType.getTypeName());
             }
         }
         //TODO: MUST SEARCH FOR RETURN STATEMENTS
         for(Node<Type> statement: statements)
         {
+            if(statement.getLineNumber()==18)
+            {
+                int a=0;
+            }
             if(statement.hasChildOfType(TokenType.FOR))
             {
                 evaluateFor(statement);
@@ -129,27 +133,31 @@ public class Semantics
         return errors;
     }
 
-    public PrimitiveType evaluateExpression(Node<Type> subRoot, boolean seenComparator)
+    public DeclaredType evaluateExpression(Node<Type> subRoot, boolean seenComparator)
     {
-        PrimitiveType currType = PrimitiveType.unknown;
-        PrimitiveType compareType = PrimitiveType.unknown;
+        DeclaredType currType = null;
+        DeclaredType compareType = null;
         TokenType currentOperator = null;
         if(subRoot.getData()==RuleType.EXPR)
         {
             if(subRoot.getChildren().get(0).getData()==TokenType.LPAREN)
             {
-                PrimitiveType exprType = evaluateExpression(subRoot.getChildren().get(1), seenComparator);
+                DeclaredType exprType = evaluateExpression(subRoot.getChildren().get(1), seenComparator);
+                if(exprType==null)
+                {
+                    return null;
+                }
                 Node<Type> opexpr = subRoot.getChildren().get(3);
                 if(!opexpr.isEpsilon())
                 {
                     TokenType operator = (TokenType)opexpr.getChildren().get(0).getData();
                     boolean comparator = operator==TokenType.EQ||operator==TokenType.NEQ||operator==TokenType.GEQ||operator==TokenType.LEQ||operator==TokenType.GREATER||operator==TokenType.LESSER;
                     Node<Type> expression = opexpr.getChildren().get(1);
-                    PrimitiveType newType = evaluateExpression(expression,comparator);
+                    DeclaredType newType = evaluateExpression(expression,comparator);
                     if( typeCompatibility(exprType, operator, newType));
                     {
                         if(comparator)
-                            return PrimitiveType.integer;
+                            return DeclaredType.integer;
                         else
                             return exprType;
                     }
@@ -169,14 +177,14 @@ public class Semantics
                 {
                     if(current.getData()==RuleType.LVALUE)
                     {
-                        PrimitiveType newType = evaluateLValue(current);
-                        if(newType==PrimitiveType.unknown)
+                        DeclaredType newType = evaluateLValue(current);
+                        if(newType==null)
                         {
-                            currType = PrimitiveType.unknown; //error with the lvalue, should have been logged
+                            currType = null; //error with the lvalue, should have been logged
                             break;
                         }
                         //this is the first type we have seen
-                        if(currType==PrimitiveType.unknown)
+                        if(currType==null)
                         {
                             currType = newType;
                         }
@@ -186,8 +194,8 @@ public class Semantics
 
                             if(!typeCompatibility(currType, currentOperator, newType))
                             {
-                                errors.add(current.getLineNumber()+": "+currentOperator.name()+" does not support arguments "+currType.name() +" and "+  newType.name() );
-                                currType = PrimitiveType.unknown;
+                                errors.add(current.getLineNumber()+": "+currentOperator.name()+" does not support arguments "+currType.getTypeName() +" and "+  newType.getTypeName() );
+                                currType = null;
                                 break;
                             }
                             else
@@ -199,29 +207,29 @@ public class Semantics
                         else
                         {
                             errors.add("Unknown parse tree error. Missing operator");
-                            currType = PrimitiveType.unknown;
+                            currType = null;
                             break;
                         }
 
                     }
                     if(current.getData()==RuleType.CONST)
                     {
-                        PrimitiveType newType = getConstType(current);
-                        if(currType==PrimitiveType.unknown)
+                        DeclaredType newType = getConstType(current);
+                        if(currType==null)
                             currType = newType;
                         else if(currentOperator!=null)
                         {
                             if(!typeCompatibility(currType, currentOperator, newType))
                             {
-                                errors.add(current.getLineNumber()+": "+currentOperator.name()+" does not support arguments "+currType.name() +" and "+  newType.name() );
-                                currType = PrimitiveType.unknown;
+                                errors.add(current.getLineNumber()+": "+currentOperator.name()+" does not support arguments "+currType.getTypeName() +" and "+  newType.getTypeName() );
+                                currType = null;
                                 break;
                             }
                         }
                         else
                         {
                             errors.add("Unknown parse tree error. Missing operator");
-                            currType = PrimitiveType.unknown;
+                            currType = null;
                             break;
                         }
                     }
@@ -236,13 +244,13 @@ public class Semantics
                             {
                                 seenComparator=true;
                                 compareType = currType;
-                                currType=PrimitiveType.unknown;
+                                currType=null;
                                 currentOperator=null;
                             }
                             else
                             {
                                 //ERRORS
-                                currType = PrimitiveType.unknown;
+                                currType = null;
                                 break;
                             }
                         }
@@ -254,12 +262,15 @@ public class Semantics
 
             if(seenComparator)
             {
+
+                if(compareType==null)
+                    return currType;
                 if(compareType==currType)
-                    currType=PrimitiveType.integer;
+                    currType=DeclaredType.integer;
                 else
                 {
-                    errors.add(subRoot.getLineNumber()+": Cannot compare "+compareType.name()+" to "+currType.name());
-                    currType=PrimitiveType.unknown;
+                    errors.add(subRoot.getLineNumber()+": Cannot compare "+compareType.getTypeName()+" to "+currType.getTypeName());
+                    currType=null;
                 }
             }
             return currType;
@@ -268,21 +279,25 @@ public class Semantics
             throw new IllegalArgumentException();
     }
 
-    public boolean typeCompatibility(PrimitiveType type1, TokenType operator, PrimitiveType type2)
+    public boolean typeCompatibility(DeclaredType type1, TokenType operator, DeclaredType type2)
     {
-        if(type1!=type2)
+        DeclaredType type1prim = getPrimitiveFromType(type1);
+        DeclaredType type2prim = getPrimitiveFromType(type2);
+        if(type1prim!=null&&!type1prim.equals(type2prim))
+        {
             return false;
-        if(type1==PrimitiveType.str)
+        }
+        if(type1prim.equals(DeclaredType.str))
         {
             if(operator!=TokenType.EQ && operator!=TokenType.NEQ&&operator!=TokenType.ASSIGN)
                 return false;
         }
-        if(type1== PrimitiveType.arr)
+        if(type1prim.isArray())
         {
             if(operator!=TokenType.ASSIGN)
                 return false;
         }
-        if(type1==PrimitiveType.integer)
+        if(type1prim.equals(DeclaredType.integer))
         {
             //all possible operators
             if(operator!=TokenType.EQ&&operator!=TokenType.GEQ&&operator!=TokenType.ASSIGN&&operator!=TokenType.NEQ&&operator!=TokenType.LEQ&&operator!=TokenType.MINUS&&operator!=TokenType.MULT&&operator!=TokenType.PLUS&&operator!=TokenType.DIV&&operator!=TokenType.GREATER&&operator!=TokenType.LESSER)
@@ -293,46 +308,61 @@ public class Semantics
         return true;
     }
 
-    public PrimitiveType evaluateLValue(Node<Type> subRoot)
+    private DeclaredType getPrimitiveFromType(DeclaredType type2)
+    {
+        return symbolTable.findTypeMap(type2);
+    }
+
+    //TODO: getArrayTypes
+    public DeclaredType evaluateLValue(Node<Type> subRoot)
     {
         int dimension=0;
-        PrimitiveType curType = PrimitiveType.unknown;
+        DeclaredType curType = null;
         for(Node<Type> sel:subRoot)
         {
             if(sel.getData()==TokenType.ID)
             {
-                curType = getPrimitiveFromId(sel.getChildren().get(0).toString().replace("\"",""), sel.getScope());
-                if(curType==PrimitiveType.unknown)
+                String id = ((Terminal)sel.getChildren().get(0).getData()).getContent();
+                curType = getPrimitiveFromId(id, sel.getScope());
+                if(curType==null)
                 {
-                    //problem with ID. should have been logged already
-                    break;
+                    errors.add(subRoot.getLineNumber()+": "+id+" could not be found in the current context");
+                    return null;
                 }
             }
             if(sel.getData()==RuleType.EXPR)
             {
+                //we are dealing with array
                 dimension++;
-                if(!(curType==PrimitiveType.arr))
+                if(!(curType.isArray()))
                 {
-                    errors.add(sel.getLineNumber()+": "+curType.name()+" does not support []");
-                    curType = PrimitiveType.unknown;
-                    break;
+                    errors.add(sel.getLineNumber()+": "+curType.getTypeName()+" does not support []");
+                    return null;
                 }
                 //TODO: getArrayDimensions....
-                if(evaluateExpression(sel,false)!=PrimitiveType.integer)
+                if(!evaluateExpression(sel,false).equals(DeclaredType.integer))
                 {
                     errors.add(sel.getLineNumber()+": Expression contained [] evaluated to unsupported type");
-                    curType = PrimitiveType.unknown;
-                    break;
+                    return null;
                 }
+            }
+        }
+        if(dimension>0)
+        {
+            if(curType.isArray()&&curType.getDimensionCount()==dimension)
+                return curType.getContainer();
+            else
+            {
+                errors.add(subRoot.getLineNumber()+": Array dimension mismatch");
+                return null;
             }
         }
         return curType;
     }
 
-    public PrimitiveType getPrimitiveFromId(String id, String scope)
+    public DeclaredType getPrimitiveFromId(String id, String scope)
     {
-        //perform lookups
-        return PrimitiveType.integer;
+        return symbolTable.findPrimitive(id,scope);
     }
 
     public void evaluateFor(Node<Type> subRoot)
@@ -341,22 +371,25 @@ public class Semantics
         {
             Node<Type> id = subRoot.getChildren().get(1);
             Node<Type> expression1 = subRoot.getChildren().get(3);
+            DeclaredType expression1Type = evaluateExpression(expression1, false);
             Node<Type> expression2 = subRoot.getChildren().get(5);
-            PrimitiveType errorType;
+            DeclaredType expression2Type = evaluateExpression(expression2, false);
+            DeclaredType errorType;
 
-            if(getPrimitiveFromId(id.getChildren().get(0).getData().toString().replace("\"",""), id.getScope())!=PrimitiveType.integer)
+            if(!getPrimitiveFromId(((Terminal)id.getChildren().get(0).getData()).getContent(), id.getScope()).equals(DeclaredType.integer))
             {
                 errors.add(id.getLineNumber()+": For loops only support integer types");
 
             }
-            if((errorType = evaluateExpression(expression1,false))!=PrimitiveType.integer)
+
+            if(expression1Type!=null&&!expression1Type.equals(DeclaredType.integer))
             {
-                errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+errorType.name());
+                errors.add(id.getLineNumber() + ": Expected int, expression evaluated to " + expression1Type.getTypeName());
 
             }
-            if((errorType= evaluateExpression(expression2,false))!=PrimitiveType.integer)
+            if(expression2Type!=null&&!expression2Type.equals(DeclaredType.integer))
             {
-                errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+errorType.name());
+                errors.add(id.getLineNumber()+": Expected int, expression evaluated to "+expression2Type.getTypeName());
 
             }
 
@@ -369,9 +402,10 @@ public class Semantics
         if(subRoot.hasChildOfType(TokenType.WHILE))
         {
             Node<Type> expression = subRoot.getChildren().get(1);
-            if(evaluateExpression(expression,false)!=PrimitiveType.integer)
+            DeclaredType expressionType = evaluateExpression(expression,false);
+            if(expressionType!=null&&!expressionType.equals(DeclaredType.integer))
             {
-               errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
+                errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
 
             }
 
@@ -385,7 +419,8 @@ public class Semantics
         if(subRoot.hasChildOfType(TokenType.IF))
         {
             Node<Type> expression = subRoot.getChildren().get(1);
-            if(evaluateExpression(expression,false)!=PrimitiveType.integer)
+            DeclaredType expressionType = evaluateExpression(expression, false);
+            if(expressionType!=null&&!expressionType.equals(DeclaredType.integer))
             {
                 errors.add(subRoot.getLineNumber()+": expression does not evaluate to true or false");
 
@@ -400,7 +435,13 @@ public class Semantics
         if(subRoot.hasChildOfType(TokenType.RETURN))
         {
             String functionId = subRoot.getScope();
-            //TODO: lookup symbol table;
+            DeclaredType expressionType = evaluateExpression(subRoot.getChildren().get(1), false);
+            DeclaredType returnType = symbolTable.findPrimitive(functionId, "");
+            if(expressionType!=null&&!expressionType.equals(returnType))
+            {
+                errors.add(subRoot.getLineNumber()+": "+expressionType.getTypeName()+" does not match expected return type "+returnType.getTypeName());
+
+            }
 
         }
 
@@ -415,12 +456,51 @@ public class Semantics
 
             if(statAssign.getChildren().get(0).getData()==TokenType.LPAREN)
             {
-                //TODO: check existence of function. If exist, ok.
+                //TODO: check existence of function. If exist, ok. Must Also check parameters
+                String id = ((Terminal)identifier.getChildren().get(0).getData()).getContent();
+                Binding binding = symbolTable.findByNameScope(id,"");
+                if(binding == null)
+                {
+                    errors.add(subRoot.getLineNumber()+": Cannot find symbol "+id+" in current context");
+                }
+                else
+                {
+                    if(!binding.isFunction())
+                    {
+                        errors.add(subRoot.getLineNumber()+": "+id+" is not a function");
+                    }
+                    else
+                    {
+                        //TODO: parameter checking
+                        List<DeclaredType> expParameters = binding.getParams();
+                        List<DeclaredType> actParameters = new ArrayList<DeclaredType>();
+                        Node<Type> expressionList = statAssign.getChildren().get(1);
+                        for(Node<Type> currentNode: expressionList)
+                        {
+                            if(currentNode.getData()==RuleType.EXPR)
+                                actParameters.add(evaluateExpression(currentNode, false));
+                        }
+                        if(expParameters.size()!=actParameters.size())
+                        {
+                            errors.add(subRoot.getLineNumber()+": "+id+" takes parameters "+expParameters+" found parameters"+actParameters);
+                        }
+                        else
+                        {
+                            for(int i=0; i<expParameters.size(); i++)
+                            {
+                                if(!typeCompatibility(expParameters.get(i), TokenType.ASSIGN, actParameters.get(i)))
+                                    errors.add(subRoot.getLineNumber()+": "+id+" takes parameters "+expParameters+" found parameters"+actParameters);
+                            }
+                        }
+
+                    }
+                }
             }
+
             else if(statAssign.getChildren().get(0).getData()==RuleType.LVALUE_TAIL||statAssign.getChildren().get(0).getData()==TokenType.ASSIGN)
             {
-                PrimitiveType idType;
-                PrimitiveType secondType = null;
+                DeclaredType idType;
+                DeclaredType secondType = null;
                 Node<Type> expr_or_id=null;
                 if(statAssign.hasChildOfType(RuleType.LVALUE_TAIL))
                 {
@@ -435,8 +515,14 @@ public class Semantics
                 }
                 else
                 {
-                    expr_or_id = statAssign.getChildren().get(1);
-                    idType = getPrimitiveFromId(identifier.getChildren().get(0).getData().toString().replace("\"", ""), subRoot.getScope());
+                    expr_or_id = statAssign.getChildren().get(2);
+                    String idStr = ((Terminal)identifier.getChildren().get(0).getData()).getContent();
+                    idType = getPrimitiveFromId(idStr, subRoot.getScope());
+                    if(idType == null)
+                    {
+                        errors.add(subRoot.getLineNumber()+": Could not find "+idStr+" in current context");
+                        return;
+                    }
                 }
 
                 if(expr_or_id.getChildren().get(0).getData()==RuleType.EXPR_NO_LVALUE)
@@ -456,25 +542,100 @@ public class Semantics
                 else if(expr_or_id.getChildren().get(0).getData()==TokenType.ID)
                 {
                     Node<Type> expr_or_funcId = expr_or_id.getChildren().get(0);
+                    String expr_or_funcIdStr = ((Terminal)expr_or_funcId.getChildren().get(0).getData()).getContent();
                     Node<Type> expr_or_func = expr_or_id.getChildren().get(1);
-                    if(expr_or_func.getChildren().get(0).getData()==TokenType.LPAREN)
+                    if(expr_or_func.isEpsilon())
+                    {
+                        //simple assignment
+                        secondType = getPrimitiveFromId(expr_or_funcIdStr,subRoot.getScope());
+                    }
+                    else if(expr_or_func.getChildren().get(0).getData()==TokenType.LPAREN)
                     {
                         //TODO:function call
-                        //check return type
+                        Binding b = symbolTable.findByNameScope(expr_or_funcIdStr,"");
+                        if(b!=null&&b.isFunction())
+                        {
+                            //TODO: check function parameters
+                            List<DeclaredType> expParameters = b.getParams();
+                            List<DeclaredType> actParameters = new ArrayList<DeclaredType>();
+                            Node<Type> expressionList = expr_or_func.getChildren().get(1);
+                            for(Node<Type> currentNode: expressionList)
+                            {
+                                if(currentNode.getData()==RuleType.EXPR)
+                                    actParameters.add(evaluateExpression(currentNode, false));
+                            }
+                            if(expParameters.size()!=actParameters.size())
+                            {
+                                errors.add(subRoot.getLineNumber()+": "+expr_or_funcIdStr+" takes parameters "+expParameters+" found parameters"+actParameters);
+                            }
+                            else
+                            {
+                                for(int i=0; i<expParameters.size(); i++)
+                                {
+                                    if(!typeCompatibility(expParameters.get(i), TokenType.ASSIGN, actParameters.get(i)))
+                                    {
+                                        errors.add(subRoot.getLineNumber()+": "+expr_or_funcIdStr+" takes parameters "+expParameters+" found parameters"+actParameters);
+                                        return;
+                                    }
+                                }
+                                secondType = b.getType();
+                                if(secondType == null)
+                                {
+                                    errors.add(subRoot.getLineNumber()+": "+expr_or_funcIdStr+" doesn't return anything");
+                                }
+
+                            }
+
+                        }
+                        else
+                        {
+                            errors.add(subRoot.getLineNumber()+": "+expr_or_funcIdStr+" is not a function");
+                        }
+
+
                     }
                     else
                     {
+                        DeclaredType lvalType = null;
                         //TODO: opexpression..........
                         //lvalue_tail opexpr
                         //TODO:make fake lvalue again, figure out how to use opexpr without rewriting eval expr
+
+                            Node<Type> lvalueSurrogate = new Node<Type>(RuleType.LVALUE, false, 0);
+                            lvalueSurrogate.getChildren().add(expr_or_funcId);
+                            lvalueSurrogate.getChildren().add(expr_or_func.getChildren().get(0));
+                            lvalType = evaluateLValue(lvalueSurrogate);
+
+                        if(lvalType!=null)
+                        {
+                            TokenType operator = (TokenType)expr_or_func.getChildren().get(1).getChildren().get(0).getChildren().get(0).getData();
+                            boolean seenComparator = operator==TokenType.EQ||operator==TokenType.NEQ||operator==TokenType.GEQ||operator==TokenType.LEQ||operator==TokenType.GREATER||operator==TokenType.LESSER;
+                            Node<Type> expression = expr_or_func.getChildren().get(1).getChildren().get(1);
+                            DeclaredType exprType = evaluateExpression(expression, seenComparator);
+                            if(typeCompatibility(lvalType, operator, exprType))
+                            {
+                                if(seenComparator)
+                                    secondType = DeclaredType.integer;
+                                else
+                                    secondType = exprType;
+                            }
+                            else
+                            {
+                                errors.add(subRoot.getLineNumber()+": "+operator.name()+" does not support types of "+lvalType.getTypeName()+" and "+exprType.getTypeName());
+
+                                return;
+                            }
+                        }
+                        else
+                            return;
                     }
 
 
                 }
                 if(idType!=null&&secondType!=null)
                 {
-                    if(idType!=secondType)
-                        errors.add(subRoot.getLineNumber()+": Tried to assign "+idType.name()+" to "+secondType.name());
+                    if(!typeCompatibility(idType, TokenType.ASSIGN, secondType))
+                        errors.add(subRoot.getLineNumber()+": Tried to assign "+secondType.getTypeName()+" to "+idType.getTypeName());
                 }
             }
 
@@ -484,13 +645,13 @@ public class Semantics
 
     }
 
-    public PrimitiveType getConstType(Node<Type> constant)
+    public DeclaredType getConstType(Node<Type> constant)
     {
         if(constant.getData()==RuleType.CONST)
             if(constant.getChildren().get(0).getData()==TokenType.INTLIT)
-                return PrimitiveType.integer;
+                return DeclaredType.integer;
             else
-                return PrimitiveType.str;
+                return DeclaredType.str;
         else
             throw new IllegalArgumentException();
     }

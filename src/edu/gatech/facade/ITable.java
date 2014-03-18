@@ -1,7 +1,7 @@
 package edu.gatech.facade;
 
-import edu.gatech.fallback.DeclaredType;
-import edu.gatech.fallback.Binding;
+import edu.gatech.icompiler.DeclaredType;
+import edu.gatech.icompiler.Binding;
 
 import java.util.List;
 
