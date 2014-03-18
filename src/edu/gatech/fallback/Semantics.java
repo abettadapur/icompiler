@@ -1,18 +1,14 @@
 package edu.gatech.fallback;
 
-import com.sun.javafx.css.Declaration;
 import edu.gatech.facade.ITable;
-import edu.gatech.fallback.DeclaredType;
 import edu.gatech.icompiler.RuleType;
 import edu.gatech.icompiler.Terminal;
 import edu.gatech.icompiler.TokenType;
 import edu.gatech.icompiler.Type;
 import edu.gatech.util.Node;
-import org.junit.Rule;
 
 
 import javax.lang.model.type.PrimitiveType;
-import javax.print.attribute.standard.PrinterMoreInfoManufacturer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -353,7 +349,7 @@ public class Semantics
         }
         if(dimension>0)
         {
-            if(curType.isArray()&&curType.getDimensions()==dimension)
+            if(curType.isArray()&&curType.getDimensionCount()==dimension)
                 return curType.getContainer();
             else
             {

@@ -1,5 +1,8 @@
 package edu.gatech.fallback;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Alex on 3/12/14.
  */
@@ -10,7 +13,7 @@ public class DeclaredType
     private String typeName;
     private String scope;
     private boolean isArray;
-    private int dimensions;
+    private List<Integer> dimensions;
     private DeclaredType container;
 
     public DeclaredType(String typeName, String scope)
@@ -18,10 +21,10 @@ public class DeclaredType
         this.isArray=false;
         this.typeName = typeName;
         this.scope = scope;
-        dimensions=0;
+        dimensions=new ArrayList<>();
         container=null;
     }
-    public DeclaredType(int dimensions, DeclaredType container, String scope)
+    public DeclaredType(List<Integer> dimensions, DeclaredType container, String scope)
     {
         this.typeName="";
         this.scope=scope;
@@ -38,8 +41,16 @@ public class DeclaredType
         return isArray;
     }
 
-    public int getDimensions() {
-        return dimensions;
+    public int getDimensionCount() {
+        return dimensions.size();
+    }
+
+    public int getDimensionX(int X)
+    {
+        if(X>=dimensions.size())
+            return -1;
+        else
+            return dimensions.get(X);
     }
 
     public DeclaredType getContainer() {
@@ -60,6 +71,24 @@ public class DeclaredType
     public String toString()
     {
         return typeName;
+
+    }
+    public String toVerboseString()
+    {
+        StringBuilder sb = new StringBuilder();
+        if(isArray)
+        {
+            sb.append("Array of "+container+" Size: ");
+            for(int i:dimensions)
+                sb.append("["+i+"]");
+
+        }
+        else
+        {
+            sb.append(typeName);
+            sb.append(" Context: "+scope==""?"global":scope);
+        }
+        return sb.toString();
     }
 
 

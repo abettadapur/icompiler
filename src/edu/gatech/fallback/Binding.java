@@ -53,4 +53,27 @@ public  class Binding
         Binding temp = (Binding) other;
         return temp.name.equals(name)&&temp.scope.equals(scope);
     }
+
+    public String toString()
+    {
+        if(isFunction())
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append(name);
+            sb.append("(");
+            for(DeclaredType t: params)
+            {
+                sb.append(t+",");
+            }
+            sb.deleteCharAt(sb.length()-1);
+            sb.append(") : ");
+            sb.append(type);
+            return sb.toString();
+        }
+        else
+        {
+            return name+" "+type+" Context: "+scope==""?"global":scope;
+        }
+    }
+
 }

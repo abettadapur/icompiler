@@ -9,6 +9,7 @@ import sun.print.resources.serviceui;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Alex on 3/12/14.
@@ -59,13 +60,14 @@ public class SymbolTable implements ITable
                     if(typeNode.getChildren().get(0).getData() == TokenType.ARRAY)
                     {
                         //this is a new type, no mapping needed
-                        int dimension = 0;
+                        List<Integer> dimension = new ArrayList<>();
                         for(Node<Type> node: typeNode)
                         {
-                            if(node.getData()==TokenType.LBRACK)
+                            if(node.getData()==TokenType.INTLIT)
                             {
-                                dimension++;
+                                dimension.add(Integer.parseInt(((Terminal) node.getChildren().get(0).getData()).getContent()));
                             }
+
                         }
                         String containerId = ((Terminal)typeNode.getChildren().get(6).getChildren().get(0).getChildren().get(0).getData()).getContent();
                         if(!typeLookup.containsKey(containerId))
@@ -367,6 +369,47 @@ public class SymbolTable implements ITable
                 }
             }
         }
+    }
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("TYPES\n---------\n");
+        for(Map.Entry<String, DeclaredType> e:  typeLookup.entrySet ())
+        {
+            sb.append(e.getKey());
+            sb.append(": ");
+            sb.append(e.getValue()+"\n");
+        }
+        sb.append("VARIABLES\n---------\n");
+        for(Map.Entry<String, List<Binding> >e: identifiers.entrySet())
+        {
+            for(Binding b:e.getValue())
+            {
+                if(!b.isFunction())
+                {
+                    sb.append(e.getKey());
+                    sb.append(": ");
+                    sb.append(b+"\n");
+                }
+
+            }
+        }
+        sb.append("FUNCTIONS\n---------\n");
+        for(Map.Entry<String, List<Binding> >e: identifiers.entrySet())
+        {
+            for(Binding b:e.getValue())
+            {
+                if(b.isFunction())
+                {
+                    sb.append(e.getKey());
+                    sb.append(": ");
+                    sb.append(b+"\n");
+                }
+
+            }
+        }
+        return sb.toString();
+
     }
 
 }
