@@ -86,7 +86,7 @@ public class DeclaredType
         else
         {
             sb.append(typeName);
-            sb.append(" Context: "+(scope.equals("")?"global":scope));
+            //sb.append(" Context: "+(scope.equals("")?"global":scope));
         }
         return sb.toString();
     }
