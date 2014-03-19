@@ -177,7 +177,7 @@ public class Semantics
             {
                 for(Node<Type> current: subRoot)
                 {
-                    if(current.getData()==RuleType.LVALUE)
+                    if(current.getNearestParentOfType(RuleType.EXPR)==subRoot&&current.getData()==RuleType.LVALUE)
                     {
                         DeclaredType newType = evaluateLValue(current);
                         if(newType==null)
@@ -214,7 +214,7 @@ public class Semantics
                         }
 
                     }
-                    if(current.getData()==RuleType.CONST)
+                    if(current.getNearestParentOfType(RuleType.EXPR)==subRoot&&current.getData()==RuleType.CONST)
                     {
                         DeclaredType newType = getConstType(current);
                         if(currType==null)
@@ -238,7 +238,7 @@ public class Semantics
                         }
                     }
                     //here is an operator
-                    if(current.getData()==RuleType.MULTOP||current.getData()==RuleType.ADDOP||current.getData()==RuleType.BINOP)
+                    if(current.getNearestParentOfType(RuleType.EXPR)==subRoot&&(current.getData()==RuleType.MULTOP||current.getData()==RuleType.ADDOP||current.getData()==RuleType.BINOP))
                     {
                         //grab that operator
                         currentOperator = (TokenType)current.getChildren().get(0).getData();

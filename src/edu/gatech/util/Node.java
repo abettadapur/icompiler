@@ -32,6 +32,7 @@ public class Node<T> implements Iterable<Node<T>>
         this.currentChild=-1;
         this.lineNumber=lineNumber;
         children = new ArrayList<>();
+        parent=null;
     }
 
     public int getLineNumber() {
@@ -150,4 +151,19 @@ public class Node<T> implements Iterable<Node<T>>
     {
         return new PreOrderIterator<>(this);
     }
+
+    public Node<T> getNearestParentOfType(Type t)
+    {
+        Node<T> parent = this.parent;
+        while(parent!=null)
+        {
+            if(parent.getData()==t)
+            {
+                return parent;
+            }
+            parent = parent.parent;
+        }
+        return null;
+    }
+
 }
