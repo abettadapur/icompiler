@@ -38,7 +38,9 @@ public class Driver {
             if(parseTree!=null)
             {
                 SymbolTable table = new SymbolTable();
+
                 List<String> errors = table.populateTable(parseTree.getChildren().get(1));
+                System.out.println(table);
                 if(errors.size()==0)
                 {
                     Semantics checker = new Semantics(parseTree, table); //MUST CHANGE

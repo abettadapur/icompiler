@@ -103,7 +103,7 @@ public class Semantics
         //TODO: MUST SEARCH FOR RETURN STATEMENTS
         for(Node<Type> statement: statements)
         {
-            if(statement.getLineNumber()==30)
+            if(statement.getLineNumber()==206)
             {
                 int a=0;
             }

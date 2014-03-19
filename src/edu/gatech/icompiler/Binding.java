@@ -63,7 +63,10 @@ public  class Binding
             sb.append("(");
             for(DeclaredType t: params)
             {
-                sb.append(t+",");
+                if(t.isArray())
+                    sb.append(t.toVerboseString()+",");
+                else
+                    sb.append(t+",");
             }
             sb.deleteCharAt(sb.length()-1);
             sb.append(") : ");

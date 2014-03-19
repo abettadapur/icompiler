@@ -321,6 +321,11 @@ public class SymbolTable implements ITable
                 return b;
             }
         }
+        for(Binding b:entries)
+        {
+            if(b.getScope().equals(""))
+                return b;
+        }
         return null;
     }
 
