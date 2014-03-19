@@ -335,7 +335,7 @@ public class SymbolTable implements ITable
         if(b==null)
             return null;
         DeclaredType type = b.getType();
-        while(true)
+        while(type!=null)
         {
             if(type.equals(DeclaredType.integer)||type.equals(DeclaredType.str)||type.isArray())
             {
@@ -343,7 +343,7 @@ public class SymbolTable implements ITable
             }
             type = typeMapping.get(type);
         }
-
+        return type;
 
     }
     public DeclaredType findTypeMap(DeclaredType type)

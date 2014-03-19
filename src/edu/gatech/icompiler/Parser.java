@@ -130,12 +130,17 @@ public class Parser
         {
             if(!error)
             {
+
                 Token token = scanner.peek();
 
                 TokenType tokenType = token.TYPE;
 
                 Type currentType = stack.pop();
 
+                if(currentType==TokenType.IF)
+                {
+                    int a= 0;
+                }
 
                 if(tokenType==TokenType.COMMENT)
                 {

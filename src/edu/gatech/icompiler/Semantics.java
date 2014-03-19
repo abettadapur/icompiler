@@ -103,7 +103,7 @@ public class Semantics
         //TODO: MUST SEARCH FOR RETURN STATEMENTS
         for(Node<Type> statement: statements)
         {
-            if(statement.getLineNumber()==18)
+            if(statement.getLineNumber()==30)
             {
                 int a=0;
             }
@@ -149,10 +149,13 @@ public class Semantics
                 Node<Type> opexpr = subRoot.getChildren().get(3);
                 if(!opexpr.isEpsilon())
                 {
-                    TokenType operator = (TokenType)opexpr.getChildren().get(0).getData();
+                    TokenType operator = (TokenType)opexpr.getChildren().get(0).getChildren().get(0).getData();
                     boolean comparator = operator==TokenType.EQ||operator==TokenType.NEQ||operator==TokenType.GEQ||operator==TokenType.LEQ||operator==TokenType.GREATER||operator==TokenType.LESSER;
                     Node<Type> expression = opexpr.getChildren().get(1);
                     DeclaredType newType = evaluateExpression(expression,comparator);
+                    if(newType==null)
+                        return null;
+
                     if( typeCompatibility(exprType, operator, newType));
                     {
                         if(comparator)
@@ -224,6 +227,8 @@ public class Semantics
                                 currType = null;
                                 break;
                             }
+                            else
+                                currentOperator=null;
                         }
                         else
                         {
@@ -237,6 +242,20 @@ public class Semantics
                     {
                         //grab that operator
                         currentOperator = (TokenType)current.getChildren().get(0).getData();
+                        if((currentOperator == TokenType.AND||currentOperator==TokenType.OR)&&seenComparator)
+                        {
+                            seenComparator = false;
+                            if(compareType==null)
+                                return currType;
+                            if(compareType==currType)
+                                currType=null;
+                            else
+                            {
+                                errors.add(subRoot.getLineNumber()+": Cannot compare "+compareType.getTypeName()+" to "+currType.getTypeName());
+                                return null;
+                            }
+
+                        }
                         if(currentOperator==TokenType.EQ||currentOperator==TokenType.NEQ||currentOperator==TokenType.GEQ||currentOperator==TokenType.LEQ||currentOperator==TokenType.GREATER||currentOperator==TokenType.LESSER)
                         {
                             if(!seenComparator)
@@ -317,11 +336,12 @@ public class Semantics
     {
         int dimension=0;
         DeclaredType curType = null;
+        String id=null;
         for(Node<Type> sel:subRoot)
         {
-            if(sel.getData()==TokenType.ID)
+            if(sel.getData()==TokenType.ID&&id==null)
             {
-                String id = ((Terminal)sel.getChildren().get(0).getData()).getContent();
+                id = ((Terminal)sel.getChildren().get(0).getData()).getContent();
                 curType = getPrimitiveFromId(id, sel.getScope());
                 if(curType==null)
                 {
@@ -339,7 +359,8 @@ public class Semantics
                     return null;
                 }
                 //TODO: getArrayDimensions....
-                if(!evaluateExpression(sel,false).equals(DeclaredType.integer))
+                DeclaredType indexType = evaluateExpression(sel,false);
+                if(!indexType.equals(DeclaredType.integer))
                 {
                     errors.add(sel.getLineNumber()+": Expression contained [] evaluated to unsupported type");
                     return null;
@@ -436,7 +457,11 @@ public class Semantics
             String functionId = subRoot.getScope();
             DeclaredType expressionType = evaluateExpression(subRoot.getChildren().get(1), false);
             DeclaredType returnType = symbolTable.findPrimitive(functionId, "");
-            if(expressionType!=null&&!expressionType.equals(returnType))
+            if(returnType==null)
+            {
+                errors.add(subRoot.getLineNumber()+": "+functionId+" cannot return a value");
+            }
+            else if(expressionType!=null&&!expressionType.equals(returnType))
             {
                 errors.add(subRoot.getLineNumber()+": "+expressionType.getTypeName()+" does not match expected return type "+returnType.getTypeName());
 
@@ -611,6 +636,8 @@ public class Semantics
                             boolean seenComparator = operator==TokenType.EQ||operator==TokenType.NEQ||operator==TokenType.GEQ||operator==TokenType.LEQ||operator==TokenType.GREATER||operator==TokenType.LESSER;
                             Node<Type> expression = expr_or_func.getChildren().get(1).getChildren().get(1);
                             DeclaredType exprType = evaluateExpression(expression, seenComparator);
+                            if(exprType==null)
+                                return;
                             if(typeCompatibility(lvalType, operator, exprType))
                             {
                                 if(seenComparator)

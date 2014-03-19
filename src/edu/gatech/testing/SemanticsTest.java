@@ -20,7 +20,7 @@ public class SemanticsTest
     @Test
     public void test1()
     {
-        Parser parser = new Parser( false);
+        Parser parser = new Parser( true);
         File f = new File("ex1.tiger");
         try
         {
@@ -41,7 +41,9 @@ public class SemanticsTest
             }
         }
         catch(Exception ex)
-        {}
+        {
+            System.out.print(ex);
+        }
     }
 
     @Test

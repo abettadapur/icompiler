@@ -10,5 +10,10 @@ in
                 sum := sum + a * b;
 				a:= a+ b;
         enddo;
+
+        if((i<0)&(i<-1)) then
+                sum:=sum+1;
+        endif;
+
         printi(sum); /* library call to printi to print the dot product */
 end
