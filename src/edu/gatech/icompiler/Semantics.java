@@ -110,8 +110,10 @@ public class Semantics
             {
                 if(!currentScope.equals(""))
                 {
-                    if(!returns.contains(currentScope))
-                        errors.add(currentScope+" does not ever return a value");
+                    Binding b = symbolTable.findByNameScope(currentScope,"");
+                    if(b.isFunction()&&b.getType()!=null)
+                        if(!returns.contains(currentScope))
+                            errors.add(currentScope+" does not ever return a value");
                 }
                 currentScope=statement.getScope();
             }
