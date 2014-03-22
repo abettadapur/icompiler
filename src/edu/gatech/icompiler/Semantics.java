@@ -18,6 +18,7 @@ public class Semantics
     private final List<Node<Type>> statements;
     private final ITable symbolTable;
 
+
     public Semantics(Node<Type> tree, ITable symbolTable)
     {
         this.tree = tree;
@@ -73,6 +74,7 @@ public class Semantics
 
     public List<String> performChecks()
     {
+        List<String> returns = new ArrayList<>();
         //check optionally initialized types
         for(Node<Type> declaration: declarations)
         {
@@ -101,8 +103,18 @@ public class Semantics
             }
         }
         //TODO: MUST SEARCH FOR RETURN STATEMENTS
+        String currentScope = "";
         for(Node<Type> statement: statements)
         {
+            if(!currentScope.equals(statement.getScope()))
+            {
+                if(!currentScope.equals(""))
+                {
+                    if(!returns.contains(currentScope))
+                        errors.add(currentScope+" does not ever return a value");
+                }
+                currentScope=statement.getScope();
+            }
             if(statement.getLineNumber()==206)
             {
                 int a=0;
@@ -122,13 +134,16 @@ public class Semantics
             }
             else if(statement.hasChildOfType(TokenType.RETURN))
             {
+                returns.add(currentScope);
                 evaluateReturn(statement);
+
             }
             else if (statement.hasChildOfType(RuleType.STAT_ASSIGN))
             {
                 evaluateStatAssign(statement);
             }
         }
+
         return errors;
     }
 
