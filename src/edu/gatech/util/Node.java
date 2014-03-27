@@ -128,6 +128,16 @@ public class Node<T> implements Iterable<Node<T>>
        }
         return out.toString();
     }
+
+    public Node<T> getFirstChildOfType(Type target){
+
+        for(Node<T> child : children)
+            if(child.getData().equals(target))
+                return child;
+
+        return null;
+    }
+
     public boolean hasChildOfType(Type target )
     {
         for(int i=0; i<children.size(); i++)
@@ -166,4 +176,13 @@ public class Node<T> implements Iterable<Node<T>>
         return null;
     }
 
+
+    public String toString(){
+        String childStrings = "\n\tWith immediate children: :::";
+
+        for(Node<T> kid : children)
+            childStrings += kid.data + " ::: ";
+
+        return "<" + data.toString() +" in scope " + scope +">" + childStrings ;
+    }
 }

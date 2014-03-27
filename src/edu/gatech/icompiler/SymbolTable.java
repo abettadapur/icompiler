@@ -3,10 +3,7 @@ package edu.gatech.icompiler;
 import edu.gatech.facade.ITable;
 import edu.gatech.util.Node;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Alex on 3/12/14.
@@ -24,6 +21,8 @@ public class SymbolTable implements ITable
         typeLookup.put("int", DeclaredType.integer);
         typeLookup.put("string", DeclaredType.str);
         typeMapping = new HashMap<>();
+
+        addStandardLibrary();
     }
 
     public List<String> populateTable(Node<Type> declaration)
@@ -210,7 +209,7 @@ public class SymbolTable implements ITable
         }
         else
         {
-            List<Binding> entries = new ArrayList<Binding>();
+            List<Binding> entries = new ArrayList<>();
             entries.add(entry);
             identifiers.put(id, entries);
         }
@@ -414,4 +413,30 @@ public class SymbolTable implements ITable
 
     }
 
+
+    private void addStandardLibrary(){
+
+        addFunction("print", null, Arrays.asList( new DeclaredType[]{DeclaredType.str }) );
+
+        addFunction("printi", null, Arrays.asList( new DeclaredType[]{DeclaredType.integer }) );
+
+        addFunction("flush", null, Arrays.asList( new DeclaredType[]{}) );
+
+        addFunction("getchar", null, Arrays.asList( new DeclaredType[]{}) );
+
+        addFunction("ord", DeclaredType.integer, Arrays.asList( new DeclaredType[]{DeclaredType.str}) );
+
+        addFunction("chr", DeclaredType.str, Arrays.asList( new DeclaredType[]{DeclaredType.integer }) );
+
+        addFunction("size", DeclaredType.integer, Arrays.asList( new DeclaredType[]{DeclaredType.str}) );
+
+        addFunction("substring", DeclaredType.str, Arrays.asList( new DeclaredType[]{DeclaredType.str, DeclaredType.integer, DeclaredType.integer}) );
+
+        addFunction("concat", DeclaredType.str, Arrays.asList( new DeclaredType[]{DeclaredType.str, DeclaredType.str}) );
+
+        addFunction("not", DeclaredType.integer, Arrays.asList( new DeclaredType[]{DeclaredType.integer}) );
+
+        addFunction("exit", null, Arrays.asList( new DeclaredType[]{DeclaredType.integer}) );
+
+    }
 }

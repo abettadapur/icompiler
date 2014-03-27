@@ -1,5 +1,6 @@
 package edu.gatech.intermediate;
 
+import edu.gatech.icompiler.Token;
 import edu.gatech.icompiler.TokenType;
 
 /**
@@ -12,6 +13,32 @@ public enum Operator {
     ARRAY_STORE, ARRAY_LOAD, UNSUPPORTED;
 
     //TODO: CALL, CALLR, ARRAY_STORE, ARRAY_LOAD
+
+    public static Operator getFromString(String foo){
+        Operator temp = UNSUPPORTED;
+
+        switch(foo){
+            case "+": temp = ADD; break;
+            case "-": temp = SUB; break;
+            case "*": temp = MULT; break;
+            case "/": temp = DIV; break;
+            case "&": temp = AND; break;
+            case "|": temp = OR; break;
+            case ":=": temp = ASSIGN; break;
+        }
+
+        return temp;
+    }
+
+
+    public static Operator getFromToken(Token token){
+
+        if(token.isToken()){
+            return getFromString(token.TOKEN_CONTENT);
+        }
+        else
+            return getFromTokenTypes(token.TYPE);
+}
 
     public static Operator getFromTokenTypes(TokenType type){
 

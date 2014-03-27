@@ -14,15 +14,11 @@ public  class Binding
         this.type = type;
         this.scope = scope;
         this.params = params;
-        isFunction=true;
+        isFunction=params !=null;
     }
 
     public Binding(String name, DeclaredType type, String scope) {
-
-        this.name = name;
-        this.type = type;
-        this.scope = scope;
-        isFunction=false;
+        this(name, type, scope, null);
     }
 
     public String getName() {
