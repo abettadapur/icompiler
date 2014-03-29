@@ -4,9 +4,7 @@ import edu.gatech.facade.ITable;
 import edu.gatech.icompiler.*;
 import edu.gatech.util.Node;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by Stefano on 3/10/14.
@@ -16,6 +14,8 @@ public class Intermediate {
     private List<IntermediateOperation> intermediates;
     private ITable table;
 
+    private Map<String, Integer> operatorPrecedence;
+
     private int labelCount =1;
     private int tempCount =1;
 
@@ -24,6 +24,12 @@ public class Intermediate {
 
         intermediates = new ArrayList<>();
 
+        operatorPrecedence = new HashMap<>();
+
+        operatorPrecedence.put("+", 1);
+        operatorPrecedence.put("-", 1);
+        operatorPrecedence.put("/", 2);
+        operatorPrecedence.put("*", 2);
 
         intermediates.addAll(getStatements(root));
 
@@ -282,37 +288,93 @@ public class Intermediate {
 
         }
 
-        List<Binding> temporaries = new ArrayList<>();
 
-        Stack<String> stack= new Stack<>();
+        List<String> postFixTerminals = orderOperations( terminals );
 
-         for(int i = terminals.size()-1; i>=0; i--)
-            stack.push(terminals.get(i));
+        Stack<String> calculationStack = new Stack<>();
 
-        //TODO: fix precedence
+        while(postFixTerminals.size() > 1){
 
-        //do not add temporaries if this is just an assignment
-        while(stack.size() > 1){
+            String token = postFixTerminals.remove(0);
 
-            String foo = stack.pop();
+            if(token.matches("\\d*")){
+                calculationStack.push(token);
+            }else{
+                Operator op = Operator.getFromString(token);
 
-            Operator op = Operator.getFromString(stack.pop());
+                String foo = calculationStack.pop();
 
-            String bar = stack.pop();
+                String bar = calculationStack.pop();
 
-            String tempName = generateTemp(DeclaredType.integer, expression.getScope()).getName();
+                String tempName = generateTemp(DeclaredType.integer, expression.getScope()).getName();
 
-            IntermediateOperation temp = new IntermediateOperation(op, tempName, foo, bar, "", null );
-            out.add(temp);
+                IntermediateOperation temp = new IntermediateOperation(op, tempName, foo, bar, "", null );
+                out.add(temp);
 
-            stack.push(tempName);
+                calculationStack.push(tempName);
+
+
+            }
+
+
         }
 
-        IntermediateOperation assignment = new IntermediateOperation(Operator.ASSIGN, initialVariable, stack.pop(), "", "", null);
+        IntermediateOperation assignment = new IntermediateOperation(Operator.ASSIGN, initialVariable, calculationStack.pop(), "", "", null);
 
         out.add(assignment);
 
         return out;
+    }
+
+
+
+    private List<String> orderOperations( List<String> in ){
+
+
+        //We put our ops in postfix notation (shunting yard algorithm)
+        List<String> out = new ArrayList<>();
+
+        Stack<String> operators = new Stack<>();
+
+        while(!in.isEmpty()){
+
+            String token = in.remove(0);
+
+            if(token.matches("\\d*"))
+                out.add(token);
+
+            if("+*-/".contains(token)){
+
+                while(!operators.isEmpty() && operatorPrecedence.get(operators.peek()) < operatorPrecedence.get(token))
+                    out.add(operators.pop());
+
+                operators.push(token);
+
+            }
+
+            if(token.equals("(")){
+                //these are just stored for precedence, they never wind up in the queue
+                operators.push(token);
+            }
+
+            if(token.equals(")")){
+
+                while(!operators.peek() .equals("("))
+                    out.add(operators.pop());
+
+                //discard parentheses
+                operators.pop();
+
+            }
+
+
+        }
+
+
+
+
+        return out;
+
     }
 
 
