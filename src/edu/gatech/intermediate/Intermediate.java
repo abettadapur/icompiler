@@ -26,10 +26,10 @@ public class Intermediate {
 
         operatorPrecedence = new HashMap<>();
 
-        operatorPrecedence.put("+", 1);
-        operatorPrecedence.put("-", 1);
-        operatorPrecedence.put("/", 2);
-        operatorPrecedence.put("*", 2);
+        operatorPrecedence.put("+", 2);
+        operatorPrecedence.put("-", 2);
+        operatorPrecedence.put("/", 1);
+        operatorPrecedence.put("*", 1);
 
         intermediates.addAll(getStatements(root));
 
@@ -247,6 +247,8 @@ public class Intermediate {
 
         List<Node<Type>> open = new ArrayList<>();
 
+        List<Node<Type>> closed = new ArrayList<>();
+
         List<String> terminals = new ArrayList<>();
 
         open.add(expression);
@@ -265,9 +267,15 @@ public class Intermediate {
 
                     //TODO: handle multidimensional arrays
 
+                    closed.add(bam);
+
                     Binding index = generateTemp(DeclaredType.integer, bar.getScope());
 
-                    Node<Type> indexingExpression =  temp.getFirstChildOfType(RuleType.LVALUE_TAIL).getFirstChildOfType(RuleType.EXPR);
+                    Node<Type> lvalue = temp.getFirstChildOfType(RuleType.LVALUE_TAIL);
+
+                    Node<Type> indexingExpression =  lvalue.getFirstChildOfType(RuleType.EXPR);
+
+                    closed.add(lvalue);
 
                     out.addAll(generateExpression( index.getName() , indexingExpression ));
 
@@ -284,22 +292,35 @@ public class Intermediate {
             else if(temp.getData().isTerminal())
                 terminals.add(((Terminal) temp.getData()).getContent());
 
-            open.addAll(0, temp.getChildren());
+//           open.addAll(0, temp.getChildren());
+
+
+           List<Node<Type>> tempList = new ArrayList<>();
+
+           for(Node<Type> node : temp.getChildren())
+               if(! closed.contains(node))
+                   tempList.add(node);
+
+            open.addAll(0,tempList);
 
         }
+
+
+
 
 
         List<String> postFixTerminals = orderOperations( terminals );
 
         Stack<String> calculationStack = new Stack<>();
 
-        while(postFixTerminals.size() > 1){
+        while(!postFixTerminals.isEmpty()){
 
             String token = postFixTerminals.remove(0);
 
-            if(token.matches("\\d*")){
+            if(token.matches("[\\d\\w]*")){
                 calculationStack.push(token);
             }else{
+
                 Operator op = Operator.getFromString(token);
 
                 String foo = calculationStack.pop();
@@ -340,7 +361,7 @@ public class Intermediate {
 
             String token = in.remove(0);
 
-            if(token.matches("\\d*"))
+            if(token.matches("[\\d\\w]*"))
                 out.add(token);
 
             if("+*-/".contains(token)){
@@ -370,7 +391,8 @@ public class Intermediate {
 
         }
 
-
+        while(! operators.isEmpty())
+            out.add(operators.pop());
 
 
         return out;
