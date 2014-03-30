@@ -66,6 +66,10 @@ public class Intermediate {
                         initialization = bar;
 
                 out.addAll(0,generateInitializationList(identifierList, initialization));
+            }
+            else if(temp.getData().equals(TokenType.IN)){
+
+                out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "", "", "main", null));
 
             }
             else if(temp.hasChildOfType(TokenType.FOR)){
@@ -80,7 +84,7 @@ public class Intermediate {
             }
             else if(temp.getData().equals(RuleType.FUNCT_DECLARATION)){
 
-                out.addAll(generateFunctionDeclaration(temp));
+                out.addAll(0,generateFunctionDeclaration(temp));
 
             }
             else if(temp.hasChildOfType(RuleType.STAT_ASSIGN)){
@@ -369,7 +373,14 @@ public class Intermediate {
 
                 Terminal foo = (Terminal)(bam.getChildren().get(0).getData());
 
-                Binding bar = table.findByNameScope(foo.getContent(), bam.getScope());
+
+                Binding bar;
+                if(bam.getScope()!=null)
+                    bar = table.findByNameScope(foo.getContent(), bam.getScope());
+                else //TODO: consult with Alex about how to fix scoping problem
+                    bar = table.find(foo.getContent()).get(0);
+
+                System.out.println(bar);
 
                 if(bar.getType().isArray()){
 
