@@ -15,9 +15,9 @@ public class IntermediateOperation {
     private String  z;
 
     private String label;
-    private List<Binding> parameters;
+    private List<String> parameters;
 
-    public IntermediateOperation(Operator op, String x, String y, String z, String label, List<Binding> parameters){
+    public IntermediateOperation(Operator op, String x, String y, String z, String label, List<String> parameters){
         this.op = op;
         this.x = x;
         this.y =y;
@@ -33,6 +33,13 @@ public class IntermediateOperation {
 
         if(op == Operator.UNSUPPORTED)
             return label;
+
+        if(null!= parameters){
+            String out = op.name() +", "+ x;
+            for(String s : parameters)
+                out+=", " + s;
+            return out;
+        }
 
         return label + op.name().toLowerCase() + ", " + x + ", " + y +", " + z;
 

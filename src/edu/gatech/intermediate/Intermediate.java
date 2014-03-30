@@ -11,6 +11,11 @@ import java.util.*;
  */
 public class Intermediate {
 
+    //TODO: while loops
+    //TODO: else blocks
+    //TODO: multidimensional arrays
+    //TODO: function calls
+
     private List<IntermediateOperation> intermediates;
     private ITable table;
 
@@ -44,7 +49,6 @@ public class Intermediate {
 
         open.add(root);
 
-        //DFS
         while(!open.isEmpty()){
 
             Node<Type> temp = open.remove(0);
@@ -69,20 +73,71 @@ public class Intermediate {
                 out.addAll(generateLoop(temp));
 
             }
+            else if(temp.hasChildOfType(TokenType.WHILE)){
+
+                out.addAll(generateWhile(temp));
+
+            }
+            else if(temp.getData().equals(RuleType.FUNCT_DECLARATION)){
+
+                out.addAll(generateFunctionDeclaration(temp));
+
+            }
             else if(temp.hasChildOfType(RuleType.STAT_ASSIGN)){
 
                 Node<Type> identifierNode = temp.getFirstChildOfType(TokenType.ID);
 
                 Binding identifier = table.findByNameScope(  ((Terminal)identifierNode.getNextChild().getData()).getContent() ,identifierNode.getScope());
 
+                Node<Type> foo= temp.getFirstChildOfType(RuleType.STAT_ASSIGN);
+
                 if(!identifier.isFunction()){
 
-                    Node<Type> foo= temp.getFirstChildOfType(RuleType.STAT_ASSIGN);
-
-
                     out.addAll(generateExpression(identifier.getName(), foo.getFirstChildOfType(RuleType.EXPR_OR_ID)));
+
                 }else{
-                    //TODO: finish
+
+
+                    List<Node<Type>> parameterExpressions = new ArrayList<>();
+
+                    List<Node<Type>> tempOpen = new ArrayList<>();
+                    tempOpen.add(foo.getFirstChildOfType(RuleType.EXPR_LIST));
+
+
+                    //find all parameters
+                    while(!tempOpen.isEmpty()){
+
+                        Node<Type> bar = tempOpen.remove(0);
+
+                        List<Node<Type>> baz = bar.getChildren();
+
+                        for(Node<Type> child : baz){
+                            if(child.getData().equals(RuleType.EXPR))
+                                parameterExpressions.add(child);
+                            else
+                                tempOpen.add(child);
+                        }
+                    }
+
+
+                    List<String> parameters = new ArrayList<>();
+
+                    for(Node<Type> bar : parameterExpressions){
+
+                        Binding baz = generateTemp(DeclaredType.integer, bar.getScope());
+
+                        List<IntermediateOperation> qux = generateExpression(baz.getName(), bar);
+
+                        out.addAll(qux);
+
+                        parameters.add(baz.getName());
+
+                    }
+
+                    IntermediateOperation call = new IntermediateOperation( Operator.CALL, identifier.getName(), "", "", "", parameters);
+
+                    out.add(call);
+
                 }
             }
             else{
@@ -92,6 +147,26 @@ public class Intermediate {
         }
 
         return out;
+    }
+
+    private List<IntermediateOperation> generateFunctionDeclaration(Node<Type> functionDeclaration){
+
+        List<IntermediateOperation> out = new ArrayList<>();
+
+
+
+        String functionName = ((Terminal)functionDeclaration.getFirstChildOfType(TokenType.ID).getNextChild().getData()).getContent();
+
+        IntermediateOperation funcStart = new IntermediateOperation(Operator.UNSUPPORTED, "", "", "", functionName, null);
+
+        List<IntermediateOperation> funcBody =  getStatements(functionDeclaration.getFirstChildOfType(RuleType.STAT_SEQ));
+
+        out.add(funcStart);
+        out.addAll(funcBody);
+
+        return out;
+
+
     }
 
     private List<IntermediateOperation> generateInitializationList(Node<Type> identifierList, Node<Type> initialization){
@@ -238,6 +313,39 @@ public class Intermediate {
         return out;
     }
 
+    private List<IntermediateOperation> generateWhile(Node<Type> expression){
+
+        List<IntermediateOperation> out = new ArrayList<>();
+
+        Binding temp = generateTemp(DeclaredType.integer, expression.getScope());
+
+        String startLabel = generateLabel();
+
+        String skipLabel = generateLabel();
+
+        IntermediateOperation loopStart = new IntermediateOperation(Operator.UNSUPPORTED, "","","", startLabel, null);
+
+        IntermediateOperation check = new IntermediateOperation(Operator.BREQ, temp.getName(), "0", skipLabel, "", null  );
+
+        List<IntermediateOperation> precondition = generateExpression( temp.getName(), expression.getFirstChildOfType(RuleType.EXPR));
+
+        List<IntermediateOperation> loopBody = getStatements(expression.getFirstChildOfType(RuleType.STAT_SEQ));
+
+        IntermediateOperation loopBack = new IntermediateOperation(Operator.GOTO, "startLabel", "", "", "", null);
+
+        IntermediateOperation loopSkip = new IntermediateOperation(Operator.UNSUPPORTED, "", "", "", skipLabel, null);
+
+        out.add(loopStart);
+
+        out.add(check);
+        out.addAll(precondition);
+        out.addAll(loopBody);
+        out.add(loopBack);
+        out.add(loopSkip);
+
+        return out;
+    }
+
     //do the dumb thing first
     private List<IntermediateOperation> generateExpression(String initialVariable, Node<Type> expression){
 
@@ -261,7 +369,7 @@ public class Intermediate {
 
                 Terminal foo = (Terminal)(bam.getChildren().get(0).getData());
 
-                Binding bar = table.findByNameScope(foo.getContent(), temp.getScope());
+                Binding bar = table.findByNameScope(foo.getContent(), bam.getScope());
 
                 if(bar.getType().isArray()){
 
@@ -291,9 +399,6 @@ public class Intermediate {
             }
             else if(temp.getData().isTerminal())
                 terminals.add(((Terminal) temp.getData()).getContent());
-
-//           open.addAll(0, temp.getChildren());
-
 
            List<Node<Type>> tempList = new ArrayList<>();
 
