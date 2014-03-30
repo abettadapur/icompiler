@@ -24,7 +24,7 @@ public class IntermediateTest {
     public void testIntermediate1(){
 
         Parser parser = new Parser( false);
-        File f = new File("ex2.tiger");
+        File f = new File("ex3.tiger");
         File bar = new File("ex2.ir");
         try
         {

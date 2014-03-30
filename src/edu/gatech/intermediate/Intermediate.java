@@ -14,7 +14,7 @@ public class Intermediate {
     //TODO: while loops
     //TODO: else blocks
     //TODO: multidimensional arrays
-    //TODO: function calls
+    //TODO: function calls with returns
 
     private List<IntermediateOperation> intermediates;
     private ITable table;

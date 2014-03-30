@@ -1,8 +1,23 @@
 let
 
-        function print ( n : int ) begin
-                printi(n);
-        end;
+    type u32 = int;
+    type u16 = int;
+    type array_int = array[20] of u32;
+    var X,Y,Z : u32;
+    var i : u32 := 0;
+    var b : u16 := 0;
+    var arrayofint : array_int;
+
+    function print(b:int, n:int) : int begin
+    	i:=b;
+    end;
+
 in
-        print(5);
+        while(i>0) do
+            i := b ;
+            arrayofint[0] := 4;
+        enddo;
+
+        arrayofint[0] := print(i,b);
 end
+
