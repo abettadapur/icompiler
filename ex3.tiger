@@ -1,8 +1,8 @@
 let
 
-        function return_it(n:int) : int begin
-                return(n);
+        function print ( n : int ) begin
+                printi(n);
         end;
 in
-        return_it(5);
+        print(5);
 end

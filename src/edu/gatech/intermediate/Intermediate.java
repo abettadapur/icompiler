@@ -156,8 +156,7 @@ public class Intermediate {
     private List<IntermediateOperation> generateFunctionDeclaration(Node<Type> functionDeclaration){
 
         List<IntermediateOperation> out = new ArrayList<>();
-
-
+        System.out.println(functionDeclaration);
 
         String functionName = ((Terminal)functionDeclaration.getFirstChildOfType(TokenType.ID).getNextChild().getData()).getContent();
 
@@ -380,7 +379,6 @@ public class Intermediate {
                 else //TODO: consult with Alex about how to fix scoping problem
                     bar = table.find(foo.getContent()).get(0);
 
-                System.out.println(bar);
 
                 if(bar.getType().isArray()){
 
