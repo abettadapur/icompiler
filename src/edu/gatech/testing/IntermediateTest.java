@@ -2,6 +2,7 @@ package edu.gatech.testing;
 
 
 import edu.gatech.icompiler.Parser;
+import edu.gatech.icompiler.Semantics;
 import edu.gatech.icompiler.SymbolTable;
 import edu.gatech.icompiler.Type;
 import edu.gatech.intermediate.Intermediate;
@@ -33,8 +34,10 @@ public class IntermediateTest {
             {
                 SymbolTable table = new SymbolTable();
                 table.populateTable(node.getChildren().get(1));
-                System.out.println(table);
 
+                System.out.println(table);
+                Semantics s = new Semantics(node,table);
+                List<String> errors = s.performChecks();
                 System.out.println("Output should look like this: ");
 
                 Scanner scan = new Scanner(bar);
