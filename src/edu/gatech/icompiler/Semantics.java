@@ -43,6 +43,7 @@ public class Semantics
                     if(child.getData()== TokenType.ID)
                     {
                         scope = ((Terminal)child.getChildren().get(0).getData()).getContent();
+                        node.setScope(scope);
                         break;
                     }
                 }

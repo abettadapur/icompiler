@@ -38,26 +38,29 @@ public class Driver {
             if(parseTree!=null)
             {
                 SymbolTable table = new SymbolTable();
-
                 List<String> errors = table.populateTable(parseTree.getChildren().get(1));
-                System.out.println(table);
                 if(errors.size()==0)
                 {
-                    Semantics checker = new Semantics(parseTree, table); //MUST CHANGE
+                    if(debug)
+                        System.out.println(table.toString());
+
+                    Semantics checker = new Semantics(parseTree, table);
                     errors = checker.performChecks();
                     if(errors.size()!=0)
                     {
                         for(String s:errors)
-                            System.out.println(s);
+                            System.err.println(s);
                     }
+                    System.err.println(errors.size()+ " ERRORS");
                 }
                 else
                 {
 
                     for(String s: errors)
                     {
-                        System.out.println(s);
+                        System.err.println(s);
                     }
+                    System.err.println(errors.size()+ "ERRORS");
                 }
             }
         }catch(Exception e){

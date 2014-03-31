@@ -102,10 +102,10 @@ public class Node<T> implements Iterable<Node<T>>
        StringBuilder out = new StringBuilder();
        if(node!=null)
        {
-           for(int i=0; i<tabLevel; i++)
-               out.append('\t');
            if(!node.isEpsilon())
            {
+               for(int i=0; i<tabLevel; i++)
+                   out.append('\t');
                if(!node.isLeaf())
                {
                 out.append("<"+node.data+">\n");
