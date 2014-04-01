@@ -108,6 +108,14 @@ public class Intermediate {
                 out.addAll(generateIf(temp));
 
             }
+            else if(temp.hasChildOfType(TokenType.RETURN)){
+
+                //TODO: fix
+                Binding foo = generateTemp(DeclaredType.integer, "");
+                out.addAll(generateExpression( foo.getName(),temp.getFirstChildOfType(RuleType.EXPR) ));
+
+                out.add(new IntermediateOperation(Operator.RETURN, foo.getName(), "", "", "", null));
+            }
             else if(temp.hasChildOfType(RuleType.STAT_ASSIGN)){
 
                 Node<Type> identifierNode = temp.getFirstChildOfType(TokenType.ID);
@@ -166,6 +174,7 @@ public class Intermediate {
                 }
             }
             else{
+                System.out.println(temp);
                 open.addAll(temp.getChildren());
             }
 
