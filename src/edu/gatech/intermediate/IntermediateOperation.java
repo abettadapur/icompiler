@@ -18,6 +18,7 @@ public class IntermediateOperation {
     private List<String> parameters;
 
     public IntermediateOperation(Operator op, String x, String y, String z, String label, List<String> parameters){
+
         this.op = op;
         this.x = x;
         this.y =y;

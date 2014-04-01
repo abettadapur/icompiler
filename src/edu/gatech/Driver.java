@@ -4,6 +4,7 @@ import edu.gatech.icompiler.Parser;
 import edu.gatech.icompiler.Semantics;
 import edu.gatech.icompiler.SymbolTable;
 import edu.gatech.icompiler.Type;
+import edu.gatech.intermediate.Intermediate;
 import edu.gatech.util.Node;
 
 import java.io.File;
@@ -52,6 +53,12 @@ public class Driver {
                             System.err.println(s);
                     }
                     System.err.println(errors.size()+ " ERRORS");
+
+                    if(errors.size() == 0){
+
+                        Intermediate intermediate = new Intermediate(debug, parseTree, table );
+
+                    }
                 }
                 else
                 {

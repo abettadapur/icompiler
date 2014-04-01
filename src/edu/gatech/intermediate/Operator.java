@@ -25,34 +25,10 @@ public enum Operator {
             case "&": temp = AND; break;
             case "|": temp = OR; break;
             case ":=": temp = ASSIGN; break;
+            default: temp = UNSUPPORTED; break;
         }
 
         return temp;
     }
 
-
-    public static Operator getFromToken(Token token){
-
-        if(token.isToken()){
-            return getFromString(token.TOKEN_CONTENT);
-        }
-        else
-            return getFromTokenTypes(token.TYPE);
-}
-
-    public static Operator getFromTokenTypes(TokenType type){
-
-        if(type.equals(TokenType.LESSER))
-            return BRLT;
-
-        if(type.equals(TokenType.GREATER))
-            return BRGT;
-
-        if( null != type)
-            for(Operator t : Operator.values())
-                if(type.name().equals(t.name()) || ("BR" + type.name()).equals(t.name()) )
-                    return t;
-
-        return UNSUPPORTED;
-    }
 }

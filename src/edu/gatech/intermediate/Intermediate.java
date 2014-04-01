@@ -11,6 +11,7 @@ import java.util.*;
  */
 public class Intermediate {
 
+    //TODO: add temporaries to table
     //TODO: while loops
     //TODO: else blocks
     //TODO: multidimensional arrays
@@ -25,18 +26,33 @@ public class Intermediate {
     private int tempCount =1;
 
     public Intermediate(Node<Type> root, ITable table){
+        this(false, root, table);
+    }
+
+    public Intermediate(boolean debug, Node<Type> root, ITable table){
         this.table = table;
 
         intermediates = new ArrayList<>();
 
         operatorPrecedence = new HashMap<>();
 
+        operatorPrecedence.put("|", 5);
+        operatorPrecedence.put("&", 5);
+        operatorPrecedence.put("<=", 4);
+        operatorPrecedence.put(">=", 4);
+        operatorPrecedence.put("<", 4);
+        operatorPrecedence.put(">", 4);
+        operatorPrecedence.put("<>", 3);
+        operatorPrecedence.put("=",3);
         operatorPrecedence.put("+", 2);
         operatorPrecedence.put("-", 2);
         operatorPrecedence.put("/", 1);
         operatorPrecedence.put("*", 1);
 
         intermediates.addAll(getStatements(root));
+
+        if(debug)
+            System.out.println(this);
 
     }
 
@@ -85,6 +101,11 @@ public class Intermediate {
             else if(temp.getData().equals(RuleType.FUNCT_DECLARATION)){
 
                 out.addAll(0,generateFunctionDeclaration(temp));
+
+            }
+            else if(temp.hasChildOfType(TokenType.IF)){
+
+                out.addAll(generateIf(temp));
 
             }
             else if(temp.hasChildOfType(RuleType.STAT_ASSIGN)){
@@ -156,7 +177,6 @@ public class Intermediate {
     private List<IntermediateOperation> generateFunctionDeclaration(Node<Type> functionDeclaration){
 
         List<IntermediateOperation> out = new ArrayList<>();
-        System.out.println(functionDeclaration);
 
         String functionName = ((Terminal)functionDeclaration.getFirstChildOfType(TokenType.ID).getNextChild().getData()).getContent();
 
@@ -169,6 +189,41 @@ public class Intermediate {
 
         return out;
 
+
+    }
+
+
+    private List<IntermediateOperation> generateIf(Node<Type> ifParent){
+
+        List<IntermediateOperation> out = new ArrayList<>();
+
+        Node<Type> switchingExpression = ifParent.getFirstChildOfType(RuleType.EXPR);
+
+        Binding entryPoint = generateTemp(DeclaredType.integer, switchingExpression.getScope());
+
+        String ifLabel = generateLabel();
+
+        String end = generateLabel();
+
+        out.addAll(generateExpression(entryPoint.getName(), switchingExpression) );
+
+        out.add(new IntermediateOperation(Operator.BRNEQ, entryPoint.getName(), "0", ifLabel, "", null ));
+
+        Node<Type> elseBlock = ifParent.getFirstChildOfType(RuleType.STAT_ELSE);
+
+        out.addAll(getStatements(elseBlock));
+
+        out.add(new IntermediateOperation(Operator.GOTO, end, "", "" ,"", null));
+
+        out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "", "" ,ifLabel, null));
+
+        Node<Type> ifBlock = ifParent.getFirstChildOfType(RuleType.STAT_SEQ);
+
+        out.addAll(getStatements(ifBlock));
+
+        out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "", "" ,end, null));
+
+        return out;
 
     }
 
@@ -334,7 +389,7 @@ public class Intermediate {
 
         List<IntermediateOperation> loopBody = getStatements(expression.getFirstChildOfType(RuleType.STAT_SEQ));
 
-        IntermediateOperation loopBack = new IntermediateOperation(Operator.GOTO, "startLabel", "", "", "", null);
+        IntermediateOperation loopBack = new IntermediateOperation(Operator.GOTO, startLabel, "", "", "", null);
 
         IntermediateOperation loopSkip = new IntermediateOperation(Operator.UNSUPPORTED, "", "", "", skipLabel, null);
 
@@ -351,8 +406,6 @@ public class Intermediate {
 
     //do the dumb thing first
     private List<IntermediateOperation> generateExpression(String initialVariable, Node<Type> expression){
-
-        //TODO: change initial to binding
 
         List<IntermediateOperation> out = new ArrayList<>();
 
@@ -372,13 +425,7 @@ public class Intermediate {
 
                 Terminal foo = (Terminal)(bam.getChildren().get(0).getData());
 
-
-                Binding bar;
-                if(bam.getScope()!=null)
-                    bar = table.findByNameScope(foo.getContent(), bam.getScope());
-                else //TODO: consult with Alex about how to fix scoping problem
-                    bar = table.find(foo.getContent()).get(0);
-
+                Binding bar = table.findByNameScope(foo.getContent(), bam.getScope());
 
                 if(bar.getType().isArray()){
 
@@ -402,7 +449,6 @@ public class Intermediate {
 
                     terminals.add(contents.getName());
 
-                    //TODO: verify
                 }
 
             }
@@ -411,6 +457,8 @@ public class Intermediate {
 
            List<Node<Type>> tempList = new ArrayList<>();
 
+
+
            for(Node<Type> node : temp.getChildren())
                if(! closed.contains(node))
                    tempList.add(node);
@@ -418,9 +466,6 @@ public class Intermediate {
             open.addAll(0,tempList);
 
         }
-
-
-
 
 
         List<String> postFixTerminals = orderOperations( terminals );
@@ -435,16 +480,13 @@ public class Intermediate {
                 calculationStack.push(token);
             }else{
 
-                Operator op = Operator.getFromString(token);
-
                 String foo = calculationStack.pop();
 
                 String bar = calculationStack.pop();
 
                 String tempName = generateTemp(DeclaredType.integer, expression.getScope()).getName();
 
-                IntermediateOperation temp = new IntermediateOperation(op, tempName, foo, bar, "", null );
-                out.add(temp);
+                out.addAll(generateOperation(token, foo, bar , tempName));
 
                 calculationStack.push(tempName);
 
@@ -478,9 +520,9 @@ public class Intermediate {
             if(token.matches("[\\d\\w]*"))
                 out.add(token);
 
-            if("+*-/".contains(token)){
+            if("+*-/<=>=<>".contains(token)){
 
-                while(!operators.isEmpty() && operatorPrecedence.get(operators.peek()) < operatorPrecedence.get(token))
+                while(!operators.isEmpty() && !operators.peek().equals("(") && operatorPrecedence.get(operators.peek()) < operatorPrecedence.get(token))
                     out.add(operators.pop());
 
                 operators.push(token);
@@ -511,6 +553,84 @@ public class Intermediate {
 
         return out;
 
+    }
+
+    private List<IntermediateOperation> generateOperation(String operand, String a, String b, String result){
+        List<IntermediateOperation> out = new ArrayList<>();
+
+        Operator op = Operator.getFromString(operand);
+
+        if(!op.equals(Operator.UNSUPPORTED)){
+            out.add(new IntermediateOperation(op, result, a, b, "", null ));
+
+        }else{
+
+
+            //TODO: refactor to Operator
+            String foo = generateLabel();
+
+            switch(operand){
+
+                case ">":
+
+
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "1", "", "", null));
+                    out.add(new IntermediateOperation(Operator.BRGT, a, b, foo, "",null));
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "0", "", "", null));
+                    out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "" ,"", foo, null));
+
+                    break;
+
+
+                case "<":
+
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "1", "", "", null));
+                    out.add(new IntermediateOperation(Operator.BRLT, a, b, foo, "",null));
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "0", "", "", null));
+                    out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "" ,"", foo, null));
+
+                    break;
+                case "=":
+
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "1", "", "", null));
+                    out.add(new IntermediateOperation(Operator.BREQ, a, b, foo, "",null));
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "0", "", "", null));
+                    out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "" ,"", foo, null));
+
+
+                    break;
+
+                case "<>":
+
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "1", "", "", null));
+                    out.add(new IntermediateOperation(Operator.BREQ, a, b, foo, "",null));
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "0", "", "", null));
+                    out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "" ,"", foo, null));
+                    break;
+
+                case "<=":
+
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "1", "", "", null));
+                    out.add(new IntermediateOperation(Operator.BRLEQ, a, b, foo, "",null));
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "0", "", "", null));
+                    out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "" ,"", foo, null));
+
+                    break;
+
+                case ">=":
+
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "1", "", "", null));
+                    out.add(new IntermediateOperation(Operator.BRGEQ, a, b, foo, "",null));
+                    out.add(new IntermediateOperation(Operator.ASSIGN, result, "0", "", "", null));
+                    out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "" ,"", foo, null));
+
+                    break;
+
+            }
+
+        }
+
+        return out;
     }
 
 
