@@ -57,6 +57,7 @@ public class Driver {
                     if(errors.size() == 0){
 
                         Intermediate intermediate = new Intermediate(debug, parseTree, table );
+                        intermediate.generateIntermediates();
 
                     }
                 }

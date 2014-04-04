@@ -8,9 +8,7 @@ let
     var b : u16 := 0;
     var arrayofint : array_int;
 
-    function print(b:int, n:int) : int begin
-    	i:=b;
-    end;
+ 
 
 in
         while(i>0) do
@@ -18,6 +16,6 @@ in
             arrayofint[0] := 4;
         enddo;
 
-        arrayofint[0] := print(i,b);
+     
 end
 

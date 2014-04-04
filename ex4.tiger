@@ -2,6 +2,6 @@ let
         var a : int;
         var b: int;
 in
-        c := 1;
+
         printi(a);
 end

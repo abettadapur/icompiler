@@ -19,9 +19,9 @@ public class Intermediate {
 
     private List<IntermediateOperation> intermediates;
     private ITable table;
-
+    private Node<Type> root;
     private Map<String, Integer> operatorPrecedence;
-
+    private boolean debug = false;
     private int labelCount =1;
     private int tempCount =1;
 
@@ -33,8 +33,10 @@ public class Intermediate {
         this.table = table;
 
         intermediates = new ArrayList<>();
-
+        this.debug = debug;
+        this.root = root;
         operatorPrecedence = new HashMap<>();
+
 
         operatorPrecedence.put("|", 5);
         operatorPrecedence.put("&", 5);
@@ -49,11 +51,17 @@ public class Intermediate {
         operatorPrecedence.put("/", 1);
         operatorPrecedence.put("*", 1);
 
-        intermediates.addAll(getStatements(root));
 
+
+
+
+    }
+    public List<IntermediateOperation> generateIntermediates()
+    {
+        intermediates.addAll(getStatements(root));
         if(debug)
             System.out.println(this);
-
+        return intermediates;
     }
 
     private List<IntermediateOperation> getStatements(Node<Type> root){
@@ -174,7 +182,7 @@ public class Intermediate {
                 }
             }
             else{
-                System.out.println(temp);
+                //System.out.println(temp);
                 open.addAll(temp.getChildren());
             }
 

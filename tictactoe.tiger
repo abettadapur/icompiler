@@ -78,12 +78,8 @@ let
                         location := ord(location_char);
                         location := location - ASCII_NUMERIC_OFFSET;
                         
-                        if location >= 1 & location <= 9 then
-                                return location - 1;
-                        else
-                                print("That is not a valid move! Please try again.\n");
-                                print_instruction();
-                        endif;
+
+
                 enddo;
         end;
 
@@ -126,17 +122,12 @@ let
                 win_cond[21] := 3;
                 win_cond[22] := 5;
                 win_cond[23] := 7;
-                a:=(a)+(b);
+
         end;
 
 
         function check_win(board : board_array_t) begin
-                /*for i := 0 to 8 do
-                       /* if (board[win_cond[i*3]-1] = board[win_cond[i*3+1]-1]) & (board[win_cond[i*3+1]-1] = board[win_cond[i*3+2]-1]) then*/
-                                /*return board[win_cond[i*3]-1];*/
-                        /*endif;*/
-                /*enddo;*/
-                return -1;
+         location:=0;
         end;
 
 

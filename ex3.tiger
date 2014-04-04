@@ -1,8 +1,8 @@
 let
 
-        function print ( n : int ) begin
+        function myprint ( n : int ) begin
                 printi(n);
         end;
 in
-        print(5);
+        myprint(5);
 end

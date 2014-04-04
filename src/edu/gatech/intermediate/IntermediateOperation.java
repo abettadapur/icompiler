@@ -9,6 +9,30 @@ import java.util.List;
  */
 public class IntermediateOperation {
 
+    public Operator getOp() {
+        return op;
+    }
+
+    public String getX() {
+        return x;
+    }
+
+    public String getY() {
+        return y;
+    }
+
+    public String getZ() {
+        return z;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public List<String> getParameters() {
+        return parameters;
+    }
+
     private Operator op;
     private String  x;
     private String  y;
