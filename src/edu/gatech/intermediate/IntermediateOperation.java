@@ -70,4 +70,25 @@ public class IntermediateOperation {
 
     }
 
+    public OperationType getType()
+    {
+        if(op==Operator.ADD||op==Operator.SUB||op==Operator.MULT||op==Operator.DIV||op==Operator.AND||op==Operator.OR)
+            return OperationType.BINARY;
+        if(op==Operator.ASSIGN)
+            return OperationType.ASSIGN;
+        if(op==Operator.GOTO)
+            return OperationType.GOTO;
+        if(op==Operator.BREQ||op==Operator.BRNEQ||op==Operator.BRLT||op==Operator.BRGT||op==Operator.BRGEQ||op==Operator.BRLEQ)
+            return OperationType.BRANCH;
+        if(op==Operator.RETURN)
+            return OperationType.RETURN;
+        if(op==Operator.CALLR||op==Operator.CALL)
+            return OperationType.FUNCTION;
+        if(op==Operator.ARRAY_LOAD)
+            return OperationType.ARRAYLOAD;
+        if(op==Operator.ARRAY_STORE)
+            return OperationType.ARRAYSTORE;
+        return null;
+    }
+
 }
