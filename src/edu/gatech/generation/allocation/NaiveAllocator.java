@@ -1,6 +1,5 @@
-package edu.gatech.generation;
+package edu.gatech.generation.allocation;
 
-import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
 import edu.gatech.intermediate.OperationType;
 import edu.gatech.intermediate.Operator;

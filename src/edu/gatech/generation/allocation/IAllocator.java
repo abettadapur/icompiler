@@ -1,4 +1,4 @@
-package edu.gatech.generation;
+package edu.gatech.generation.allocation;
 
 import edu.gatech.intermediate.IntermediateOperation;
 

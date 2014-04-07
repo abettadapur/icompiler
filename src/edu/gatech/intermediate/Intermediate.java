@@ -381,7 +381,7 @@ public class Intermediate {
 
         out.addAll(body);
 
-        out.add(new IntermediateOperation(Operator.ADD, loopVar ,loopVar, "1", "", null  ));
+        out.add(new IntermediateOperation(Operator.ADD, "1" ,loopVar, loopVar, "", null  ));
         out.add(new IntermediateOperation(Operator.GOTO, label, "", "", "", null ));
         out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "", "", skipLabel, null));
 
