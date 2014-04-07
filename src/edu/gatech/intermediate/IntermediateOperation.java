@@ -48,7 +48,7 @@ public class IntermediateOperation {
         this.y =y;
         this.z = z;
 
-        this.label = label != null && !label.isEmpty() ? label+"\t" : "\t\t";
+        this.label = label;
         this.parameters = parameters;
 
     }
@@ -66,11 +66,13 @@ public class IntermediateOperation {
             return out;
         }
         String printLabel = label;
-        if(!printLabel.equals("\t\t"))
+        if(printLabel!=null&&!printLabel.equals(""))
         {
-            int index = printLabel.indexOf("\t");
-            printLabel = printLabel.substring(0,index)+":"+printLabel.substring(index);
-
+            printLabel += ":\t";
+        }
+        else
+        {
+            printLabel="\t\t";
         }
         return printLabel + op.name().toLowerCase() + ", " + x + ", " + y +", " + z;
 

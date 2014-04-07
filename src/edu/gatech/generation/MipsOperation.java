@@ -44,7 +44,12 @@ public class MipsOperation
     {
         StringBuilder sb = new StringBuilder();
         if(!label.equals(""))
-            sb.append(label+": ");
+        {
+            sb.append(label+": \t");
+        }
+        else
+            sb.append("\t\t");
+
         sb.append(operator.name().toLowerCase()+" ");
         sb.append(x);
         if(operator==MipsOperator.LW||operator==MipsOperator.SW)
