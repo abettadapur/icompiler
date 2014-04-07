@@ -247,7 +247,6 @@ public class Intermediate {
     private List<IntermediateOperation> generateInitializationList(Node<Type> identifierList, Node<Type> initialization){
 
         String value = null;
-
         List<Node<Type>> identifiers = new ArrayList<>();
 
         {
@@ -648,6 +647,11 @@ public class Intermediate {
         }
 
         return out;
+    }
+
+    public void coalesceLabels()
+    {
+
     }
 
 

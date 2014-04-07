@@ -3,6 +3,7 @@ package edu.gatech.generation.allocation;
 import edu.gatech.intermediate.IntermediateOperation;
 import edu.gatech.intermediate.OperationType;
 import edu.gatech.intermediate.Operator;
+import edu.gatech.util.Util;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +31,9 @@ public class NaiveAllocator implements IAllocator {
                         operands.add(operation.getZ());
                         break;
                     case ASSIGN:
-                        break; //TODO
+                        operands.add(operation.getX());
+                        operands.add(operation.getY());
+                        break;
                     case GOTO:
                         break;
                     case BRANCH:
@@ -49,12 +52,16 @@ public class NaiveAllocator implements IAllocator {
                 int register = 2;
                 for(String s: operands)
                 {
-                    IntermediateOperation store = new IntermediateOperation(Operator.STORE, "$"+register, s, "","",null);
-                    IntermediateOperation load = new IntermediateOperation(Operator.LOAD, "$"+register, s, "","",null);
-                    stream.add(i+1, store);
-                    stream.add(i, load);
-                    register++;
-                    i++;
+                    if(!Util.isNumeric(s))
+                    {
+                        operation.registerReplace(s, "$"+register);
+                        IntermediateOperation store = new IntermediateOperation(Operator.STORE, "$"+register, s, "","",null);
+                        IntermediateOperation load = new IntermediateOperation(Operator.LOAD, "$"+register, s, "","",null);
+                        stream.add(i+1, store);
+                        stream.add(i, load);
+                        register++;
+                        i++;
+                    }
                 }
             }
 
@@ -66,4 +73,5 @@ public class NaiveAllocator implements IAllocator {
             System.out.println(op);
         }
     }
+
 }

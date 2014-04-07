@@ -69,6 +69,15 @@ public class IntermediateOperation {
         return label + op.name().toLowerCase() + ", " + x + ", " + y +", " + z;
 
     }
+    public void registerReplace(String param, String register)
+    {
+        if(param.equals(x))
+            x = register;
+        if(param.equals(y))
+            y = register;
+        if(param.equals(z))
+            z = register;
+    }
 
     public OperationType getType()
     {

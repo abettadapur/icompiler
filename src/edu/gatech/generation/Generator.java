@@ -77,6 +77,9 @@ public class Generator
                     instructionStream.add(new MipsOperation("", MipsOperator.BLT, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
                     break;
 
+                case ASSIGN:
+                    instructionStream.add(new MipsOperation("", MipsOperator.ADDI, intermediate.getX(), intermediate.getY(), "0"));
+
                 default:
                     break;
 
