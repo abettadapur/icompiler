@@ -43,11 +43,28 @@ public class NaiveAllocator implements IAllocator {
                     case RETURN:
                         operands.add(operation.getX());
                     case FUNCTION:
-                        break; //TODO
+                        if(operation.getParameters().size()!=0)
+                        {
+                            for(String s:operation.getParameters())
+                                operands.add(s);
+                        }
+                        break;
+                    case FUNCTIONR:
+                        operands.add(operation.getX());
+                        if(operation.getParameters().size()!=0)
+                        {
+                            for(String s:operation.getParameters())
+                                operands.add(s);
+                        }
+                        break;
                     case ARRAYSTORE:
-                        break; //TODO
+                        operands.add(operation.getX());
+                        operands.add(operation.getY());
+                        operands.add(operation.getZ());
                     case ARRAYLOAD:
-                        break; //TODO
+                        operands.add(operation.getX());
+                        operands.add(operation.getY());
+                        operands.add(operation.getZ());
                 }
                 int register = 2;
                 for(String s: operands)

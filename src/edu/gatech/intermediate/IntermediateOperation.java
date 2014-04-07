@@ -65,8 +65,14 @@ public class IntermediateOperation {
                 out+=", " + s;
             return out;
         }
+        String printLabel = label;
+        if(!printLabel.equals("\t\t"))
+        {
+            int index = printLabel.indexOf("\t");
+            printLabel = printLabel.substring(0,index)+":"+printLabel.substring(index);
 
-        return label + op.name().toLowerCase() + ", " + x + ", " + y +", " + z;
+        }
+        return printLabel + op.name().toLowerCase() + ", " + x + ", " + y +", " + z;
 
     }
     public void registerReplace(String param, String register)
@@ -77,6 +83,10 @@ public class IntermediateOperation {
             y = register;
         if(param.equals(z))
             z = register;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     public OperationType getType()
@@ -91,7 +101,9 @@ public class IntermediateOperation {
             return OperationType.BRANCH;
         if(op==Operator.RETURN)
             return OperationType.RETURN;
-        if(op==Operator.CALLR||op==Operator.CALL)
+        if(op==Operator.CALLR)
+            return OperationType.FUNCTIONR;
+        if(op==Operator.CALL)
             return OperationType.FUNCTION;
         if(op==Operator.ARRAY_LOAD)
             return OperationType.ARRAYLOAD;

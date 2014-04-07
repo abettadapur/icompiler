@@ -59,6 +59,7 @@ public class Intermediate {
     public List<IntermediateOperation> generateIntermediates()
     {
         intermediates.addAll(getStatements(root));
+        coalesceLabels(intermediates);
         if(debug)
             System.out.println(this);
         return intermediates;
@@ -380,7 +381,7 @@ public class Intermediate {
 
         out.addAll(body);
 
-        out.add(new IntermediateOperation(Operator.ADD, "1" ,loopVar, loopVar, "", null  ));
+        out.add(new IntermediateOperation(Operator.ADD, loopVar ,loopVar, "1", "", null  ));
         out.add(new IntermediateOperation(Operator.GOTO, label, "", "", "", null ));
         out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "", "", skipLabel, null));
 
@@ -649,9 +650,19 @@ public class Intermediate {
         return out;
     }
 
-    public void coalesceLabels()
+    public void coalesceLabels(List<IntermediateOperation> out)
     {
-
+        for(int i=0; i<out.size(); i++)
+        {
+            IntermediateOperation operation = out.get(i);
+            if(operation.getOp()==Operator.UNSUPPORTED)
+            {
+                IntermediateOperation labeledOp = out.get(i+1);
+                labeledOp.setLabel(operation.getLabel());
+                i--;
+                out.remove(operation);
+            }
+        }
     }
 
 
