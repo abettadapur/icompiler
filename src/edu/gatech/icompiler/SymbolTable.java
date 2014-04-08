@@ -170,7 +170,8 @@ public class SymbolTable implements ITable
             throw new IllegalArgumentException();
 
     }
-    private String addVariable(String id, DeclaredType type, String scope)
+    @Override
+    public String addVariable(String id, DeclaredType type, String scope)
     {
         Binding entry = new Binding(id,type,scope);
         if(identifiers.containsKey(id))
@@ -192,6 +193,7 @@ public class SymbolTable implements ITable
         }
         return "";
     }
+
     private String addFunction(String id, DeclaredType returnType, List<DeclaredType> params)
     {
         Binding entry = new Binding(id,returnType,"", params);

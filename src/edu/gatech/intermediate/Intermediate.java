@@ -325,7 +325,10 @@ public class Intermediate {
     }
 
     private Binding generateTemp(DeclaredType type, String scope){
-        return new Binding( "t"+tempCount++, type, scope);
+        if(scope==null)
+            scope="";
+        table.addVariable("t"+tempCount++, type, scope);
+        return table.findByNameScope("t"+(tempCount-1), scope);
 
     }
 

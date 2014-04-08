@@ -10,11 +10,14 @@ import java.util.List;
  */
 public interface ITable
 {
+    String addVariable(String id, DeclaredType type, String scope);
+
     public List<Binding> find(String name);
     public Binding findByNameScope(String name, String scope);
     public DeclaredType findType(String id);
     public DeclaredType findPrimitive(String id,String scope);
     public DeclaredType findTypeMap(DeclaredType type);
     public List<Binding> getVars();
+
 }
 

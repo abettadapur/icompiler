@@ -26,27 +26,27 @@ public class Generator
             switch(intermediate.getOp())
             {
                 case ADD:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getZ(), intermediate.getX(), intermediate.getY()));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
                     break;
 
                 case SUB:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.SUB, intermediate.getZ(), intermediate.getX(), intermediate.getY()));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.SUB, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
                     break;
 
                 case MULT:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.MULT, intermediate.getZ(), intermediate.getX(), intermediate.getY()));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.MUL, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
                     break;
 
                 case DIV:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.DIV, intermediate.getZ(), intermediate.getX(), intermediate.getY()));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.DIV, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
                     break;
 
                 case AND:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.AND, intermediate.getZ(), intermediate.getX(), intermediate.getY()));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.AND, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
                     break;
 
                 case OR:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(),  MipsOperator.OR, intermediate.getZ(), intermediate.getX(), intermediate.getY()));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(),  MipsOperator.OR, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
                     break;
 
                 case LOAD:
@@ -85,7 +85,7 @@ public class Generator
                     break;
 
                 case ASSIGN:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), intermediate.getY(), "0"));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), "$0", intermediate.getY()));
                     break;
 
                 case ARRAY_LOAD:
