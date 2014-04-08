@@ -289,7 +289,7 @@ public class Intermediate {
 
         List<IntermediateOperation> out = new ArrayList<>();
 
-
+        //out.add(new IntermediateOperation(Operator.UNSUPPORTED, "","","","data", null));
         for(Node<Type> foo : identifiers){
 
             Terminal bar = (Terminal) foo.getData();

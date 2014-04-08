@@ -63,7 +63,7 @@ public class NaiveAllocator implements IAllocator {
                         operands.add(operation.getZ());
                     case ARRAYLOAD:
                         operands.add(operation.getX());
-                        operands.add(operation.getY());
+                       // operands.add(operation.getY());
                         operands.add(operation.getZ());
                 }
                 int register = 2;

@@ -371,6 +371,23 @@ public class SymbolTable implements ITable
             }
         }
     }
+
+    @Override
+    public List<Binding> getVars() {
+        ArrayList<Binding> variables = new ArrayList<>();
+        for(Map.Entry<String, List<Binding>> entry:identifiers.entrySet())
+        {
+            for(Binding b: entry.getValue())
+            {
+                if(b.getScope().equals("")&&!b.isFunction())
+                {
+                    variables.add(b);
+                }
+            }
+        }
+        return variables;
+    }
+
     public String toString()
     {
         StringBuilder sb = new StringBuilder();

@@ -49,16 +49,20 @@ public class MipsOperation
         }
         else
             sb.append("\t\t");
-
-        sb.append(operator.name().toLowerCase()+" ");
-        sb.append(x);
+        if(isMetaInstruction())
+            sb.append("."+operator.name().toLowerCase()+" ");
+        else
+            sb.append(operator.name().toLowerCase()+" ");
+        if(!x.equals(""))
+            sb.append(x);
         if(operator==MipsOperator.LW||operator==MipsOperator.SW)
         {
             sb.append(", "+y+"("+z+")");
         }
         else
         {
-            sb.append(", "+y);
+            if(!y.equals(""))
+                sb.append(", "+y);
             if(!z.equals(""))
                 sb.append(", "+z);
         }
@@ -66,5 +70,9 @@ public class MipsOperation
 
 
 
+    }
+    public boolean isMetaInstruction()
+    {
+        return (operator==MipsOperator.DATA||operator==MipsOperator.TEXT||operator==MipsOperator.BYTE||operator==MipsOperator.ASCII||operator==MipsOperator.WORD||operator==MipsOperator.SPACE);
     }
 }

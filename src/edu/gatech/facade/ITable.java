@@ -15,5 +15,6 @@ public interface ITable
     public DeclaredType findType(String id);
     public DeclaredType findPrimitive(String id,String scope);
     public DeclaredType findTypeMap(DeclaredType type);
+    public List<Binding> getVars();
 }
 
