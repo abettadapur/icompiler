@@ -36,8 +36,6 @@ public class Intermediate {
         this.debug = debug;
         this.root = root;
         operatorPrecedence = new HashMap<>();
-
-
         operatorPrecedence.put("|", 5);
         operatorPrecedence.put("&", 5);
         operatorPrecedence.put("<=", 4);
@@ -52,11 +50,19 @@ public class Intermediate {
         operatorPrecedence.put("*", 1);
 
 
+        generateIntermediates();
 
+
+        removeRedundancy();
 
 
     }
-    public List<IntermediateOperation> generateIntermediates()
+
+    public List<IntermediateOperation> getIntermediates(){
+        return intermediates;
+    }
+
+    private List<IntermediateOperation> generateIntermediates()
     {
         intermediates.addAll(getStatements(root));
         coalesceLabels(intermediates);
@@ -119,7 +125,6 @@ public class Intermediate {
             }
             else if(temp.hasChildOfType(TokenType.RETURN)){
 
-                //TODO: fix
                 Binding foo = generateTemp(DeclaredType.integer, "");
                 out.addAll(generateExpression( foo.getName(),temp.getFirstChildOfType(RuleType.EXPR) ));
 
@@ -258,7 +263,7 @@ public class Intermediate {
             while(!open.isEmpty()){
                 Node<Type> foo = open.remove(0);
 
-               if(foo.getData().isTerminal() && ! foo.getData().equals(","))
+               if(foo.getData().isTerminal() )
                    identifiers.add(foo);
                else
                    open.addAll(foo.getChildren());
@@ -585,8 +590,6 @@ public class Intermediate {
 
         }else{
 
-
-            //TODO: refactor to Operator
             String foo = generateLabel();
 
             switch(operand){
@@ -668,6 +671,12 @@ public class Intermediate {
         }
     }
 
+
+    private void removeRedundancy(){
+
+        //TODO: remove redundant temporaries
+
+    }
 
     public String toString(){
 

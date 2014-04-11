@@ -1,4 +1,4 @@
-package edu.gatech;
+package edu.gatech.testing;
 
 import edu.gatech.generation.Generator;
 import edu.gatech.generation.MipsOperation;
@@ -11,36 +11,25 @@ import edu.gatech.icompiler.Type;
 import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
 import edu.gatech.util.Node;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
 
 /**
- * Created by Stefano on 2/23/14.
+ * Created by Stefano on 4/11/14.
  */
-public class Driver {
+public class GeneratorTest {
 
-    public static void main(String[] args){
+    @Test
+    public void naiveGenerationTest(){
 
         boolean debug = false;
-
-        if(args.length ==0 || args.length >2){
-            System.out.println("Usage: [fileToParse] <debug flag>\n\t\tAdd flag -d to see debugging output");
-            return;
-        }
-
-        if(args.length ==2 && ! (args[1].equals("-d"))){
-            System.out.println("Please use -d as a debug flag");
-            return;
-        }
-
-        if(args.length == 2 && args[1].equals("-d"))
-            debug = true;
 
         Parser parser = new Parser(debug);
 
         try{
-            Node<Type> parseTree =  parser.parse(new File(args[0]));
+            Node<Type> parseTree =  parser.parse(new File("ex1.tiger"));
             if(parseTree!=null)
             {
                 SymbolTable table = new SymbolTable();
@@ -60,7 +49,6 @@ public class Driver {
                     System.err.println(errors.size()+ " ERRORS");
 
                     if(errors.size() == 0){
-
 
                         Intermediate intermediate = new Intermediate(debug, parseTree, table );
                         List<IntermediateOperation> irstream = intermediate.getIntermediates();
@@ -87,5 +75,17 @@ public class Driver {
         }catch(Exception e){
             e.printStackTrace();
         }
+
     }
+
+    @Test
+    public void basicAllocationTest(){
+
+    }
+
+    @Test
+    public void extendedAllocationTest(){
+
+    }
+
 }

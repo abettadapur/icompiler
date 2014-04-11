@@ -19,7 +19,7 @@ public class NaiveAllocator implements IAllocator {
         {
             IntermediateOperation operation = stream.get(i);
             OperationType type = operation.getType();
-            HashSet<String> operands = new HashSet<String>();
+            HashSet<String> operands = new HashSet<>();
             if(type!=null)
 
             {

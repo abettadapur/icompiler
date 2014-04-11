@@ -26,6 +26,7 @@ public class Generator
             switch(intermediate.getOp())
             {
                 case ADD:
+                    //TODO: make sure there are no numerics in here (that's what addi is for)
                     instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
                     break;
 
@@ -85,7 +86,8 @@ public class Generator
                     break;
 
                 case ASSIGN:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), "$0", intermediate.getY()));
+                    //TODO: same check as in ADD
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), "$0", intermediate.getY()));
                     break;
 
                 case ARRAY_LOAD:
