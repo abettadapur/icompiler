@@ -7,6 +7,7 @@ import edu.gatech.icompiler.SymbolTable;
 import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
 import edu.gatech.intermediate.OperationType;
+import edu.gatech.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,12 @@ public class Generator
             switch(intermediate.getOp())
             {
                 case ADD:
-                    //TODO: make sure there are no numerics in here (that's what addi is for)
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+
+                    if(!Util.isNumeric(intermediate.getY()) && !Util.isNumeric(intermediate.getZ()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+
                     break;
 
                 case SUB:
@@ -86,8 +91,12 @@ public class Generator
                     break;
 
                 case ASSIGN:
-                    //TODO: same check as in ADD
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), "$0", intermediate.getY()));
+
+                    if(!Util.isNumeric(intermediate.getY()) )
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), "$0", intermediate.getY()));
+                    else
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), "$0", intermediate.getY()));
+
                     break;
 
                 case ARRAY_LOAD:
