@@ -30,9 +30,12 @@ public class Generator
 
                     if(!Util.isNumeric(intermediate.getY()) && !Util.isNumeric(intermediate.getZ()))
                         instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
-                    else
-                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
-
+                    else{
+                        if(Util.isNumeric(intermediate.getY()))
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), intermediate.getZ(), intermediate.getY()));
+                        else
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    }
                     break;
 
                 case SUB:
