@@ -332,8 +332,17 @@ public class Intermediate {
     private Binding generateTemp(DeclaredType type, String scope){
         if(scope==null)
             scope="";
-        table.addVariable("t"+tempCount++, type, scope);
-        return table.findByNameScope("t"+(tempCount-1), scope);
+
+
+
+        String tempName = "t"+tempCount;
+
+        while( table.find(tempName) != null ){
+            tempName  = "t" + ++tempCount;
+        }
+
+        table.addVariable(tempName, type, scope);
+        return table.findByNameScope(tempName, scope);
 
     }
 
@@ -451,6 +460,7 @@ public class Intermediate {
                 Terminal foo = (Terminal)(bam.getChildren().get(0).getData());
 
                 Binding bar = table.findByNameScope(foo.getContent(), bam.getScope());
+
 
                 if(bar.getType().isArray()){
 
