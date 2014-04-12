@@ -2,6 +2,7 @@ package edu.gatech.testing;
 
 import edu.gatech.generation.Generator;
 import edu.gatech.generation.MipsOperation;
+import edu.gatech.generation.allocation.BasicAllocator;
 import edu.gatech.generation.allocation.IAllocator;
 import edu.gatech.generation.allocation.NaiveAllocator;
 import edu.gatech.icompiler.Parser;
@@ -21,7 +22,6 @@ import java.util.List;
  */
 public class GeneratorTest {
 
-    @Test
     public void naiveGenerationTest(){
 
         boolean debug = false;
@@ -80,10 +80,59 @@ public class GeneratorTest {
 
     @Test
     public void basicAllocationTest(){
+        boolean debug = false;
 
+        Parser parser = new Parser(debug);
+
+        try{
+            Node<Type> parseTree =  parser.parse(new File("ex1.tiger"));
+            if(parseTree!=null)
+            {
+                SymbolTable table = new SymbolTable();
+                List<String> errors = table.populateTable(parseTree.getChildren().get(1));
+                if(errors.size()==0)
+                {
+                    if(debug)
+                        System.out.println(table.toString());
+
+                    Semantics checker = new Semantics(parseTree, table);
+                    errors = checker.performChecks();
+                    if(errors.size()!=0)
+                    {
+                        for(String s:errors)
+                            System.err.println(s);
+                    }
+                    System.err.println(errors.size()+ " ERRORS");
+
+                    if(errors.size() == 0){
+
+                        Intermediate intermediate = new Intermediate(debug, parseTree, table );
+                        List<IntermediateOperation> irstream = intermediate.getIntermediates();
+                        IAllocator allocator = new BasicAllocator();
+                        allocator.annotateIr(irstream);
+                        List<MipsOperation> program = Generator.generateCode(irstream, table);
+                        System.out.println("----Compiled Program----");
+                        for(MipsOperation operation: program)
+                            System.out.println(operation);
+
+
+                    }
+                }
+                else
+                {
+
+                    for(String s: errors)
+                    {
+                        System.err.println(s);
+                    }
+                    System.err.println(errors.size()+ "ERRORS");
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
-    @Test
     public void extendedAllocationTest(){
 
     }

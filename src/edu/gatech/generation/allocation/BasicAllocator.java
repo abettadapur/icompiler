@@ -26,17 +26,20 @@ public class BasicAllocator implements IAllocator
 
         List<Integer> leaders = new ArrayList<>();
 
+        leaders.add(0);
         //find leaders
         for(int i=0; i<irStream.size(); i++)
         {
             IntermediateOperation operation = irStream.get(i);
 
-            if(operation.getLabel()!=null&&!operation.getLabel().equals(""))
+                if(operation.getLabel()!=null&&!operation.getLabel().equals(""))
             {
-                leaders.add(i);
+                if(!leaders.contains(i))
+                    leaders.add(i);
 
             }else if(operation.getType() == OperationType.BRANCH || operation.getType()==OperationType.GOTO ){
-                leaders.add(i+1);
+                if(!leaders.contains(i+1))
+                    leaders.add(i+1);
             }
         }
 
@@ -56,7 +59,6 @@ public class BasicAllocator implements IAllocator
                 block.addOperation(bar);
 
         }
-
 
         for(int i=0; i < blocks.size(); i++){
 

@@ -21,6 +21,7 @@ public class BasicBlock
         this.startIndex=startIndex;
         this.lastIndex=lastIndex;
         this.nextBlocks = new ArrayList<>();
+        this.contents = new ArrayList<>();
     }
 
     public List<IntermediateOperation> getContents(){
