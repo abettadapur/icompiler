@@ -16,11 +16,8 @@ public class BasicBlock
     private int lastIndex;
     private List<BasicBlock> nextBlocks;
 
-    private String entryLabel;
-
-    public BasicBlock(int startIndex, int lastIndex, String entryLabel)
+    public BasicBlock(int startIndex, int lastIndex)
     {
-        this.entryLabel = entryLabel;
         this.startIndex=startIndex;
         this.lastIndex=lastIndex;
         this.nextBlocks = new ArrayList<>();
@@ -28,6 +25,14 @@ public class BasicBlock
 
     public List<IntermediateOperation> getContents(){
         return contents;
+    }
+
+    public IntermediateOperation getFirstOp(){
+        return contents.get(0);
+    }
+
+    public IntermediateOperation getLastOp(){
+        return contents.get(contents.size()-1);
     }
 
     public void addOperation(IntermediateOperation op ){
