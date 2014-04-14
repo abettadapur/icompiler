@@ -2,7 +2,9 @@ package edu.gatech.intermediate;
 
 import edu.gatech.icompiler.Binding;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Stefano on 3/10/14.
@@ -41,6 +43,8 @@ public class IntermediateOperation {
     private String label;
     private List<String> parameters;
 
+    private Set<String> in, out;
+
     public IntermediateOperation(Operator op, String x, String y, String z, String label, List<String> parameters){
 
         this.op = op;
@@ -50,6 +54,9 @@ public class IntermediateOperation {
 
         this.label = label;
         this.parameters = parameters;
+
+        in = new HashSet<>();
+        out = new HashSet<>();
 
     }
 
@@ -113,5 +120,23 @@ public class IntermediateOperation {
             return OperationType.ARRAYSTORE;
         return null;
     }
+
+    public boolean containsOperand(String s)
+    {
+        if(s!=null)
+            return s.equals(x)||s.equals(y)||s.equals(z);
+        return false;
+    }
+
+    public Set<String> getIn()
+    {
+        return in;
+    }
+    public Set<String> getOut()
+    {
+        return out;
+    }
+
+
 
 }

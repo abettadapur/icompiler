@@ -96,7 +96,7 @@ public class Generator
                 case ASSIGN:
 
                     if(!Util.isNumeric(intermediate.getY()) )
-                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), "$0", intermediate.getY()));
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.SW, intermediate.getX(), "$0", intermediate.getY()));
                     else
                         instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), "$0", intermediate.getY()));
 

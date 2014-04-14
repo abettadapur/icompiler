@@ -4,7 +4,9 @@ import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Alex on 4/8/14.
@@ -15,6 +17,7 @@ public class BasicBlock
     private int startIndex;
     private int lastIndex;
     private List<BasicBlock> nextBlocks;
+    private Set<String> in,out;
 
     public BasicBlock(int startIndex, int lastIndex)
     {
@@ -22,6 +25,8 @@ public class BasicBlock
         this.lastIndex=lastIndex;
         this.nextBlocks = new ArrayList<>();
         this.contents = new ArrayList<>();
+        in = new HashSet<>();
+        out = new HashSet<>();
     }
 
     public List<IntermediateOperation> getContents(){
@@ -45,4 +50,11 @@ public class BasicBlock
         nextBlocks.add(b);
     }
 
+    public Set<String> getIn() {
+        return in;
+    }
+
+    public Set<String> getOut() {
+        return out;
+    }
 }
