@@ -7,6 +7,7 @@ import edu.gatech.util.Util;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Alex on 4/4/14.
@@ -15,11 +16,19 @@ public class NaiveAllocator implements IAllocator {
     @Override
     public void annotateIr(List<IntermediateOperation> stream)
     {
-        for(int i=0; i<stream.size(); i++)
+        int i = 0;
+        for(IntermediateOperation op: stream)
+        {
+            if(op.getLabel().equals("main"))
+                break;
+            i++;
+
+        }
+        for(i=i; i<stream.size(); i++)
         {
             IntermediateOperation operation = stream.get(i);
             OperationType type = operation.getType();
-            HashSet<String> operands = new HashSet<>();
+            Set<String> operands = new HashSet<>();
             if(type!=null)
 
             {
@@ -68,7 +77,7 @@ public class NaiveAllocator implements IAllocator {
                         operands.add(operation.getZ());
                         break;
                 }
-                int register = 2;
+                int register = 8;
                 for(String s: operands)
                 {
                     if(!Util.isNumeric(s))
@@ -76,6 +85,11 @@ public class NaiveAllocator implements IAllocator {
                         operation.registerReplace(s, "$"+register);
                         IntermediateOperation store = new IntermediateOperation(Operator.STORE, "$"+register, s, "","",null);
                         IntermediateOperation load = new IntermediateOperation(Operator.LOAD, "$"+register, s, "","",null);
+                        if(register==8)
+                        {
+                            load.setLabel(operation.getLabel());
+                            operation.setLabel("");
+                        }
                         stream.add(i+1, store);
                         stream.add(i, load);
                         register++;

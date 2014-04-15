@@ -73,6 +73,6 @@ public class MipsOperation
     }
     public boolean isMetaInstruction()
     {
-        return (operator==MipsOperator.DATA||operator==MipsOperator.TEXT||operator==MipsOperator.BYTE||operator==MipsOperator.ASCII||operator==MipsOperator.WORD||operator==MipsOperator.SPACE);
+        return (operator==MipsOperator.DATA||operator==MipsOperator.TEXT||operator==MipsOperator.BYTE||operator==MipsOperator.ASCII||operator==MipsOperator.WORD||operator==MipsOperator.SPACE||operator==MipsOperator.GLOBL);
     }
 }
