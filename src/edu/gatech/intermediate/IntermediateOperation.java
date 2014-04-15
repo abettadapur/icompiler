@@ -92,6 +92,11 @@ public class IntermediateOperation {
             y = register;
         if(param.equals(z))
             z = register;
+
+        if(parameters!=null)
+            for(int i=0; i<parameters.size(); i++)
+                if(param.equals(parameters.get(i)))
+                    parameters.set(i, register);
     }
 
     public void setLabel(String label) {

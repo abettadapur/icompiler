@@ -12,7 +12,9 @@ import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
 import edu.gatech.util.Node;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
 
 /**
@@ -67,9 +69,26 @@ public class Driver {
                         IAllocator allocator = new NaiveAllocator();
                         allocator.annotateIr(irstream);
                         List<MipsOperation> program = Generator.generateCode(irstream, table);
-                        System.out.println("----Compiled Program----");
+                        if(debug)
+                        {
+                            System.out.println("----Compiled Program----");
+                            for(MipsOperation operation: program)
+                                System.out.println(operation);
+                        }
+
+                        String  filePrefix = args[0].split("\\.")[0];
+                        File file = new File(filePrefix+".asm");
+                        file.createNewFile();
+
+                        FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                        BufferedWriter bw = new BufferedWriter(fw);
                         for(MipsOperation operation: program)
-                            System.out.println(operation);
+                        {
+                            bw.write(operation.toString());
+                            bw.newLine();
+                            bw.flush();
+                        }
+
 
 
                     }

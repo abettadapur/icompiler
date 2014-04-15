@@ -3,10 +3,7 @@ package edu.gatech.generation;
 import edu.gatech.facade.ITable;
 import edu.gatech.icompiler.Binding;
 import edu.gatech.icompiler.DeclaredType;
-import edu.gatech.icompiler.SymbolTable;
-import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
-import edu.gatech.intermediate.OperationType;
 import edu.gatech.util.Util;
 
 import java.util.ArrayList;
@@ -20,10 +17,20 @@ public class Generator
     public static List<MipsOperation> generateCode(List<IntermediateOperation> irStream, ITable table)
     {
         List<MipsOperation> instructionStream = new ArrayList<>();
-        generateDataSegment(instructionStream, table);
+        generateDataSegment(instructionStream, irStream, table);
         instructionStream.add(new MipsOperation("", MipsOperator.TEXT,"","",""));
-        for(IntermediateOperation intermediate: irStream)
+        instructionStream.add(new MipsOperation("", MipsOperator.GLOBL, "main","",""));
+        int i = 0;
+        for(IntermediateOperation op: irStream)
         {
+            if(op.getLabel().equals("main"))
+                break;
+            i++;
+
+        }
+        for(i=i;i<irStream.size(); i++)
+        {
+            IntermediateOperation intermediate = irStream.get(i);
             switch(intermediate.getOp())
             {
                 case ADD:
@@ -59,13 +66,13 @@ public class Generator
                     break;
 
                 case LOAD:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, intermediate.getX(), intermediate.getY(), ""));
-                    instructionStream.add(new MipsOperation("", MipsOperator.LW, intermediate.getX(), "0", intermediate.getX()));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, "$27", intermediate.getY(), ""));
+                    instructionStream.add(new MipsOperation("", MipsOperator.LW, intermediate.getX(), "0", "$27"));
                     break;
 
                 case STORE:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, intermediate.getX(), intermediate.getY(), ""));
-                    instructionStream.add(new MipsOperation("", MipsOperator.SW, intermediate.getX(), "0", intermediate.getX()));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, "$27", intermediate.getY(), ""));
+                    instructionStream.add(new MipsOperation("", MipsOperator.SW, intermediate.getX(), "0", "$27"));
                     break;
 
                 case BREQ:
@@ -95,19 +102,33 @@ public class Generator
 
                 case ASSIGN:
 
-                    if(!Util.isNumeric(intermediate.getY()) )
-                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.SW, intermediate.getX(), "$0", intermediate.getY()));
-                    else
-                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, intermediate.getX(), "$0", intermediate.getY()));
+                    //if(!Util.isNumeric(intermediate.getY()) )
+                      //  instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.SW, intermediate.getX(), "0", intermediate.getY()));
+                    //else
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), "$0", intermediate.getY()));
 
                     break;
 
                 case ARRAY_LOAD:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, "$31", intermediate.getY(),"" ));
-                    instructionStream.add(new MipsOperation("", MipsOperator.ADD, "$31", "$31", intermediate.getZ()));
-                    instructionStream.add(new MipsOperation("", MipsOperator.LW, intermediate.getX(), "0","$31"));
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, "$27", intermediate.getY(),"" ));
+                    instructionStream.add(new MipsOperation("", MipsOperator.ADDI, "$23", "$0", "4"));
+                    instructionStream.add(new MipsOperation("", MipsOperator.MUL, intermediate.getZ(), "$23", intermediate.getZ()));
+                    instructionStream.add(new MipsOperation("", MipsOperator.ADD, "$27", "$27", intermediate.getZ()));
+                    instructionStream.add(new MipsOperation("", MipsOperator.LW, intermediate.getX(), "0","$27"));
                     break;
 
+                case CALL:
+                    if(intermediate.getX().equals("printi"))
+                    {
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LI, "$v0", "1",""));
+                        instructionStream.add(new MipsOperation("", MipsOperator.MOVE, "$a0", intermediate.getParameters().get(0),""));
+                        instructionStream.add(new MipsOperation("", MipsOperator.SYSCALL, "", "",""));
+
+
+                    }
+                    break;
+                case GOTO:
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.J, intermediate.getX(),"",""));
                 default:
                     break;
 
@@ -115,23 +136,58 @@ public class Generator
             }
         }
 
+        instructionStream.add(new MipsOperation("", MipsOperator.JR, "$ra", "",""));
+
         return instructionStream;
     }
-    public static void generateDataSegment(List<MipsOperation> instructionStream, ITable table)
+    public static void generateDataSegment(List<MipsOperation> instructionStream, List<IntermediateOperation> irStream,  ITable table)
     {
+        List<IntermediateOperation> assignments = new ArrayList<>();
+        for(IntermediateOperation op: irStream)
+        {
+            if(op.getLabel().equals("main"))
+                break;
+            assignments.add(op);
+        }
         List<Binding> vars = table.getVars();
         instructionStream.add(new MipsOperation("", MipsOperator.DATA,"","",""));
         for(Binding b: vars)
         {
             if(table.findPrimitive(b.getName(), b.getScope())== DeclaredType.integer)
             {
-                instructionStream.add(new MipsOperation(b.getName(), MipsOperator.WORD, "0","",""));
+                int initialize = 0;
+                for(IntermediateOperation op:assignments)
+                {
+                    if(op.getX().equals(b.getName()))
+                    {
+                        initialize = Integer.parseInt(op.getY());
+                        break;
+                    }
+                }
+                instructionStream.add(new MipsOperation(b.getName(), MipsOperator.WORD, initialize+"","",""));
             }
             if(table.findPrimitive(b.getName(), b.getScope()).isArray())
             {
+                int initialize = 0;
+                for(IntermediateOperation op:assignments)
+                {
+                    if(op.getX().equals(b.getName()))
+                    {
+                        initialize = Integer.parseInt(op.getZ());
+                        break;
+                    }
+                }
                 if(b.getType().getDimensionCount()==1)
                 {
-                    instructionStream.add(new MipsOperation(b.getName(), MipsOperator.SPACE, b.getType().getDimensionX(0)+"","",""));
+                    StringBuilder intialization = new StringBuilder();
+                    for(int i=0; i<b.getType().getDimensionX(0); i++)
+                    {
+                        intialization.append(initialize);
+                        if(i!=b.getType().getDimensionX(0)-1)
+                            intialization.append(",");
+                    }
+
+                    instructionStream.add(new MipsOperation(b.getName(), MipsOperator.WORD, intialization.toString(),"",""));
                 }
                 //TODO: MULTIARRAYS
             }

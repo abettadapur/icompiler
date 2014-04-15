@@ -5,5 +5,5 @@ package edu.gatech.generation;
  */
 public enum MipsOperator
 {
-    ADD, ADDI, SUB, MUL, DIV, LW, SW, LA, MFHI, MFLO, AND, OR, NOR, BEQ, BNE, BGT, BLT, BGE, BLE, J, JR, JAL, DATA, TEXT, SPACE, BYTE, ASCII, WORD;
+    ADD, ADDI, SUB, MUL, DIV, LW, SW, LA, MFHI, MFLO, AND, OR, NOR, BEQ, BNE, BGT, BLT, BGE, BLE, J, JR, JAL, DATA, TEXT, SPACE, BYTE, ASCII, WORD, GLOBL,LI, MOVE, SYSCALL;
 }
