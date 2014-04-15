@@ -41,6 +41,10 @@ public class BasicBlock
         return contents.get(contents.size()-1);
     }
 
+    public List<BasicBlock> getNextBlocks(){
+        return nextBlocks;
+    }
+
     public void addOperation(IntermediateOperation op ){
         contents.add(op);
     }
