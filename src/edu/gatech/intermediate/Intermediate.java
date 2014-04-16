@@ -66,6 +66,8 @@ public class Intermediate {
     {
         intermediates.addAll(getStatements(root));
         coalesceLabels(intermediates);
+        for(IntermediateOperation intermediate: intermediates)
+            intermediate.populateDefUse();
         if(debug)
             System.out.println(this);
         return intermediates;

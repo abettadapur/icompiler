@@ -1,6 +1,7 @@
 package edu.gatech.intermediate;
 
 import edu.gatech.icompiler.Binding;
+import edu.gatech.util.Util;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +36,14 @@ public class IntermediateOperation {
         return parameters;
     }
 
+    public Set<String> getUse() {
+        return use;
+    }
+
+    public Set<String> getDef() {
+        return def;
+    }
+
     private Operator op;
     private String  x;
     private String  y;
@@ -43,7 +52,7 @@ public class IntermediateOperation {
     private String label;
     private List<String> parameters;
 
-    private Set<String> in, out;
+    private Set<String> in, out, use, def;
 
     public IntermediateOperation(Operator op, String x, String y, String z, String label, List<String> parameters){
 
@@ -57,7 +66,73 @@ public class IntermediateOperation {
 
         in = new HashSet<>();
         out = new HashSet<>();
+        use = new HashSet<>();
+        def = new HashSet<>();
+        
+        //populateDefUse();
 
+    }
+
+    public void populateDefUse()
+    {
+        switch(getType())
+        {
+            case BINARY:
+                if(!Util.isNumeric(x))
+                    def.add(x);
+                if(!Util.isNumeric(y))
+                    use.add(y);
+                if(!Util.isNumeric(z))
+                    use.add(z);
+                break;
+            case ASSIGN:
+                if(!Util.isNumeric(x))
+                    def.add(x);
+                if(!Util.isNumeric(y))
+                    use.add(y);
+                break;
+            case GOTO:
+                break;
+            case BRANCH:
+                if(!Util.isNumeric(x))
+                    use.add(x);
+                if(!Util.isNumeric(y))
+                    use.add(y);
+                break;
+            case RETURN:
+                if(!Util.isNumeric(x))
+                    use.add(x);
+            case FUNCTION:
+                if(parameters.size()!=0)
+                {
+                    for(String s:parameters)
+                        if(!Util.isNumeric(s))
+                            use.add(s);
+                }
+                break;
+            case FUNCTIONR:
+                if(!Util.isNumeric(x))
+                    def.add(x);
+                if(parameters.size()!=0)
+                {
+                    for(String s:parameters)
+                        if(!Util.isNumeric(s))
+                            use.add(s);
+                }
+                break;
+            case ARRAYSTORE:
+                if(!Util.isNumeric(x))
+                    def.add(x);
+                if(!Util.isNumeric(y))
+                    use.add(y);
+                if(!Util.isNumeric(z))
+                    use.add(z);
+                break;
+            case ARRAYLOAD:
+                if(!Util.isNumeric(z))
+                    use.add(z);
+                break;
+        }    
     }
 
     @Override

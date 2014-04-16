@@ -2,6 +2,7 @@ package edu.gatech;
 
 import edu.gatech.generation.Generator;
 import edu.gatech.generation.MipsOperation;
+import edu.gatech.generation.allocation.BasicAllocator;
 import edu.gatech.generation.allocation.IAllocator;
 import edu.gatech.generation.allocation.NaiveAllocator;
 import edu.gatech.icompiler.Parser;
@@ -66,7 +67,7 @@ public class Driver {
 
                         Intermediate intermediate = new Intermediate(debug, parseTree, table );
                         List<IntermediateOperation> irstream = intermediate.getIntermediates();
-                        IAllocator allocator = new NaiveAllocator();
+                        IAllocator allocator = new BasicAllocator();
                         allocator.annotateIr(irstream);
                         List<MipsOperation> program = Generator.generateCode(irstream, table);
                         if(debug)

@@ -19,6 +19,14 @@ public class BasicAllocator implements IAllocator
     public void annotateIr(List<IntermediateOperation> irStream)
     {
         entryPoints = buildBlocks(irStream);
+        for(BasicBlock block:entryPoints)
+        {
+            //few options. we can color, we can linear scan...
+            //LINEAR SCAN: every instruction has some live variables. Load them into registers as necessary.
+            //If we run out of registers, spill a register. Preferrably one that is not dirty (also which one is used last?)
+            //If a var is no longer live, vacate the register
+            //How many registers?
+        }
     }
 
     private List<BasicBlock> buildBlocks(List<IntermediateOperation> irStream)
@@ -27,9 +35,18 @@ public class BasicAllocator implements IAllocator
 
         List<Integer> leaders = new ArrayList<>();
 
-        leaders.add(0);
+        int start = 0;
+        for(IntermediateOperation op: irStream)
+        {
+            if(op.getLabel().equals("main"))
+                break;
+            start++;
+
+        }
+
+        leaders.add(start);
         //find leaders
-        for(int i=0; i<irStream.size(); i++)
+        for(int i=start; i<irStream.size(); i++)
         {
             IntermediateOperation operation = irStream.get(i);
 
@@ -91,6 +108,11 @@ public class BasicAllocator implements IAllocator
 
         }
 
+        for(BasicBlock b: blocks)
+        {
+            fillInOutSets(b);
+        }
+
 
 
         return blocks;
@@ -107,10 +129,14 @@ public class BasicAllocator implements IAllocator
                 operation.getOut().addAll(previousIn); //out[b] = in[b+1]
             }
 
-            Set<String> operands = getOperands(operation);
+            Set<String> use = operation.getUse();
+            Set<String> def = operation.getDef();
+            operation.getIn().removeAll(def);
+            operation.getIn().addAll(use);
 
-
+            previousIn = operation.getIn();
         }
+        block.getIn().addAll(block.getContents().get(0).getIn());
     }
 
     private Set<String> getOperands(IntermediateOperation op)
