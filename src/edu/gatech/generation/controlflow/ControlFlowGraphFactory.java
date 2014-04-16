@@ -37,10 +37,16 @@ public class ControlFlowGraphFactory {
         List<BasicBlock> blocks = new ArrayList<>();
 
         List<Integer> leaders = new ArrayList<>();
-
-        leaders.add(0);
+        int start = 0;
+        for(IntermediateOperation op:irStream)
+        {
+            if("main".equals(op.getLabel()))
+                break;
+            start++;
+        }
+        leaders.add(start);
         //find leaders
-        for(int i=0; i<irStream.size(); i++)
+        for(int i=start; i<irStream.size(); i++)
         {
             IntermediateOperation operation = irStream.get(i);
 

@@ -20,7 +20,8 @@ public class BasicAllocator implements IAllocator
     public void annotateIr(List<IntermediateOperation> irStream)
     {
         entryPoints = ControlFlowGraphFactory.getBasicBlocks(irStream);
-
+        for(BasicBlock b: entryPoints)
+            fillInOutSets(b);
         ControlFlowGraphFactory.printGraph(entryPoints);
 
     }
@@ -36,9 +37,12 @@ public class BasicAllocator implements IAllocator
                 operation.getOut().addAll(previousIn); //out[b] = in[b+1]
             }
 
-            Set<String> operands = getOperands(operation);
-
+            operation.getIn().addAll(operation.getOut());
+            operation.getIn().removeAll(operation.getDef());
+            operation.getIn().addAll(operation.getUse());
+            previousIn = operation.getIn();
         }
+        block.getIn().addAll(previousIn);
     }
 
     private Set<String> getOperands(IntermediateOperation op)
