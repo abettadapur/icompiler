@@ -38,6 +38,10 @@ public class BasicAllocator implements IAllocator
         for(IntermediateOperation op:b.getContents())
         {
             Set<String> in = op.getIn();
+            for(String s:in)
+            {
+                graph.addNode(s);
+            }
 
         }
     }
