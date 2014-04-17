@@ -1,117 +1,113 @@
 package edu.gatech.generation.allocation;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by Alex on 4/16/14.
  */
 public class InterferenceGraph
 {
-    List<GraphNode<String>> graph;
+    private Map<String, GraphNode> graph;
 
-    public InterferenceGraph()
-    {
-        graph = new ArrayList<>();
-       /* for(String var: variables)
-            graph.add(new GraphNode<String>(var));  //node addition*/
+    private final int UNUSED = -1;
 
-
+    public InterferenceGraph(){
+        graph = new LinkedHashMap<>();
     }
 
-    public void addEdge(String source, String dest)
-    {
-        GraphNode<String> sourceNode = null;
-        GraphNode<String> destNode = null;
-        for(GraphNode<String> node: graph)
-        {
-            if(node.data.equals(source))
-                sourceNode = node;
-            if(node.data.equals(dest))
-                destNode = node;
-        }
-        if(sourceNode!=null&&destNode!=null)
-        {
-            if(!sourceNode.neighbors.contains(destNode))
-                sourceNode.neighbors.add(destNode);
-            if(!destNode.neighbors.contains(destNode))
-                destNode.neighbors.add(sourceNode);
+    public void addEdge(String source, String dest){
+        if(graph.containsKey(source) && graph.containsKey(dest)){
+            GraphNode foo = graph.get(source);
+            GraphNode bar = graph.get(dest);
+            foo.addNeighbor(bar);
+            bar.addNeighbor(foo);
         }
     }
-    public void addNode(String data)
-    {
-        if(!graph.contains(new GraphNode<>(data)))
-            graph.add(new GraphNode<String>(data));
+
+    public void addNode(String data){
+        graph.put(data, new GraphNode(data));
     }
 
-    public void colorGraph(int K)
-    {
-        Stack<GraphNode<String>> stack = new Stack<>();
-        for(GraphNode<String> node: graph)
-        {
-            if(node.neighbors.size()<K)
+    public void colorGraph(int K){
+
+        Stack<GraphNode> stack = new Stack<>();
+
+        List<GraphNode> unused = new ArrayList<>();
+        unused.addAll(graph.values());
+        List<GraphNode> remove = new ArrayList<>();
+
+        for(GraphNode node: unused)
+            if(node.neighbors.size()<K){
                 stack.push(node);
-        }
-        while(graph.size()!=stack.size())
-        {
-            //least cost nodes
-        }
+                remove.add(node);
+            }
+
+        unused.removeAll(remove);
+
+        Collections.sort(unused);
+
+        stack.addAll(unused);
+
         while(!stack.isEmpty())
         {
-            GraphNode<String> node = stack.pop();
+            GraphNode node = stack.pop();
+
             List<Integer> possibleColors = new ArrayList<>();
+
             for(int i =0; i<K; i++)
                 possibleColors.add(i);
-            for(GraphNode<String> neighbor: node.neighbors)
-            {
-                if(neighbor.color!=-1)
+
+            for(GraphNode neighbor: node.neighbors)
+                if(neighbor.color!=UNUSED)
                     possibleColors.remove(Integer.valueOf(neighbor.color));
-            }
-            if(possibleColors.size()==0)
-            {
-               node.color = -1; //indicates a spilled value
-            }
+
+            if(possibleColors.isEmpty())
+               node.color = UNUSED; //indicates a spilled value
             else
-            {
                 node.color = possibleColors.get(0);
-            }
+
         }
     }
 
-    public int getColor(String s)
-    {
-        for(GraphNode<String> node:graph)
-        {
-            if(s.equals(node.data))
-                return node.color;
-        }
-        return -1;
+    public int getColor(String s){
+        return graph.get(s).color;
     }
 
-    private class GraphNode<T>
-    {
-        T data;
-        List<GraphNode<T>> neighbors;
-        int color;
+    private class GraphNode implements Comparable< GraphNode>{
+        private String data;
+        private Set<GraphNode> neighbors;
+        private int color;
 
-        public GraphNode(T var)
-        {
+        public GraphNode(String var){
+            neighbors = new LinkedHashSet<>();
             data = var;
-            color = -1;
+            color = UNUSED;
         }
-        public boolean equals(Object o)
-        {
-            if(o instanceof GraphNode)
-            {
-                GraphNode<String> node = (GraphNode<String>)o;
-                if(node.data.equals(data))
-                    return true;
-            }
-            return false;
 
+        public void addNeighbor(GraphNode node){
+            if(null != node)
+                neighbors.add(node);
         }
+
+        @Override
+        public int compareTo(GraphNode other){
+         return neighbors.size() - other.neighbors.size();
+        }
+
+        @Override
+        public int hashCode(){
+            return data.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o){
+         if(null == o) return false;
+         if(this == o) return true;
+         if(!(o instanceof GraphNode)) return false;
+         GraphNode temp = (GraphNode) o;
+         return temp.data.equals(data);
+        }
+
+
     }
 }

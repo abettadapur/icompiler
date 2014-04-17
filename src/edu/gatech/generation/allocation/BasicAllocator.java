@@ -22,8 +22,7 @@ public class BasicAllocator implements IAllocator
     {
         entryPoints = ControlFlowGraphFactory.getBasicBlocks(irStream);
         ControlFlowGraphFactory.printGraph(entryPoints);
-        for(BasicBlock b: entryPoints)
-        {
+        for(BasicBlock b: entryPoints){
             fillInOutSets(b);
             annotateBlock(b);
         }
@@ -34,16 +33,54 @@ public class BasicAllocator implements IAllocator
     private void annotateBlock(BasicBlock b)
     {
         InterferenceGraph graph = new InterferenceGraph();
-        HashMap<String, Integer> table = new HashMap<>();
-        for(IntermediateOperation op:b.getContents())
-        {
+
+        Set<String> buffer = new LinkedHashSet<>();
+        Set<String> dead = new LinkedHashSet<>();
+
+        for(IntermediateOperation op:b.getContents()){
+
+
             Set<String> in = op.getIn();
-            for(String s:in)
-            {
-                graph.addNode(s);
+
+            Set<String> temp = new HashSet<>();
+
+            temp.addAll(in);
+            temp.addAll(op.getOut());
+            temp.addAll(op.getDef());
+            temp.addAll(op.getUse());
+
+            temp.removeAll(buffer);
+
+            dead.addAll(temp);
+
+            List<String> replace = new ArrayList<>();
+
+            for(String s: in)
+                if(dead.contains(s))
+                    replace.add(s);
+
+            for(String s : replace){
+                in.remove(s);
+                in.add(s+".");
             }
 
+            for(String s:in)
+                graph.addNode(s);
+
+            for(String s : in)
+                for(String t : in)
+                    graph.addEdge(s, t);
+
+            buffer.clear();
+
+            buffer.addAll(in);
+            buffer.addAll(op.getOut());
+            buffer.addAll(op.getUse());
+            buffer.addAll(op.getDef());
+
         }
+
+
     }
 
     private void fillInOutSets(BasicBlock block)
