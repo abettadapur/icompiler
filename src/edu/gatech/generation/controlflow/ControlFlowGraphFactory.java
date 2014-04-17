@@ -19,10 +19,10 @@ public class ControlFlowGraphFactory {
 
             for(IntermediateOperation op : block.getContents())
                 System.out.println(op.toString());
-            System.out.println("Block has out edges to blocks starting at: ");
+            System.out.println("Block has out edges to blocks starting with: ");
 
             for(BasicBlock link : block.getNextBlocks()){
-                System.out.println(link);
+                System.out.println(link.getFirstOp());
             }
 
             System.out.println();

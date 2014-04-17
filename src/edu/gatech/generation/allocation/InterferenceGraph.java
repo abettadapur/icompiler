@@ -13,11 +13,11 @@ public class InterferenceGraph
 {
     List<GraphNode<String>> graph;
 
-    public InterferenceGraph(List<String> variables)
+    public InterferenceGraph()
     {
         graph = new ArrayList<>();
-        for(String var: variables)
-            graph.add(new GraphNode<String>(var));  //node addition
+       /* for(String var: variables)
+            graph.add(new GraphNode<String>(var));  //node addition*/
 
 
     }
@@ -35,9 +35,16 @@ public class InterferenceGraph
         }
         if(sourceNode!=null&&destNode!=null)
         {
-            sourceNode.neighbors.add(destNode);
-            destNode.neighbors.add(sourceNode);
+            if(!sourceNode.neighbors.contains(destNode))
+                sourceNode.neighbors.add(destNode);
+            if(!destNode.neighbors.contains(destNode))
+                destNode.neighbors.add(sourceNode);
         }
+    }
+    public void addNode(String data)
+    {
+        if(!graph.contains(new GraphNode<>(data)))
+            graph.add(new GraphNode<String>(data));
     }
 
     public void colorGraph(int K)
@@ -94,6 +101,17 @@ public class InterferenceGraph
         {
             data = var;
             color = -1;
+        }
+        public boolean equals(Object o)
+        {
+            if(o instanceof GraphNode)
+            {
+                GraphNode<String> node = (GraphNode<String>)o;
+                if(node.data.equals(data))
+                    return true;
+            }
+            return false;
+
         }
     }
 }

@@ -2,6 +2,7 @@ package edu.gatech.generation.allocation;
 
 import edu.gatech.generation.controlflow.BasicBlock;
 import edu.gatech.generation.controlflow.ControlFlowGraphFactory;
+import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
 import edu.gatech.intermediate.OperationType;
 import edu.gatech.util.Util;
@@ -20,10 +21,25 @@ public class BasicAllocator implements IAllocator
     public void annotateIr(List<IntermediateOperation> irStream)
     {
         entryPoints = ControlFlowGraphFactory.getBasicBlocks(irStream);
-        for(BasicBlock b: entryPoints)
-            fillInOutSets(b);
         ControlFlowGraphFactory.printGraph(entryPoints);
+        for(BasicBlock b: entryPoints)
+        {
+            fillInOutSets(b);
+            annotateBlock(b);
+        }
 
+
+    }
+
+    private void annotateBlock(BasicBlock b)
+    {
+        InterferenceGraph graph = new InterferenceGraph();
+        HashMap<String, Integer> table = new HashMap<>();
+        for(IntermediateOperation op:b.getContents())
+        {
+            Set<String> in = op.getIn();
+
+        }
     }
 
     private void fillInOutSets(BasicBlock block)
@@ -43,6 +59,16 @@ public class BasicAllocator implements IAllocator
             previousIn = operation.getIn();
         }
         block.getIn().addAll(previousIn);
+    }
+
+    private Set<String> getVariables(BasicBlock b)
+    {
+        Set<String> variables = new HashSet<>();
+        for(IntermediateOperation op:b.getContents())
+        {
+            variables.addAll(getOperands(op));
+        }
+        return variables;
     }
 
     private Set<String> getOperands(IntermediateOperation op)
