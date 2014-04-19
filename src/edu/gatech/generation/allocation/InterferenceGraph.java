@@ -9,7 +9,7 @@ public class InterferenceGraph
 {
     private Map<String, GraphNode> graph;
 
-    private final int UNUSED = -1;
+    public static final int SPILLED = -1;
 
     public InterferenceGraph(){
         graph = new LinkedHashMap<>();
@@ -25,7 +25,8 @@ public class InterferenceGraph
     }
 
     public void addNode(String data){
-        graph.put(data, new GraphNode(data));
+        if(!graph.containsKey(data))
+            graph.put(data, new GraphNode(data));
     }
 
     public void colorGraph(int K){
@@ -58,11 +59,11 @@ public class InterferenceGraph
                 possibleColors.add(i);
 
             for(GraphNode neighbor: node.neighbors)
-                if(neighbor.color!=UNUSED)
+                if(neighbor.color!= SPILLED)
                     possibleColors.remove(Integer.valueOf(neighbor.color));
 
             if(possibleColors.isEmpty())
-               node.color = UNUSED; //indicates a spilled value
+               node.color = SPILLED; //indicates a spilled value
             else
                 node.color = possibleColors.get(0);
 
@@ -81,7 +82,7 @@ public class InterferenceGraph
         public GraphNode(String var){
             neighbors = new LinkedHashSet<>();
             data = var;
-            color = UNUSED;
+            color = SPILLED;
         }
 
         public void addNeighbor(GraphNode node){
@@ -106,6 +107,11 @@ public class InterferenceGraph
          if(!(o instanceof GraphNode)) return false;
          GraphNode temp = (GraphNode) o;
          return temp.data.equals(data);
+        }
+
+        public String toString()
+        {
+            return color+"";
         }
 
 

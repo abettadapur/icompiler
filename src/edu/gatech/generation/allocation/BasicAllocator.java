@@ -1,10 +1,14 @@
 package edu.gatech.generation.allocation;
 
+import edu.gatech.generation.MipsOperation;
+import edu.gatech.generation.MipsOperator;
 import edu.gatech.generation.controlflow.BasicBlock;
 import edu.gatech.generation.controlflow.ControlFlowGraphFactory;
 import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
 import edu.gatech.intermediate.OperationType;
+import edu.gatech.intermediate.Operator;
+import edu.gatech.util.Pair;
 import edu.gatech.util.Util;
 
 import java.util.*;
@@ -33,52 +37,68 @@ public class BasicAllocator implements IAllocator
     private void annotateBlock(BasicBlock b)
     {
         InterferenceGraph graph = new InterferenceGraph();
-
+        HashMap<String, Pair<Integer, Integer>> liveRangeTable = new HashMap<>();
         Set<String> buffer = new LinkedHashSet<>();
-        Set<String> dead = new LinkedHashSet<>();
+        //Set<String> dead = new LinkedHashSet<>();
+        Set<String> prevIn = null;
 
-        for(IntermediateOperation op:b.getContents()){
-
-
-            Set<String> in = op.getIn();
-
-            Set<String> temp = new HashSet<>();
-
-            temp.addAll(in);
-            temp.addAll(op.getOut());
-            temp.addAll(op.getDef());
-            temp.addAll(op.getUse());
-
-            temp.removeAll(buffer);
-
-            dead.addAll(temp);
-
-            List<String> replace = new ArrayList<>();
-
-            for(String s: in)
-                if(dead.contains(s))
-                    replace.add(s);
-
-            for(String s : replace){
-                in.remove(s);
-                in.add(s+".");
+        for(int i = 0; i<b.getContents().size(); i++)
+        {
+            Set<String> in = b.getContents().get(i).getIn();
+            for(String s:in)
+            {
+                graph.addNode(s);
+                for(String s2: in)
+                {
+                    if(!s.equals(s2))
+                        graph.addEdge(s, s2);
+                }
+                if(!liveRangeTable.containsKey(s))
+                {
+                    liveRangeTable.put(s, new Pair<Integer,Integer>(i,-1));
+                }
+            }
+            Set<String> dead = new HashSet<>();
+            if(prevIn!=null)
+                dead.addAll(prevIn);
+            if(!dead.isEmpty())
+            {
+                dead.removeAll(in);//dead now contains the variables that died in the last instruction
+                for(String s: dead)
+                {
+                    if(liveRangeTable.containsKey(s))
+                        liveRangeTable.get(s).setU(i-1);
+                }
             }
 
-            for(String s:in)
-                graph.addNode(s);
+            prevIn = in;
+        }
+        graph.colorGraph(5); //TODO: ABSTRACT
+        for(Map.Entry<String, Pair<Integer, Integer>> entry:liveRangeTable.entrySet())
+        {
+            int color = graph.getColor(entry.getKey());
+            int registerNumber = -1;
+            if(color!=InterferenceGraph.SPILLED)
+                registerNumber = color+8;
 
-            for(String s : in)
-                for(String t : in)
-                    graph.addEdge(s, t);
+            if(registerNumber!=-1)
+            {
+                int loadIndex = entry.getValue().getT();
+                int storeIndex = entry.getValue().getU();
 
-            buffer.clear();
+                IntermediateOperation load = new IntermediateOperation(Operator.LOAD, "", "$"+registerNumber,entry.getKey(), "", null);
+                IntermediateOperation store = new IntermediateOperation(Operator.STORE, "",entry.getKey(),"$"+registerNumber, "", null);
 
-            buffer.addAll(in);
-            buffer.addAll(op.getOut());
-            buffer.addAll(op.getUse());
-            buffer.addAll(op.getDef());
+
+            }
+
+
 
         }
+
+
+
+
 
 
     }
