@@ -1,5 +1,6 @@
 package edu.gatech.generation;
 
+import com.sun.java.swing.plaf.motif.MotifPopupMenuSeparatorUI;
 import edu.gatech.facade.ITable;
 import edu.gatech.icompiler.Binding;
 import edu.gatech.icompiler.DeclaredType;
@@ -102,10 +103,18 @@ public class Generator
 
                 case ASSIGN:
 
-                    //if(!Util.isNumeric(intermediate.getY()) )
-                      //  instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.SW, intermediate.getX(), "0", intermediate.getY()));
-                    //else
-                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, intermediate.getX(), "$0", intermediate.getY()));
+                    if(!Util.isNumeric(intermediate.getY()) )
+                    {
+                      instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, "$27", intermediate.getX(),""));
+                      instructionStream.add(new MipsOperation("", MipsOperator.SW, intermediate.getY(), "0", "$27"));
+                    }
+                    else
+                    {
+
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, "$27", intermediate.getX(),""));
+                        instructionStream.add(new MipsOperation("", MipsOperator.ADDI, "$26", "$0", intermediate.getY()));
+                        instructionStream.add(new MipsOperation("", MipsOperator.SW, "$26", "0", "$27"));
+                    }
 
                     break;
 

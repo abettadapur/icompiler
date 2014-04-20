@@ -40,7 +40,7 @@ public class NaiveAllocator implements IAllocator {
                         operands.add(operation.getZ());
                         break;
                     case ASSIGN:
-                        operands.add(operation.getX());
+                       // operands.add(operation.getX());
                         operands.add(operation.getY());
                         break;
                     case GOTO:
