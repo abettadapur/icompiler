@@ -31,6 +31,12 @@ public class BasicAllocator implements IAllocator
             annotateBlock(b);
         }
 
+        irStream.clear();
+        for(BasicBlock b: entryPoints)
+        {
+            irStream.addAll(b.getContents());
+        }
+
 
     }
 
@@ -127,6 +133,8 @@ public class BasicAllocator implements IAllocator
                     toInsert.add(new Pair<>(pair.getT(), load));
                     toInsert.add(new Pair<>(pair.getU(), store));
                 }
+                for(IntermediateOperation op: b.getContents())
+                    op.registerReplace(entry.getKey(), "$"+registerNumber);
             }
             else
             {
@@ -158,7 +166,12 @@ public class BasicAllocator implements IAllocator
             if(op.getU().getOp()==Operator.LOAD)
                 b.getContents().add(op.getT()+offset, op.getU());
             else
-                b.getContents().add(op.getT()+offset+1, op.getU());
+            {
+                if(b.getContents().get(op.getT()+offset).getType()==OperationType.BRANCH)
+                    b.getContents().add(op.getT()+offset, op.getU());
+                else
+                    b.getContents().add(op.getT()+offset+1, op.getU());
+            }
             offset++;
         }
 

@@ -67,7 +67,7 @@ public class Driver {
 
                         Intermediate intermediate = new Intermediate(debug, parseTree, table );
                         List<IntermediateOperation> irstream = intermediate.getIntermediates();
-                        IAllocator allocator = new NaiveAllocator();
+                        IAllocator allocator = new BasicAllocator();
                         allocator.annotateIr(irstream);
                         List<MipsOperation> program = Generator.generateCode(irstream, table);
                         if(debug)
