@@ -138,7 +138,7 @@ public class BasicAllocator implements IAllocator
             }
             else
             {
-                //spill stuff
+               //spills
             }
         }
         Collections.sort(toInsert, new Comparator<Pair<Integer, IntermediateOperation>>() {
@@ -173,6 +173,11 @@ public class BasicAllocator implements IAllocator
                     b.getContents().add(op.getT()+offset+1, op.getU());
             }
             offset++;
+        }
+
+        for(int i = 0; i<b.getContents().size(); i++)
+        {
+
         }
 
 
