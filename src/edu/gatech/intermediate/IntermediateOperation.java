@@ -162,7 +162,7 @@ public class IntermediateOperation {
     public void registerReplace(String param, String register)
     {
         if(param.equals(x))
-            x = register;
+           x = register;
         if(param.equals(y))
             y = register;
         if(param.equals(z))
