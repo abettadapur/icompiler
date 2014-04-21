@@ -161,8 +161,9 @@ public class IntermediateOperation {
     }
     public void registerReplace(String param, String register)
     {
-        if(param.equals(x))
-           x = register;
+        if(getType()!=OperationType.ASSIGN)
+            if(param.equals(x))
+                x = register;
         if(param.equals(y))
             y = register;
         if(param.equals(z))
@@ -204,7 +205,7 @@ public class IntermediateOperation {
     public boolean containsOperand(String s)
     {
         if(s!=null)
-            return s.equals(x)||s.equals(y)||s.equals(z);
+            return s.equals(y)||s.equals(z);
         return false;
     }
 

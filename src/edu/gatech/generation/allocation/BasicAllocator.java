@@ -1,5 +1,7 @@
 package edu.gatech.generation.allocation;
 
+import com.sun.corba.se.spi.activation._RepositoryImplBase;
+import com.sun.corba.se.spi.orb.Operation;
 import edu.gatech.generation.MipsOperation;
 import edu.gatech.generation.MipsOperator;
 import edu.gatech.generation.controlflow.BasicBlock;
@@ -115,6 +117,7 @@ public class BasicAllocator implements IAllocator
 
 
         List<Pair<Integer, IntermediateOperation>> toInsert = new ArrayList<>();
+        List<String> spills = new ArrayList<>();
         for(Map.Entry<String, List<Pair<Integer, Integer>>> entry:liveRangeTable.entrySet())
         {
             int color = graph.getColor(entry.getKey());
@@ -132,13 +135,29 @@ public class BasicAllocator implements IAllocator
                         pair.setU(b.getContents().size()-1);
                     toInsert.add(new Pair<>(pair.getT(), load));
                     toInsert.add(new Pair<>(pair.getU(), store));
+                    for(int i=pair.getT(); i<=pair.getU(); i++)
+                        b.getContents().get(i).registerReplace(entry.getKey(), "$"+registerNumber);
                 }
-                for(IntermediateOperation op: b.getContents())
-                    op.registerReplace(entry.getKey(), "$"+registerNumber);
+
             }
             else
             {
-               //spills
+               spills.add(entry.getKey());
+            }
+        }
+        for(int i=0; i<b.getContents().size(); i++)
+        {
+            IntermediateOperation op = b.getContents().get(i);
+            int register = 13;
+            for(String s:spills)
+            {
+                if(op.containsOperand(s))
+                {
+                    toInsert.add(new Pair<>(i, new IntermediateOperation(Operator.LOAD, "$"+register,s,"","",null)));
+                    toInsert.add(new Pair<>(i, new IntermediateOperation(Operator.STORE, "$"+register,s,"","",null)));
+                    op.registerReplace(s,"$"+register);
+                    register++;
+                }
             }
         }
         Collections.sort(toInsert, new Comparator<Pair<Integer, IntermediateOperation>>() {
@@ -202,7 +221,10 @@ public class BasicAllocator implements IAllocator
             }
 
             operation.getIn().addAll(operation.getOut());
-            operation.getIn().removeAll(operation.getDef());
+            if(operation.getType()!=OperationType.BINARY)
+                operation.getIn().removeAll(operation.getDef());
+            else
+                operation.getIn().addAll(operation.getDef());
             operation.getIn().addAll(operation.getUse());
             previousIn = operation.getIn();
         }
