@@ -617,7 +617,7 @@ public class Intermediate {
         Operator op = Operator.getFromString(operand);
 
         if(!op.equals(Operator.UNSUPPORTED)){
-            out.add(new IntermediateOperation(op, result, a, b, "", null ));
+            out.add(new IntermediateOperation(op, result, b, a, "", null ));
 
         }else{
 
