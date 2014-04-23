@@ -142,9 +142,27 @@ public class Intermediate {
                 Node<Type> foo= temp.getFirstChildOfType(RuleType.STAT_ASSIGN);
 
                 if(!identifier.isFunction()){
+                    if(identifier.getType().isArray()){
 
-                    out.addAll(generateExpression(identifier.getName(), foo.getFirstChildOfType(RuleType.EXPR_OR_ID)));
+                        Node assignment = temp.getFirstChildOfType(RuleType.STAT_ASSIGN);
+                        Node expression = assignment.getFirstChildOfType(RuleType.LVALUE_TAIL).getFirstChildOfType(RuleType.EXPR);
 
+                        Binding index =  generateTemp(DeclaredType.integer, expression.getScope());
+
+                        List<IntermediateOperation> indexingList  =generateExpression(index.getName(), expression);
+
+                        Binding value  = generateTemp(identifier.getType().getContainer(), identifier.getScope());
+
+                        List<IntermediateOperation> valueList  = generateExpression(value.getName(), foo.getFirstChildOfType(RuleType.EXPR_OR_ID));
+
+                        out.addAll(indexingList);
+                        out.addAll(valueList);
+                        out.add(new IntermediateOperation(Operator.ARRAY_STORE,identifier.getName(), index.getName(), value.getName(),"", null  ));
+
+                    }
+                    else{
+                        out.addAll(generateExpression(identifier.getName(), foo.getFirstChildOfType(RuleType.EXPR_OR_ID)));
+                    }
                 }else{
 
 
