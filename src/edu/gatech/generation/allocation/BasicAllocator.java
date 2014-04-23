@@ -10,6 +10,7 @@ import edu.gatech.intermediate.Intermediate;
 import edu.gatech.intermediate.IntermediateOperation;
 import edu.gatech.intermediate.OperationType;
 import edu.gatech.intermediate.Operator;
+import edu.gatech.testing.IntermediateTest;
 import edu.gatech.util.Pair;
 import edu.gatech.util.Util;
 
@@ -26,6 +27,13 @@ public class BasicAllocator implements IAllocator
     @Override
     public void annotateIr(List<IntermediateOperation> irStream)
     {
+        List<IntermediateOperation> assignments = new ArrayList<>();
+        for(IntermediateOperation op: irStream)
+        {
+            if(op.getLabel().equals("main"))
+                break;
+            assignments.add(op);
+        }
         entryPoints = ControlFlowGraphFactory.getBasicBlocks(irStream);
         ControlFlowGraphFactory.printGraph(entryPoints);
         for(BasicBlock b: entryPoints){
@@ -33,7 +41,10 @@ public class BasicAllocator implements IAllocator
             annotateBlock(b);
         }
 
+
+
         irStream.clear();
+        irStream.addAll(assignments);
         for(BasicBlock b: entryPoints)
         {
             irStream.addAll(b.getContents());
@@ -130,7 +141,7 @@ public class BasicAllocator implements IAllocator
                 for(Pair<Integer, Integer> pair:entry.getValue())
                 {
                     IntermediateOperation load = new IntermediateOperation(Operator.LOAD, "$"+registerNumber,entry.getKey(), "","", null);
-                    IntermediateOperation store = new IntermediateOperation(Operator.STORE,entry.getKey(),"$"+registerNumber, "","", null);
+                    IntermediateOperation store = new IntermediateOperation(Operator.STORE,"$"+registerNumber,entry.getKey(), "","", null);
                     if(pair.getU()==-1)
                         pair.setU(b.getContents().size()-1);
                     toInsert.add(new Pair<>(pair.getT(), load));
@@ -155,7 +166,7 @@ public class BasicAllocator implements IAllocator
                 {
                     toInsert.add(new Pair<>(i, new IntermediateOperation(Operator.LOAD, "$"+register,s,"","",null)));
                     toInsert.add(new Pair<>(i, new IntermediateOperation(Operator.STORE, "$"+register,s,"","",null)));
-                    op.registerReplace(s,"$"+register);
+                    op.registerReplace(s, "$" + register);
                     register++;
                 }
             }
@@ -180,13 +191,23 @@ public class BasicAllocator implements IAllocator
         });
 
         int offset = 0;
+        List<String> labels = new ArrayList<>();
         for(Pair<Integer, IntermediateOperation> op:toInsert)
         {
             if(op.getU().getOp()==Operator.LOAD)
+            {
+                if(!labels.contains(b.getContents().get(op.getT()+offset).getLabel()))
+                {
+
+                    op.getU().setLabel(b.getContents().get(op.getT() + offset).getLabel());
+                    labels.add(b.getContents().get(op.getT()+offset).getLabel());
+                    b.getContents().get(op.getT()+offset).setLabel("");
+                }
                 b.getContents().add(op.getT()+offset, op.getU());
+            }
             else
             {
-                if(b.getContents().get(op.getT()+offset).getType()==OperationType.BRANCH)
+                if(b.getContents().get(op.getT()+offset).getType()==OperationType.BRANCH||b.getContents().get(op.getT()+offset).getType()==OperationType.FUNCTION||b.getContents().get(op.getT()+offset).getType()==OperationType.FUNCTIONR)
                     b.getContents().add(op.getT()+offset, op.getU());
                 else
                     b.getContents().add(op.getT()+offset+1, op.getU());
@@ -198,15 +219,6 @@ public class BasicAllocator implements IAllocator
         {
 
         }
-
-
-
-
-
-
-
-
-
     }
 
     private void fillInOutSets(BasicBlock block)

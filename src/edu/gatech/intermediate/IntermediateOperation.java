@@ -205,7 +205,12 @@ public class IntermediateOperation {
     public boolean containsOperand(String s)
     {
         if(s!=null)
-            return s.equals(y)||s.equals(z);
+        {
+            if(getType()!=OperationType.ASSIGN)
+                return s.equals(x)||s.equals(y)||s.equals(z);
+            else
+                return s.equals(y)||s.equals(z);
+        }
         return false;
     }
 

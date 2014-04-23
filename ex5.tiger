@@ -1,10 +1,12 @@
 let
-        var a, b : int := 0;
+        var a : int :=0;
+        var c : int :=10;
 in
-        if a+a = b then
-                a := b / 2;
+        if a+a = c then
+                a := c / 2;
         else
-        	b:=a;
+        	a:=c;
         endif;
+
         printi(a);
 end

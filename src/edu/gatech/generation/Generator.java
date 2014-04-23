@@ -47,15 +47,57 @@ public class Generator
                     break;
 
                 case SUB:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.SUB, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getY()) && !Util.isNumeric(intermediate.getZ()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.SUB, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getY()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation("", MipsOperator.SUB, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getZ()));
+                            instructionStream.add(new MipsOperation("", MipsOperator.SUB, intermediate.getX(), intermediate.getY(), "$16"));
+                        }
+                    }
                     break;
 
                 case MULT:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.MUL, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getY()) && !Util.isNumeric(intermediate.getZ()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.MUL, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getY()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation("", MipsOperator.MUL, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getZ()));
+                            instructionStream.add(new MipsOperation("", MipsOperator.MUL, intermediate.getX(), intermediate.getY(), "$16"));
+                        }
+                    }
                     break;
 
                 case DIV:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.DIV, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getY()) && !Util.isNumeric(intermediate.getZ()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.DIV, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getY()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation("", MipsOperator.DIV, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getZ()));
+                            instructionStream.add(new MipsOperation("", MipsOperator.DIV, intermediate.getX(), intermediate.getY(), "$16"));
+                        }
+                    }
                     break;
 
                 case AND:
