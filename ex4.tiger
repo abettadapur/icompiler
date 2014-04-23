@@ -1,7 +1,12 @@
 let
-        var a : int;
-        var b: int;
+        var a : int :=1;
+        var c: int :=1;
+        var count :int :=10;
 in
-
+    while count > 0 do
+        a:= a+c;
+        c:= a+c;
         printi(a);
+        count := count - 1;
+    enddo;
 end

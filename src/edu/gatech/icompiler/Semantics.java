@@ -2,6 +2,7 @@ package edu.gatech.icompiler;
 
 import edu.gatech.facade.ITable;
 import edu.gatech.util.Node;
+import org.junit.Rule;
 
 import javax.lang.model.type.PrimitiveType;
 import java.util.ArrayList;
@@ -519,7 +520,7 @@ public class Semantics
                         Node<Type> expressionList = statAssign.getChildren().get(1);
                         for(Node<Type> currentNode: expressionList)
                         {
-                            if(currentNode.getData()==RuleType.EXPR)
+                            if(currentNode.getData()==RuleType.EXPR&&currentNode.getParent().getData()!= RuleType.LVALUE_TAIL)
                                 actParameters.add(evaluateExpression(currentNode, false));
                         }
                         if(expParameters.size()!=actParameters.size())

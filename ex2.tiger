@@ -3,17 +3,16 @@ let
         type ArrayInt = array [100] of int; /*Declare ArrayInt as a new type */
         type B = int;
         var X :ArrayInt := 10; /* Declare vars X and Y as arrays with initialization */
-        var i, sum, b :B := 0;
+        var i, sum, c :B := 0;
 in
         for i := 0  to 100 do /* for loop for dot product */
             X[i]:=i;
         enddo;
 
         for i := 0  to 100 do /* for loop for dot product */
-                sum := sum + X[i];
-                b:=b+1;
+                sum := c+X[i];
+                printi(sum);
         enddo;
 
-
-        printi(sum); /* library call to printi to print the dot product */
+        printi(X[0]);
 end

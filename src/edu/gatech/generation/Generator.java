@@ -119,28 +119,112 @@ public class Generator
                     break;
 
                 case BREQ:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BEQ, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getX())&&!Util.isNumeric(intermediate.getY()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BEQ, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getX()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getX()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BEQ, "$16", intermediate.getY(), intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BEQ, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                    }
                     break;
 
                 case BRNEQ:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BNE, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getX())&&!Util.isNumeric(intermediate.getY()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BNE, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getX()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getX()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BNE, "$16", intermediate.getY(), intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BNE, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                    }
                     break;
 
                 case BRGEQ:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BGE, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getX())&&!Util.isNumeric(intermediate.getY()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BGE, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getX()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getX()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BGE, "$16", intermediate.getY(), intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BGE, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                    }
                     break;
 
                 case BRLEQ:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BLE, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getX())&&!Util.isNumeric(intermediate.getY()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BLE, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getX()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getX()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BLE, "$16", intermediate.getY(), intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BLE, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                    }
                     break;
 
 
                 case BRGT:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BGT, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getX())&&!Util.isNumeric(intermediate.getY()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BGT, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getX()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getX()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BGT, "$16", intermediate.getY(), intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BGT, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                    }
                     break;
 
                 case BRLT:
-                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BLT, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    if(!Util.isNumeric(intermediate.getX())&&!Util.isNumeric(intermediate.getY()))
+                        instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BLT, intermediate.getX(), intermediate.getY(), intermediate.getZ()));
+                    else
+                    {
+                        if(Util.isNumeric(intermediate.getX()))
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getX()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BLT, "$16", intermediate.getY(), intermediate.getZ()));
+                        }
+                        else
+                        {
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADDI, "$16", "$0", intermediate.getY()));
+                            instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.BLT, intermediate.getX(), "$16", intermediate.getZ()));
+                        }
+                    }
                     break;
 
                 case ASSIGN:
@@ -167,6 +251,13 @@ public class Generator
                     instructionStream.add(new MipsOperation("", MipsOperator.ADD, "$27", "$27", intermediate.getZ()));
                     instructionStream.add(new MipsOperation("", MipsOperator.LW, intermediate.getX(), "0","$27"));
                     break;
+
+                case ARRAY_STORE:
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.LA, "$27", intermediate.getX(),"" ));
+                    instructionStream.add(new MipsOperation("", MipsOperator.ADDI, "$23", "$0", "4"));
+                    instructionStream.add(new MipsOperation("", MipsOperator.MUL, intermediate.getY(), "$23", intermediate.getY()));
+                    instructionStream.add(new MipsOperation("", MipsOperator.ADD, "$27", "$27", intermediate.getY()));
+                    instructionStream.add(new MipsOperation("", MipsOperator.SW, intermediate.getZ(), "0","$27"));
 
                 case CALL:
                     if(intermediate.getX().equals("printi"))
