@@ -697,9 +697,16 @@ public class Intermediate {
                 if(i!=out.size()-1)
                 {
                     IntermediateOperation labeledOp = out.get(i+1);
-                    labeledOp.setLabel(operation.getLabel());
-                    i--;
-                    out.remove(operation);
+                    if(labeledOp.getOp()==Operator.UNSUPPORTED)
+                    {
+                        out.set(i, new IntermediateOperation(Operator.NOP, "", "", "", operation.getLabel(), null));
+                    }
+                    else
+                    {
+                        labeledOp.setLabel(operation.getLabel());
+                        i--;
+                        out.remove(operation);
+                    }
                 }
             }
         }

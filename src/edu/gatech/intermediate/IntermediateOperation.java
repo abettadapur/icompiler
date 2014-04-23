@@ -202,6 +202,8 @@ public class IntermediateOperation {
             return OperationType.ARRAYSTORE;
         if(op==Operator.END)
             return OperationType.END;
+        if(op==Operator.NOP)
+            return OperationType.NOP;
         return null;
     }
 

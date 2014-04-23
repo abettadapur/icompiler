@@ -275,6 +275,9 @@ public class Generator
                 case END:
                     instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.JR, "$ra", "",""));
                     break;
+                case NOP:
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.ADD, "$0", "$0","$0"));
+                    break;
                 default:
                     break;
 
