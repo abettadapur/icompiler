@@ -26,19 +26,33 @@ public class Driver {
     public static void main(String[] args){
 
         boolean debug = false;
+        IAllocator allocator = null;
 
-        if(args.length ==0 || args.length >2){
-            System.out.println("Usage: [fileToParse] <debug flag>\n\t\tAdd flag -d to see debugging output");
+        if(args.length ==0 || args.length<2){
+            System.out.println("Usage: [fileToParse] [-n|-b] <debug flag>\n\t\tAdd flag -d to see debugging output");
             return;
         }
 
-        if(args.length ==2 && ! (args[1].equals("-d"))){
+
+        if(args.length ==3 && ! (args[2].equals("-d"))){
             System.out.println("Please use -d as a debug flag");
             return;
         }
 
-        if(args.length == 2 && args[1].equals("-d"))
+        if(args.length==3&&!(args[1].equals("-n"))&&!(args[1].equals("-b")))
+        {
+            System.out.println("Please use -n to use the naive allocator and -b to use the basic block allocator");
+            return;
+        }
+
+        if(args.length == 3 && args[2].equals("-d"))
+        {
             debug = true;
+            if(args[1].equals("-n"))
+                allocator = new NaiveAllocator();
+            else
+                allocator = new BasicAllocator();
+        }
 
         Parser parser = new Parser(debug);
 
@@ -73,7 +87,6 @@ public class Driver {
                             for(IntermediateOperation operation: irstream)
                                 System.out.println(operation);
                         }
-                        IAllocator allocator = new BasicAllocator();
                         allocator.annotateIr(irstream);
                         List<MipsOperation> program = Generator.generateCode(irstream, table);
                         if(debug)
