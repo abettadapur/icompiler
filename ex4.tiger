@@ -7,6 +7,7 @@ in
         a:= a+c;
         c:= a+c;
         printi(a);
+        printi(c);
         count := count - 1;
     enddo;
 end
