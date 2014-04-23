@@ -448,12 +448,10 @@ public class Intermediate {
 
         IntermediateOperation loopSkip = new IntermediateOperation(Operator.UNSUPPORTED, "", "", "", skipLabel, null);
 
-
-
-        out.add(new IntermediateOperation(Operator.ASSIGN, temp.getName(), "0", "", "", null));
+        out.add(new IntermediateOperation(Operator.ASSIGN, temp.getName(), "0", "", "" , null));
         out.add(loopStart);
-        out.add(check);
         out.addAll(precondition);
+        out.add(check);
         out.addAll(loopBody);
         out.add(loopBack);
         out.add(loopSkip);
