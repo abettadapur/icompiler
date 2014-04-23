@@ -132,6 +132,7 @@ public class IntermediateOperation {
                 if(!Util.isNumeric(z))
                     use.add(z);
                 break;
+
         }    
     }
 
@@ -199,6 +200,8 @@ public class IntermediateOperation {
             return OperationType.ARRAYLOAD;
         if(op==Operator.ARRAY_STORE)
             return OperationType.ARRAYSTORE;
+        if(op==Operator.END)
+            return OperationType.END;
         return null;
     }
 

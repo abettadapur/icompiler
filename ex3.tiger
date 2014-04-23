@@ -1,8 +1,9 @@
 let
-
-        function myprint ( n : int ) begin
-                printi(n);
-        end;
+    type ArrayInt = array [100] of int; /*Declare ArrayInt as a new type */
+    var X : ArrayInt; /* Declare vars X and Y as arrays with initialization */
+    var i : int :=0;
 in
-        myprint(5);
+         for i := 0  to 100 do
+            printi(i);
+         enddo;
 end

@@ -180,6 +180,10 @@ public class Generator
                     break;
                 case GOTO:
                     instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.J, intermediate.getX(),"",""));
+                    break;
+                case END:
+                    instructionStream.add(new MipsOperation(intermediate.getLabel(), MipsOperator.JR, "$ra", "",""));
+                    break;
                 default:
                     break;
 
@@ -187,7 +191,7 @@ public class Generator
             }
         }
 
-        instructionStream.add(new MipsOperation("", MipsOperator.JR, "$ra", "",""));
+
 
         return instructionStream;
     }

@@ -65,6 +65,7 @@ public class Intermediate {
     private List<IntermediateOperation> generateIntermediates()
     {
         intermediates.addAll(getStatements(root));
+        intermediates.add(new IntermediateOperation(Operator.END, "","","","",null));
         coalesceLabels(intermediates);
         for(IntermediateOperation intermediate: intermediates)
             intermediate.populateDefUse();
@@ -675,10 +676,13 @@ public class Intermediate {
             IntermediateOperation operation = out.get(i);
             if(operation.getOp()==Operator.UNSUPPORTED)
             {
-                IntermediateOperation labeledOp = out.get(i+1);
-                labeledOp.setLabel(operation.getLabel());
-                i--;
-                out.remove(operation);
+                if(i!=out.size()-1)
+                {
+                    IntermediateOperation labeledOp = out.get(i+1);
+                    labeledOp.setLabel(operation.getLabel());
+                    i--;
+                    out.remove(operation);
+                }
             }
         }
     }
