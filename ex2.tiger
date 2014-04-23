@@ -1,21 +1,19 @@
+
 let
-
-    type u32 = int;
-    type u16 = int;
-    type array_int = array[20] of u32;
-    var X,Y,Z : u32;
-    var i : u32 := 0;
-    var b : u16 := 0;
-    var arrayofint : array_int;
-
- 
-
+        type ArrayInt = array [100] of int; /*Declare ArrayInt as a new type */
+        type B = int;
+        var X :ArrayInt := 10; /* Declare vars X and Y as arrays with initialization */
+        var i, sum, b :B := 0;
 in
-        while(i>0) do
-            i := b ;
-            arrayofint[0] := 4;
+        for i := 0  to 100 do /* for loop for dot product */
+            X[i]:=i;
         enddo;
 
-     
-end
+        for i := 0  to 100 do /* for loop for dot product */
+                sum := sum + X[i];
+                b:=b+1;
+        enddo;
 
+
+        printi(sum); /* library call to printi to print the dot product */
+end
