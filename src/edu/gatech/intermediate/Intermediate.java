@@ -629,7 +629,7 @@ public class Intermediate {
 
 
                     out.add(new IntermediateOperation(Operator.ASSIGN, result, "1", "", "", null));
-                    out.add(new IntermediateOperation(Operator.BRGT, a, b, foo, "",null));
+                    out.add(new IntermediateOperation(Operator.BRGT, b, a, foo, "",null));
                     out.add(new IntermediateOperation(Operator.ASSIGN, result, "0", "", "", null));
                     out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "" ,"", foo, null));
 
@@ -639,7 +639,7 @@ public class Intermediate {
                 case "<":
 
                     out.add(new IntermediateOperation(Operator.ASSIGN, result, "1", "", "", null));
-                    out.add(new IntermediateOperation(Operator.BRLT, a, b, foo, "",null));
+                    out.add(new IntermediateOperation(Operator.BRLT, b, a, foo, "",null));
                     out.add(new IntermediateOperation(Operator.ASSIGN, result, "0", "", "", null));
                     out.add(new IntermediateOperation(Operator.UNSUPPORTED, "", "" ,"", foo, null));
 
