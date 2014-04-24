@@ -84,7 +84,7 @@ public class ExtendedAllocator extends BasicAllocator implements IAllocator{
 	}
 	
 	@Override
-	public void annotateIr(List<IntermediateOperation> irStream)
+	public void annotateIr(List<IntermediateOperation> irStream, boolean debug)
     {
         List<IntermediateOperation> assignments = new ArrayList<>();
         for(IntermediateOperation op: irStream)
@@ -94,12 +94,14 @@ public class ExtendedAllocator extends BasicAllocator implements IAllocator{
             assignments.add(op);
         }
         entryPoints = ControlFlowGraphFactory.getBasicBlocks(irStream);
-        ControlFlowGraphFactory.printGraph(entryPoints);
+        if(debug)
+            ControlFlowGraphFactory.printGraph(entryPoints);
         
         EBBEntryPoints = extendedBasicBlocks(entryPoints);
         
-        		
-        ControlFlowGraphFactory.printGraph(EBBEntryPoints);
+
+        if(debug)
+            ControlFlowGraphFactory.printGraph(EBBEntryPoints);
         for(BasicBlock b: EBBEntryPoints){
             fillInOutSets(b);
             annotateBlock(b);

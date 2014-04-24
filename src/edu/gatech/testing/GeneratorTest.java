@@ -53,7 +53,7 @@ public class GeneratorTest {
                         Intermediate intermediate = new Intermediate(debug, parseTree, table );
                         List<IntermediateOperation> irstream = intermediate.getIntermediates();
                         IAllocator allocator = new NaiveAllocator();
-                        allocator.annotateIr(irstream);
+                        allocator.annotateIr(irstream,debug);
                         List<MipsOperation> program = Generator.generateCode(irstream, table);
                         System.out.println("----Compiled Program----");
                         for(MipsOperation operation: program)
@@ -109,7 +109,7 @@ public class GeneratorTest {
                         Intermediate intermediate = new Intermediate(debug, parseTree, table );
                         List<IntermediateOperation> irstream = intermediate.getIntermediates();
                         IAllocator allocator = new BasicAllocator();
-                        allocator.annotateIr(irstream);
+                        allocator.annotateIr(irstream,debug);
                         List<MipsOperation> program = Generator.generateCode(irstream, table);
                         System.out.println("----Compiled Program----");
                         for(MipsOperation operation: program)

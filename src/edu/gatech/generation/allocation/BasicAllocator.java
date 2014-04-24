@@ -25,7 +25,7 @@ public class BasicAllocator implements IAllocator
     private List<BasicBlock> entryPoints;
 
     @Override
-    public void annotateIr(List<IntermediateOperation> irStream)
+    public void annotateIr(List<IntermediateOperation> irStream, boolean debug)
     {
         List<IntermediateOperation> assignments = new ArrayList<>();
         for(IntermediateOperation op: irStream)
@@ -35,7 +35,8 @@ public class BasicAllocator implements IAllocator
             assignments.add(op);
         }
         entryPoints = ControlFlowGraphFactory.getBasicBlocks(irStream);
-        ControlFlowGraphFactory.printGraph(entryPoints);
+        if(debug)
+            ControlFlowGraphFactory.printGraph(entryPoints);
         for(BasicBlock b: entryPoints){
             fillInOutSets(b);
             annotateBlock(b);

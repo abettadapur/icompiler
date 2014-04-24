@@ -9,5 +9,5 @@ import java.util.List;
  */
 public interface IAllocator
 {
-    public void annotateIr(List<IntermediateOperation> io);
+    public void annotateIr(List<IntermediateOperation> io, boolean debug);
 }

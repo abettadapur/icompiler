@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class NaiveAllocator implements IAllocator {
     @Override
-    public void annotateIr(List<IntermediateOperation> stream)
+    public void annotateIr(List<IntermediateOperation> stream, boolean debug)
     {
         int i = 0;
         for(IntermediateOperation op: stream)
@@ -101,10 +101,7 @@ public class NaiveAllocator implements IAllocator {
 
 
         }
-        for(IntermediateOperation op:stream)
-        {
-            System.out.println(op);
-        }
+
     }
 
 }

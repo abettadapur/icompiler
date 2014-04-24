@@ -47,9 +47,12 @@ public class Driver {
             return;
         }
 
-        if(args.length == 3 && args[2].equals("-d"))
+
+
+        if(args.length==2||(args.length == 3 && args[2].equals("-d")))
         {
-            debug = true;
+            if(args.length==3)
+                debug = true;
             if(args[1].equals("-n"))
                 allocator = new NaiveAllocator();
             else if(args[1].equals("-b"))
@@ -95,7 +98,7 @@ public class Driver {
                         }
 
 
-                        allocator.annotateIr(irstream);
+                        allocator.annotateIr(irstream,debug);
                         List<MipsOperation> program = Generator.generateCode(irstream, table);
                         if(debug)
                         {
