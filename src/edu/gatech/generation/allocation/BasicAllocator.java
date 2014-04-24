@@ -53,7 +53,7 @@ public class BasicAllocator implements IAllocator
 
     }
 
-    private void annotateBlock(BasicBlock b)
+    protected void annotateBlock(BasicBlock b)
     {
         InterferenceGraph graph = new InterferenceGraph();
         HashMap<String, List<Pair<Integer, Integer>>> liveRangeTable = new HashMap<>();
@@ -221,7 +221,7 @@ public class BasicAllocator implements IAllocator
         }
     }
 
-    private void fillInOutSets(BasicBlock block)
+    protected void fillInOutSets(BasicBlock block)
     {
         Set<String> previousIn=null;
         for(int i=block.getContents().size()-1; i>-1; i--)
@@ -253,7 +253,7 @@ public class BasicAllocator implements IAllocator
         return variables;
     }
 
-    private Set<String> getOperands(IntermediateOperation op)
+    protected Set<String> getOperands(IntermediateOperation op)
     {
         Set<String> variables = new HashSet<>();
         if(op.getType()!=null)
