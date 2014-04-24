@@ -94,22 +94,31 @@ public class ControlFlowGraphFactory {
                     if(block.getFirstOp().getLabel().equals(lastOp.getX()))
                     {
                         currentBlock.addNext(block);
+                        block.addPrev(currentBlock);
                     }
 
             }else if(lastOp.getType() == OperationType.BRANCH){
                 //search for label and add next block
                 if(i+1 < blocks.size())
+                {
                     currentBlock.addNext(blocks.get(i + 1));
+                    blocks.get(i + 1).addPrev(currentBlock);
+                }
 
                 for(BasicBlock block : blocks)
                     if(block.getFirstOp().getLabel().equals(lastOp.getZ()))
-                        currentBlock.addNext(block);
+                    {
+                    	currentBlock.addNext(block);
+                    	block.addPrev(currentBlock);
+                    }
+                        
 
             }
             else{
                 //add next block
                 if(i+1 < blocks.size()){
                     currentBlock.addNext(blocks.get(i+1));
+                    blocks.get(i + 1).addPrev(currentBlock);
                 }
             }
 
