@@ -87,6 +87,7 @@ public class ExtendedAllocator implements IAllocator{
 	public void annotateIr(List<IntermediateOperation> irStream)
     {
         entryPoints = ControlFlowGraphFactory.getBasicBlocks(irStream);
+        ControlFlowGraphFactory.printGraph(entryPoints);
         
         EBBEntryPoints = extendedBasicBlocks(entryPoints);
         

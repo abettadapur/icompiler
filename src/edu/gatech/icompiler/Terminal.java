@@ -9,7 +9,7 @@ public class Terminal implements Type
         return content;
     }
 
-    private final String content;
+    private String content;
 
     public Terminal(String content) {
         this.content = content;
@@ -28,4 +28,7 @@ public class Terminal implements Type
         return "\""+content+"\"";
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

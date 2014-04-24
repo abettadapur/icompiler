@@ -17,6 +17,7 @@ import edu.gatech.util.Node;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -65,6 +66,7 @@ public class Driver {
             if(parseTree!=null)
             {
                 SymbolTable table = new SymbolTable();
+                table.alias(parseTree);
                 List<String> errors = table.populateTable(parseTree.getChildren().get(1));
                 if(errors.size()==0)
                 {
@@ -91,6 +93,8 @@ public class Driver {
                             for(IntermediateOperation operation: irstream)
                                 System.out.println(operation);
                         }
+
+
                         allocator.annotateIr(irstream);
                         List<MipsOperation> program = Generator.generateCode(irstream, table);
                         if(debug)
@@ -127,8 +131,8 @@ public class Driver {
                     System.err.println(errors.size()+ "ERRORS");
                 }
             }
-        }catch(Exception e){
-            e.printStackTrace();
+        }catch(IOException e){
+            System.out.println(e);
         }
     }
 }

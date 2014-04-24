@@ -1,5 +1,8 @@
 package edu.gatech.util;
 
+import edu.gatech.generation.MipsOperation;
+import edu.gatech.generation.MipsOperator;
+
 import java.util.List;
 
 /**
@@ -18,5 +21,14 @@ public class Util {
     public static boolean isNumeric(String str)
     {
         return str.matches("-?\\d+(\\.\\d+)?");
+    }
+
+    public static boolean isInstruction(String id)
+    {
+        for(MipsOperator op:MipsOperator.values())
+            if(op.name().toLowerCase().equals(id))
+                return true;
+        return false;
+
     }
 }

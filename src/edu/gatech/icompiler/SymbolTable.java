@@ -2,6 +2,7 @@ package edu.gatech.icompiler;
 
 import edu.gatech.facade.ITable;
 import edu.gatech.util.Node;
+import edu.gatech.util.Util;
 
 import java.util.*;
 
@@ -142,7 +143,9 @@ public class SymbolTable implements ITable
                         {
                             if(node.getData()==TokenType.ID)
                             {
-                                ids.add(((Terminal)node.getChildren().get(0).getData()).getContent()); //add id to list to add
+                                Terminal terminal = (Terminal)node.getChildren().get(0).getData();
+                                String id = terminal.getContent();
+                                ids.add(id); //add id to list to add
                             }
                         }
                         for(String id:ids)
@@ -457,5 +460,21 @@ public class SymbolTable implements ITable
 
         addFunction("exit", null, Arrays.asList( new DeclaredType[]{DeclaredType.integer}) );
 
+    }
+
+    public void alias(Node<Type> parseTree)
+    {
+        for(Node<Type> node:parseTree)
+        {
+            if(node.getData().isTerminal())
+            {
+                String id = ((Terminal)(node.getData())).getContent();
+                if(Util.isInstruction(id))
+                {
+                    id = "_"+id;
+                    ((Terminal)(node.getData())).setContent(id);
+                }
+            }
+        }
     }
 }
