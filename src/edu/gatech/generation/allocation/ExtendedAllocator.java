@@ -35,7 +35,7 @@ public class ExtendedAllocator implements IAllocator{
 		
 		while(!visited.isEmpty())
 		{
-			List<BasicBlock> BBsinEBB = new ArrayList<>();
+			List<BasicBlock> BBsInEBB = new ArrayList<>();
 			Queue<BasicBlock> breadthFirstList = new LinkedList<>();
 			breadthFirstList.add(visited.get(0));
 			
@@ -62,11 +62,11 @@ public class ExtendedAllocator implements IAllocator{
 					}
 				}
 				
-				BBsinEBB.add(curr);
+				BBsInEBB.add(curr);
 			}
 			
 			// make EBB and add to EBBs list
-			EBBs.add(makeEBB(BBsinEBB));
+			EBBs.add(makeEBB(BBsInEBB));
 		}
 		
 		return EBBs;
