@@ -6,15 +6,27 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+
+import edu.gatech.generation.controlflow.BasicBlock;
+import edu.gatech.generation.controlflow.ControlFlowGraphFactory;
+import edu.gatech.intermediate.IntermediateOperation;
+import edu.gatech.intermediate.OperationType;
+import edu.gatech.intermediate.Operator;
+import edu.gatech.util.Pair;
+import edu.gatech.util.Util;
 
 /**
  * Created by Alex on 4/4/14.
  */
 public class ExtendedAllocator implements IAllocator{
 	
+	private List<BasicBlock> entryPoints;
+	private List<BasicBlock> EBBEntryPoints;
 	
 	public List<BasicBlock> extendedBasicBlocks(List<BasicBlock> BB)
 	{
@@ -33,24 +45,24 @@ public class ExtendedAllocator implements IAllocator{
 				//removing curr from visited
 				for(int i=0;i<visited.size();i++)
 				{
-					if(curr.startIndex == visited.get(i).startIndex  && curr.lastIndex == visited.get(i).lastIndex)
+					if(curr.getStartIndex() == visited.get(i).getStartIndex()  && curr.getLastIndex() == visited.get(i).getLastIndex())
 					{
-						visted.remove(i);
+						visited.remove(i);
 						break;
 					}
 				}
 				
 				// adding direct non-join succesors of curr to breadthFistList
-				for(BasicBlock b: getNextBlocks)
+				for(BasicBlock b: curr.getNextBlocks())
 				{
 					// if successor is not a join node, add it to breadthFistList
-					if(b.getPrevNodes().size()<=1)
+					if(b.getPrevBlocks().size()<=1)
 					{
 						breadthFirstList.add(b);
 					}
 				}
 				
-				BBsinEBB.add(curr)
+				BBsinEBB.add(curr);
 			}
 			
 			// make EBB and add to EBBs list
@@ -65,11 +77,13 @@ public class ExtendedAllocator implements IAllocator{
 		
 		BasicBlock EBB = new BasicBlock(0,0); // hack - not using indexes for allocation right?
 		for(BasicBlock b:BBs)
-			EBB.addOperation(b.getContent);
+			for(IntermediateOperation i:b.getContents())
+				EBB.addOperation(i);
 
 		return EBB;
 	}
 	
+	@Override
 	public void annotateIr(List<IntermediateOperation> irStream)
     {
         entryPoints = ControlFlowGraphFactory.getBasicBlocks(irStream);
@@ -79,7 +93,7 @@ public class ExtendedAllocator implements IAllocator{
         		
         ControlFlowGraphFactory.printGraph(EBBEntryPoints);
         for(BasicBlock b: EBBEntryPoints){
-            BasicAfillInOutSets(b);
+            fillInOutSets(b);
             annotateBlock(b);
         }
 
@@ -339,6 +353,7 @@ public class ExtendedAllocator implements IAllocator{
         }
         return variables;
     }
+
 
 }
 
