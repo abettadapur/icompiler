@@ -92,7 +92,9 @@ public class ControlFlowGraphFactory {
 
                 for(BasicBlock block : blocks)
                     if(block.getFirstOp().getLabel().equals(lastOp.getX()))
+                    {
                         currentBlock.addNext(block);
+                    }
 
             }else if(lastOp.getType() == OperationType.BRANCH){
                 //search for label and add next block

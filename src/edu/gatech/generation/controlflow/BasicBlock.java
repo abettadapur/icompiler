@@ -17,6 +17,7 @@ public class BasicBlock
     private int startIndex;
     private int lastIndex;
     private List<BasicBlock> nextBlocks;
+    private List<BasicBlock> prevBlocks;
     private Set<String> in,out;
 
     public BasicBlock(int startIndex, int lastIndex)
@@ -24,6 +25,7 @@ public class BasicBlock
         this.startIndex=startIndex;
         this.lastIndex=lastIndex;
         this.nextBlocks = new ArrayList<>();
+        this.prevBlocks = new ArrayList<>();
         this.contents = new ArrayList<>();
         in = new HashSet<>();
         out = new HashSet<>();
@@ -37,12 +39,22 @@ public class BasicBlock
         return contents.get(0);
     }
 
+    public int getStartIndex(){
+        return startIndex;
+    }
+    public int getLastIndex(){
+        return lastIndex;
+    }
     public IntermediateOperation getLastOp(){
         return contents.get(contents.size()-1);
     }
 
     public List<BasicBlock> getNextBlocks(){
         return nextBlocks;
+    }
+    
+    public List<BasicBlock> getPrevBlocks(){
+        return prevBlocks;
     }
 
     public void addOperation(IntermediateOperation op ){
@@ -52,6 +64,11 @@ public class BasicBlock
     public void addNext(BasicBlock b)
     {
         nextBlocks.add(b);
+    }
+    
+    public void addPrev(BasicBlock b)
+    {
+        prevBlocks.add(b);
     }
 
     public Set<String> getIn() {
